@@ -1,0 +1,17 @@
+{
+  "name": "Kyogen Clash",
+  "version": "0.0.1",
+  "description": "Solana RTS game",
+  "kind": "app",
+  "icon": {
+    "md": "./public/next.svg"
+  },
+  "screenshots": [
+    "./public/next.svg"
+  ],
+  "entrypoints": {
+    "default": {
+      "web": "./out/index.html"
+    }
+  }
+}
