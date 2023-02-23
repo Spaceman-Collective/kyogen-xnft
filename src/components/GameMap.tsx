@@ -1,8 +1,9 @@
-import { Sprite, Stage } from "react-pixi-fiber";
-import * as PIXI from "pixi.js";
+import { Stage } from "react-pixi-fiber";
 import { Viewport } from "./PixiViewport";
 import Creeper from "../../public/Creeper-elements-states.png";
-import { TileMap, TILE_LENGTH, TILE_SPACING } from "./TileMap";
+import { TileMap } from "./TileMap";
+import { UnitSprite } from "./UnitSprite";
+import { TILE_LENGTH, TILE_SPACING } from "../constants";
 
 export const GameMap = () => {
   // TODO use dynamic map dims
@@ -22,12 +23,7 @@ export const GameMap = () => {
     >
       <Viewport screenHeight={stageHeight} screenWidth={stageWidth}>
         <TileMap height={mapHeight} width={mapWidth} />
-        <Sprite
-          // TODO Creeper sprite should drag over the map, not with it
-          texture={PIXI.Texture.from(Creeper.src)}
-          x={4}
-          y={-4}
-        />
+        <UnitSprite src={Creeper.src} />
       </Viewport>
     </Stage>
   );

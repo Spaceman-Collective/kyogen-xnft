@@ -1,9 +1,7 @@
 import { Texture } from "pixi.js";
 import { Container, Sprite } from "react-pixi-fiber";
 import MapTile from "../../public/MapTile.png";
-
-export const TILE_LENGTH = 80;
-export const TILE_SPACING = 4;
+import { TILE_LENGTH, TILE_SPACING } from "../constants";
 
 export const TileMap = ({
   height,
