@@ -23,7 +23,7 @@ export const GameMap = () => {
     >
       <Viewport screenHeight={stageHeight} screenWidth={stageWidth}>
         <TileMap height={mapHeight} width={mapWidth} />
-        <UnitSprite src={Creeper.src} />
+        <UnitSprite src={Creeper.src} movement={1} />
       </Viewport>
     </Stage>
   );
