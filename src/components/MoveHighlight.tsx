@@ -44,16 +44,15 @@ export const MoveHighlight = ({
         x={moveRectPosition.x}
         y={moveRectPosition.y}
         fill={0x999084}
-        alpha={0.6}
-        radius={TILE_LENGTH / 2}
+        alpha={0.3}
+        radius={moveRectLength / 3}
       />
       {tiles.map((coords, index) => {
-        const radius = 28;
+        const radius = 14;
         const position = calculateCenteredPositionFromCenter(...coords);
         return (
           <Circle
             key={index}
-            alpha={0.5}
             radius={radius}
             x={position.x}
             y={position.y}

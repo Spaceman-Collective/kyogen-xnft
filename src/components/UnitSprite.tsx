@@ -2,6 +2,7 @@ import * as PIXI from "pixi.js";
 import { useCallback, useMemo, useState } from "react";
 import { Container, Sprite } from "react-pixi-fiber";
 import { TILE_LENGTH } from "../constants";
+import { useGameConfig } from "../context/GameConfigContext";
 import {
   calculateTileCoords,
   calculateUnitPositionOnTileCoords,
@@ -13,16 +14,28 @@ import { MoveHighlight } from "./MoveHighlight";
 export const UnitSprite = ({
   src,
   movement,
+  initialX,
+  initialY,
 }: {
   src: PIXI.Texture<PIXI.Resource> | string;
   movement: number;
+  initialX: number;
+  initialY: number;
 }) => {
+  const gameConfig = useGameConfig();
   const [dragging, setDragging] = useState(false);
   const [startTile, setStartTile] = useState<[number, number] | null>(null);
   const moveable = useMemo(
     () =>
-      dragging && startTile ? getMoveableTiles(startTile, movement, 8, 8) : [],
-    [dragging, movement, startTile]
+      dragging && startTile
+        ? getMoveableTiles(
+            startTile,
+            movement,
+            gameConfig.width,
+            gameConfig.height
+          )
+        : [],
+    [dragging, gameConfig.height, gameConfig.width, movement, startTile]
   );
 
   const onDragStart: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
@@ -82,8 +95,8 @@ export const UnitSprite = ({
         height={TILE_LENGTH}
         width={TILE_LENGTH}
         interactive
-        x={0}
-        y={0}
+        x={initialX}
+        y={initialY}
       />
     </Container>
   );
