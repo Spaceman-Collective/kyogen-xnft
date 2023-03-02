@@ -1,3 +1,4 @@
+import { Viewport } from "pixi-viewport";
 import * as PIXI from "pixi.js";
 import { useCallback, useMemo, useState } from "react";
 import { Container, Sprite } from "react-pixi-fiber";
@@ -8,6 +9,7 @@ import {
   calculateUnitPositionOnTileCoords,
   calculateDistance,
   getMoveableTiles,
+  normalizeGlobalPointFromViewport,
 } from "../utils/map";
 import { MoveHighlight } from "./MoveHighlight";
 
@@ -43,7 +45,12 @@ export const UnitSprite = ({
       event.stopPropagation();
 
       const sprite = event.currentTarget as PIXI.DisplayObject;
-      setStartTile(calculateTileCoords(event.global));
+      const viewport = sprite.parent.parent as Viewport;
+      setStartTile(
+        calculateTileCoords(
+          normalizeGlobalPointFromViewport(viewport, event.global)
+        )
+      );
       sprite.alpha = 0.5;
       setDragging(true);
     }, []);
@@ -53,10 +60,13 @@ export const UnitSprite = ({
       (event) => {
         event.stopPropagation();
         const sprite = event.currentTarget as PIXI.DisplayObject;
+        const viewport = sprite.parent.parent as Viewport;
         sprite.alpha = 1;
         setDragging(false);
         // snap sprite to tile
-        const coords = calculateTileCoords(event.global);
+        const coords = calculateTileCoords(
+          normalizeGlobalPointFromViewport(viewport, event.global)
+        );
         const distance = calculateDistance(startTile!, coords);
         const finalPosition = calculateUnitPositionOnTileCoords(
           ...(distance <= movement ? coords : startTile!)
@@ -72,8 +82,13 @@ export const UnitSprite = ({
         event.stopPropagation();
         const sprite = event.currentTarget as PIXI.DisplayObject;
         if (dragging) {
-          sprite.x = event.globalX - TILE_LENGTH / 2;
-          sprite.y = event.globalY - TILE_LENGTH / 2;
+          const viewport = sprite.parent.parent as Viewport;
+          const position = normalizeGlobalPointFromViewport(
+            viewport,
+            event.global
+          );
+          sprite.x = position.x - TILE_LENGTH / 2;
+          sprite.y = position.y - TILE_LENGTH / 2;
         }
       },
       [dragging]

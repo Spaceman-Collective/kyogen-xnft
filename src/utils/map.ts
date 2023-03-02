@@ -1,5 +1,19 @@
+import { Viewport } from "pixi-viewport";
 import * as PIXI from "pixi.js";
 import { TILE_LENGTH, TILE_SPACING } from "../constants";
+
+/**
+ * Normalize Stage Point based on viewport transformation
+ */
+export const normalizeGlobalPointFromViewport = (
+  viewport: Viewport,
+  point: PIXI.Point
+) => {
+  return new PIXI.Point(
+    point.x - (viewport.lastViewport?.x ?? 0),
+    point.y - (viewport.lastViewport?.y ?? 0)
+  );
+};
 
 /**
  * Calculates which tile i,j the coordinates are at. x and y are respective to the Stage.
