@@ -15,7 +15,6 @@ export interface DisplayObjectViewportProps extends ViewportProps {
   application: PIXI.Application;
 }
 
-
 const DisplayObjectViewport = CustomPIXIComponent<
   PixiViewport,
   DisplayObjectViewportProps
@@ -41,6 +40,7 @@ const DisplayObjectViewport = CustomPIXIComponent<
         .wheel()
         .decelerate()
         .bounce();
+      // TODO without bounce, when the viewport is moved it throws off positioning Sprites
       return viewport;
     },
   },
