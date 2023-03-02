@@ -18,12 +18,17 @@ export const GameMap = () => {
   return (
     <Stage
       options={{
-        backgroundColor: 0xEAE6D5,
+        backgroundColor: 0xeae6d5,
         height: stageHeight,
         width: stageWidth,
       }}
     >
-      <Viewport worldHeight={mapHeight} worldWidth={mapWidth}>
+      <Viewport
+        screenHeight={stageHeight}
+        screenWidth={stageWidth}
+        worldHeight={mapHeight}
+        worldWidth={mapWidth}
+      >
         <TileMap />
         <UnitSprite initialX={0} initialY={0} src={Creeper.src} movement={1} />
       </Viewport>

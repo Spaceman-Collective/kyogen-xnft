@@ -8,8 +8,8 @@ import { useLocalStorage } from "usehooks-ts";
 export const OnboardingUserGate = () => {
   const [username, setUsername] = useLocalStorage("username", "");
   const [connected, setConnected] = useLocalStorage("connected", false);
-
-  if (connected && username) {
+  
+  if (connected && username || typeof window === 'undefined') {
     return null;
   }
 

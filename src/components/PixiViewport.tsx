@@ -4,6 +4,8 @@ import { CustomPIXIComponent, usePixiApp } from "react-pixi-fiber";
 import { Viewport as PixiViewport } from "pixi-viewport";
 
 export interface ViewportProps {
+  screenHeight?: number;
+  screenWidth?: number;
   worldWidth: number;
   worldHeight: number;
   children?: React.ReactNode;
@@ -18,8 +20,16 @@ const DisplayObjectViewport = CustomPIXIComponent<
   DisplayObjectViewportProps
 >(
   {
-    customDisplayObject: ({ application, worldHeight, worldWidth }) => {
+    customDisplayObject: ({
+      application,
+      screenHeight,
+      screenWidth,
+      worldHeight,
+      worldWidth,
+    }) => {
       const viewport = new PixiViewport({
+        screenHeight: screenHeight,
+        screenWidth: screenWidth,
         worldWidth: worldWidth,
         worldHeight: worldHeight,
         interaction: application.renderer.events,
@@ -28,7 +38,7 @@ const DisplayObjectViewport = CustomPIXIComponent<
         .drag()
         .pinch()
         .wheel()
-        .decelerate()
+        .decelerate({ bounce: 0.95 })
         .bounce();
       return viewport;
     },
