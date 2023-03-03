@@ -27,7 +27,7 @@ export const SpawnSprite = ({ x, y }: { x: number; y: number }) => {
       setActive(true);
     }, []);
   const onDismiss: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
-    useCallback((event) => {
+    useCallback(() => {
       setActive(false);
     }, []);
 
@@ -64,6 +64,7 @@ export const SpawnSprite = ({ x, y }: { x: number; y: number }) => {
               texture={CreeperNinjaTexture}
               height={CARD_WIDTH}
               width={CARD_WIDTH}
+              onclick={(event) => console.log(event)}
             />
             <Sprite
               texture={CreeperSamuraiTexture}
