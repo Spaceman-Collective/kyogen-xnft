@@ -2,6 +2,7 @@ import React from "react";
 import * as PIXI from "pixi.js";
 import { CustomPIXIComponent, usePixiApp } from "react-pixi-fiber";
 import { Viewport as PixiViewport, Viewport } from "pixi-viewport";
+import { WORLD_OVERFLOW } from "../constants";
 
 export interface ViewportProps {
   screenHeight?: number;
@@ -39,7 +40,14 @@ const DisplayObjectViewport = CustomPIXIComponent<
         .pinch()
         .wheel()
         .decelerate({ bounce: 0.95 })
-        .bounce();
+        .bounce({
+          bounceBox: new PIXI.Rectangle(
+            -WORLD_OVERFLOW,
+            -WORLD_OVERFLOW,
+            worldWidth + WORLD_OVERFLOW,
+            worldHeight + WORLD_OVERFLOW
+          ),
+        });
       return viewport;
     },
   },

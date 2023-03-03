@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 import { useCallback, useMemo, useState } from "react";
 import { Container, Sprite } from "react-pixi-fiber";
-import { TILE_LENGTH } from "../constants";
+import { TILE_LENGTH, UNIT_LENGTH } from "../constants";
 import { useGameConfig } from "../context/GameConfigContext";
 import {
   calculateTileCoords,
@@ -10,7 +10,7 @@ import {
   getMoveableTiles,
   normalizeGlobalPointFromViewport,
 } from "../utils/map";
-import { HealthBar, HealthBarHeight, HealthBarWidth } from "./HealthBar";
+import { HealthBar, HealthBarWidth } from "./HealthBar";
 import { MoveHighlight } from "./MoveHighlight";
 import { getViewport } from "./PixiViewport";
 
@@ -43,12 +43,14 @@ export const UnitSprite = ({
   );
 
   const onMouseOver: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
-    useCallback(() => {
+    useCallback((event) => {
+      event.stopPropagation();
       setHovering(true);
     }, []);
 
   const onMouseOut: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
-    useCallback(() => {
+    useCallback((event) => {
+      event.stopPropagation();
       setHovering(false);
     }, []);
 
@@ -115,6 +117,10 @@ export const UnitSprite = ({
       [dragging]
     );
 
+  // Since the unit sprite should be centered within the tile, we will need to
+  // offset it and any other relative graphics.
+  const unitOffset = (TILE_LENGTH - UNIT_LENGTH) / 2;
+
   return (
     <>
       <MoveHighlight
@@ -124,28 +130,27 @@ export const UnitSprite = ({
         tiles={moveable}
       />
       <Container
-        height={TILE_LENGTH}
         onpointerdown={onDragStart}
         onpointerup={onDragEnd}
         onpointermove={onDragMove}
         onmouseover={onMouseOver}
         onmouseout={onMouseOut}
-        width={TILE_LENGTH}
         x={initialX}
         y={initialY}
         interactive
       >
         <Sprite
           texture={typeof src === "string" ? PIXI.Texture.from(src) : src}
-          // TODO fix this. Naively setting dims to same as tile to skip additional coord calcs.
-          height={TILE_LENGTH}
-          width={TILE_LENGTH}
+          height={UNIT_LENGTH}
+          width={UNIT_LENGTH}
+          x={unitOffset}
+          y={unitOffset}
         />
         {hovering && (
           <HealthBar
             percent={0.5}
             x={(TILE_LENGTH - HealthBarWidth) / 2}
-            y={TILE_LENGTH - HealthBarHeight}
+            y={UNIT_LENGTH}
           />
         )}
       </Container>

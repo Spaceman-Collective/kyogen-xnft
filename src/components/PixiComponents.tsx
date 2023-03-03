@@ -93,3 +93,49 @@ export const RoundedRect = CustomPIXIComponent<PIXI.Graphics, RoundedRectProps>(
   },
   "RoundedRect"
 );
+
+export interface TriangleProps extends GraphicsProps {
+  width: number;
+  height: number;
+}
+
+export const Triangle = CustomPIXIComponent<PIXI.Graphics, TriangleProps>(
+  {
+    customDisplayObject: () => new PIXI.Graphics(),
+    customApplyProps: (obj, oldProps, newProps) => {
+      if (
+        keyDiff(oldProps, newProps, [
+          "height",
+          "width",
+          "x",
+          "y",
+          "strokeWidth",
+          "stroke",
+          "fill",
+        ])
+      ) {
+        const x = newProps.x || 0;
+        const y = newProps.y || 0;
+        const halfWidth = newProps.width / 2;
+        obj.x = x;
+        obj.y = y;
+        obj.clear();
+        obj.lineStyle({ width: newProps.strokeWidth, color: newProps.stroke });
+        obj.beginFill(newProps.fill);
+        obj.moveTo(newProps.width, 0);
+        obj.lineTo(halfWidth, newProps.height);
+        obj.lineTo(0, 0);
+        obj.lineTo(halfWidth, 0);
+        obj.endFill();
+      }
+
+      if (
+        typeof newProps.alpha !== "undefined" &&
+        oldProps?.alpha !== newProps.alpha
+      ) {
+        obj.alpha = newProps.alpha;
+      }
+    },
+  },
+  "Triangle"
+);
