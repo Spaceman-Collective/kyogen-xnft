@@ -1,4 +1,3 @@
-import { Viewport } from "pixi-viewport";
 import * as PIXI from "pixi.js";
 import { useCallback, useMemo, useState } from "react";
 import { Container, Sprite } from "react-pixi-fiber";
@@ -11,7 +10,9 @@ import {
   getMoveableTiles,
   normalizeGlobalPointFromViewport,
 } from "../utils/map";
+import { HealthBar, HealthBarHeight, HealthBarWidth } from "./HealthBar";
 import { MoveHighlight } from "./MoveHighlight";
+import { getViewport } from "./PixiViewport";
 
 export const UnitSprite = ({
   src,
@@ -27,6 +28,7 @@ export const UnitSprite = ({
   const gameConfig = useGameConfig();
   const [dragging, setDragging] = useState(false);
   const [startTile, setStartTile] = useState<[number, number] | null>(null);
+  const [hovering, setHovering] = useState(false);
   const moveable = useMemo(
     () =>
       dragging && startTile
@@ -40,18 +42,31 @@ export const UnitSprite = ({
     [dragging, gameConfig.height, gameConfig.width, movement, startTile]
   );
 
+  const onMouseOver: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
+    useCallback(() => {
+      setHovering(true);
+    }, []);
+
+  const onMouseOut: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
+    useCallback(() => {
+      setHovering(false);
+    }, []);
+
   const onDragStart: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
     useCallback((event) => {
       event.stopPropagation();
 
-      const sprite = event.currentTarget as PIXI.DisplayObject;
-      const viewport = sprite.parent.parent as Viewport;
+      const container = event.currentTarget as PIXI.DisplayObject;
+      const viewport = getViewport(container);
+      if (!viewport) {
+        return;
+      }
       setStartTile(
         calculateTileCoords(
           normalizeGlobalPointFromViewport(viewport, event.global)
         )
       );
-      sprite.alpha = 0.5;
+      container.alpha = 0.5;
       setDragging(true);
     }, []);
 
@@ -59,9 +74,12 @@ export const UnitSprite = ({
     useCallback(
       (event) => {
         event.stopPropagation();
-        const sprite = event.currentTarget as PIXI.DisplayObject;
-        const viewport = sprite.parent.parent as Viewport;
-        sprite.alpha = 1;
+        const container = event.currentTarget as PIXI.DisplayObject;
+        const viewport = getViewport(container);
+        if (!viewport) {
+          return;
+        }
+        container.alpha = 1;
         setDragging(false);
         // snap sprite to tile
         const coords = calculateTileCoords(
@@ -71,7 +89,7 @@ export const UnitSprite = ({
         const finalPosition = calculateUnitPositionOnTileCoords(
           ...(distance <= movement ? coords : startTile!)
         );
-        sprite.position = finalPosition;
+        container.position = finalPosition;
       },
       [movement, startTile]
     );
@@ -80,39 +98,57 @@ export const UnitSprite = ({
     useCallback(
       (event) => {
         event.stopPropagation();
-        const sprite = event.currentTarget as PIXI.DisplayObject;
+        const container = event.currentTarget as PIXI.DisplayObject;
         if (dragging) {
-          const viewport = sprite.parent.parent as Viewport;
+          const viewport = getViewport(container);
+          if (!viewport) {
+            return;
+          }
           const position = normalizeGlobalPointFromViewport(
             viewport,
             event.global
           );
-          sprite.x = position.x - TILE_LENGTH / 2;
-          sprite.y = position.y - TILE_LENGTH / 2;
+          container.x = position.x - TILE_LENGTH / 2;
+          container.y = position.y - TILE_LENGTH / 2;
         }
       },
       [dragging]
     );
 
   return (
-    <Container>
+    <>
       <MoveHighlight
+        // must be outside container in order to remain static
         movement={movement}
         startTile={startTile}
         tiles={moveable}
       />
-      <Sprite
-        texture={typeof src === "string" ? PIXI.Texture.from(src) : src}
+      <Container
+        height={TILE_LENGTH}
         onpointerdown={onDragStart}
         onpointerup={onDragEnd}
         onpointermove={onDragMove}
-        // TODO fix this. Naively setting dims to same as tile to skip additional coord calcs.
-        height={TILE_LENGTH}
+        onmouseover={onMouseOver}
+        onmouseout={onMouseOut}
         width={TILE_LENGTH}
-        interactive
         x={initialX}
         y={initialY}
-      />
-    </Container>
+        interactive
+      >
+        <Sprite
+          texture={typeof src === "string" ? PIXI.Texture.from(src) : src}
+          // TODO fix this. Naively setting dims to same as tile to skip additional coord calcs.
+          height={TILE_LENGTH}
+          width={TILE_LENGTH}
+        />
+        {hovering && (
+          <HealthBar
+            percent={0.5}
+            x={(TILE_LENGTH - HealthBarWidth) / 2}
+            y={TILE_LENGTH - HealthBarHeight}
+          />
+        )}
+      </Container>
+    </>
   );
 };

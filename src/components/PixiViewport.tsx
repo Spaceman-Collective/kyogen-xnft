@@ -1,7 +1,7 @@
 import React from "react";
 import * as PIXI from "pixi.js";
 import { CustomPIXIComponent, usePixiApp } from "react-pixi-fiber";
-import { Viewport as PixiViewport } from "pixi-viewport";
+import { Viewport as PixiViewport, Viewport } from "pixi-viewport";
 
 export interface ViewportProps {
   screenHeight?: number;
@@ -46,8 +46,18 @@ const DisplayObjectViewport = CustomPIXIComponent<
   "Viewport"
 );
 
-export const Viewport = (props: ViewportProps) => {
+export const KyogenViewport = (props: ViewportProps) => {
   const application = usePixiApp();
 
   return <DisplayObjectViewport application={application} {...props} />;
+};
+
+export const getViewport = (object: PIXI.DisplayObject): Viewport | null => {
+  if (!object) {
+    return null;
+  }
+  if (object instanceof Viewport) {
+    return object as Viewport;
+  }
+  return getViewport(object.parent);
 };
