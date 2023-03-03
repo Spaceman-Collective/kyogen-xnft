@@ -20,6 +20,7 @@ module.exports = {
         },
         'kyogen-border': "#15171C",
         'kyogen-disabled': "#767676",
+        'kyogen-fund-bg': 'rgb(var(--color-kyogen-fund-bg))'
       },
       fontFamily: {
         millimetre: ["Millimetre", "sans-serif"],
