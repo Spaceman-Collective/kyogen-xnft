@@ -2,16 +2,16 @@
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    fontSize: {
-      title: [
-        "1.75rem",
-        {
-          lineHeight: "1.75rem",
-          fontWeight: 800,
-        },
-      ],
-    },
     extend: {
+      fontSize: {
+        title: [
+          "1.75rem",
+          {
+            lineHeight: "1.75rem",
+            fontWeight: 800,
+          },
+        ],
+      },
       colors: {
         'kyogen-primary': {
           DEFAULT: '#9448B1',
