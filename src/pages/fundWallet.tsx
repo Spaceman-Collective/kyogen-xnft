@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Image from "next/image";
 
 import { InputContainer } from "@/components/inputs/InputContainer";
@@ -8,13 +8,45 @@ import SolanaLogoLight from "../../public/solana_logo_light.svg";
 import SolanaLogo from "../../public/solana_logo.svg";
 import { TextInput } from "@/components/inputs/TextInput";
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
+import { useGameWallet } from "@/context/GameWalletContext";
+import { LAMPORTS_PER_SOL, SystemProgram, Transaction } from "@solana/web3.js";
+import { xnft } from "@/types";
 
 const inputContainerClass = "w-[409px] items-center";
 
+const MIN_SOL_TRANSFER = 0.1;
+
 const FundWallet = () => {
   const [transferAmount, setTransferAmount] = useState(0);
-  // TODO: Access the connected wallet
-  // 
+  const { keypair: gameKeypair } = useGameWallet();
+
+  const handleTransfer = useCallback(() => {
+    // Check that the transfer value is greater than 0
+    if (transferAmount < MIN_SOL_TRANSFER) {
+      // TODO: Alert's don't work in xNFT environment. Use another feedback provider
+      console.error(`Must transfer at least ${MIN_SOL_TRANSFER}`);
+      return;
+    }
+    if (!gameKeypair) {
+      console.error("gameKeypair not found");
+      return;
+    }
+
+    // Create the transfer transaction
+    const transaction = new Transaction();
+    const transferInstruction = SystemProgram.transfer({
+      fromPubkey: window.xnft.solana.publicKey,
+      toPubkey: gameKeypair.publicKey,
+      lamports: LAMPORTS_PER_SOL * transferAmount,
+    });
+    transaction.add(transferInstruction);
+
+    (async () => {
+      // TODO: Wrap transaction sending and confirming in DRY error handling
+      const txId = await window.xnft.solana.sendAndConfirm(transaction);
+      console.log(`Transaction ${txId} confirmed`);
+    })();
+  }, [transferAmount, gameKeypair]);
 
   return (
     <div className="font-millimetre bg-kyogen-fund-bg min-h-screen min-w-screen">
@@ -42,7 +74,10 @@ const FundWallet = () => {
             value={transferAmount}
             onChange={(e) => setTransferAmount(parseFloat(e.target.value))}
           />
-          <PrimaryButton className="text-xl px-7 mt-10 mb-2">
+          <PrimaryButton
+            className="text-xl px-7 mt-10 mb-2"
+            onClick={handleTransfer}
+          >
             TRANSFER
           </PrimaryButton>
         </InputContainer>
