@@ -59,6 +59,14 @@ export const Navbar = () => {
                   New Game
                 </Link>
               </Menu.Item>
+              <Menu.Item>
+                <Link
+                  href="/fundWallet"
+                  className="mt-4 block text-right text-white hover:text-opacity-50 lg:mr-4 lg:mt-0 lg:inline-block"
+                >
+                  Fund Game Wallet
+                </Link>
+              </Menu.Item>
             </Menu.Items>
           </>
         )}
