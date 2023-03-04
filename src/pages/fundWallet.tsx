@@ -13,6 +13,8 @@ const inputContainerClass = "w-[409px] items-center";
 
 const FundWallet = () => {
   const [transferAmount, setTransferAmount] = useState(0);
+  // TODO: Access the connected wallet
+  // 
 
   return (
     <div className="font-millimetre bg-kyogen-fund-bg min-h-screen min-w-screen">

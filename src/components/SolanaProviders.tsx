@@ -1,15 +1,16 @@
-'use client';
+"use client";
 
 import {
   ConnectionProvider,
   WalletProvider,
-} from '@solana/wallet-adapter-react';
-import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
-import { useMemo } from 'react';
+} from "@solana/wallet-adapter-react";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import { useMemo } from "react";
 
-import '@solana/wallet-adapter-react-ui/styles.css';
+import "@solana/wallet-adapter-react-ui/styles.css";
+import { GameWalletProvider } from "@/context/GameWalletContext";
 
-const endpoint = 'http://localhost:8899';
+const endpoint = "http://localhost:8899";
 export const SolanaProviders = ({
   children,
 }: {
@@ -20,10 +21,12 @@ export const SolanaProviders = ({
   return (
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>
-        <WalletModalProvider>
-          {/* Your app's components go here, nested within the context providers. */}
-          {children}
-        </WalletModalProvider>
+        <GameWalletProvider>
+          <WalletModalProvider>
+            {/* Your app's components go here, nested within the context providers. */}
+            {children}
+          </WalletModalProvider>
+        </GameWalletProvider>
       </WalletProvider>
     </ConnectionProvider>
   );
