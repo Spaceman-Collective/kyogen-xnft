@@ -20,7 +20,7 @@ const FundWallet = () => {
   const [transferAmount, setTransferAmount] = useState(0);
   const { keypair: gameKeypair } = useGameWallet();
 
-  const handleTransfer = useCallback(() => {
+  const handleTransfer = useCallback(async () => {
     // Check that the transfer value is greater than 0
     if (transferAmount < MIN_SOL_TRANSFER) {
       // TODO: Alert's don't work in xNFT environment. Use another feedback provider
@@ -41,11 +41,10 @@ const FundWallet = () => {
     });
     transaction.add(transferInstruction);
 
-    (async () => {
-      // TODO: Wrap transaction sending and confirming in DRY error handling
-      const txId = await window.xnft.solana.sendAndConfirm(transaction);
-      console.log(`Transaction ${txId} confirmed`);
-    })();
+    // TODO: Wrap transaction sending and confirming in DRY error handling
+    const txId = await window.xnft.solana.sendAndConfirm(transaction);
+    console.log(`Transaction ${txId} confirmed`);
+    
   }, [transferAmount, gameKeypair]);
 
   return (
