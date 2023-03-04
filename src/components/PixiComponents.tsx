@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import { CustomPIXIComponent, PixiComponent } from "react-pixi-fiber";
 import { keyDiff } from "../utils/keyDiff";
 
-interface GraphicsProps {
+export interface GraphicsProps {
   x?: number;
   y?: number;
   strokeWidth?: number;

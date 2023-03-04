@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js";
 import { Container, Sprite } from "react-pixi-fiber";
 import {
+  CARD_HEIGHT,
   CARD_WIDTH,
   FEATURE_LENGTH,
   TILE_LENGTH,
@@ -12,6 +13,7 @@ import CreeperSamurai from "../../../public/tile_creeper_samurai_2x.webp";
 import { useCallback, useState } from "react";
 import { SelectorToolTip } from "./SelectorToolTip";
 import { WorldOverlay } from "../WorldOverlay";
+import { NumberContainer } from "../NumberContainer";
 
 const CreeperSpawnTexture = PIXI.Texture.from(CreeperSpawn.src);
 const CreeperNinjaTexture = PIXI.Texture.from(CreeperNinja.src);
@@ -60,22 +62,48 @@ export const SpawnSprite = ({ x, y }: { x: number; y: number }) => {
             x={featureOffset}
             y={featureOffset}
           >
-            <Sprite
-              texture={CreeperNinjaTexture}
-              height={CARD_WIDTH}
-              width={CARD_WIDTH}
-              onclick={(event) => console.log(event)}
-            />
-            <Sprite
-              texture={CreeperSamuraiTexture}
-              height={CARD_WIDTH}
-              width={CARD_WIDTH}
-            />
-            <Sprite
-              texture={CreeperSoheiTexture}
-              height={CARD_WIDTH}
-              width={CARD_WIDTH}
-            />
+            <Container>
+              <Sprite
+                texture={CreeperNinjaTexture}
+                height={CARD_WIDTH}
+                width={CARD_WIDTH}
+              />
+              <NumberContainer
+                fill={0x8f2a2a}
+                stroke={0x371717}
+                text="0"
+                x={CARD_WIDTH}
+                y={CARD_HEIGHT}
+              />
+            </Container>
+            <Container>
+              <Sprite
+                texture={CreeperSamuraiTexture}
+                height={CARD_WIDTH}
+                width={CARD_WIDTH}
+              />
+              <NumberContainer
+                fill={0x8f2a2a}
+                stroke={0x371717}
+                text="2"
+                x={CARD_WIDTH}
+                y={CARD_HEIGHT}
+              />
+            </Container>
+            <Container>
+              <Sprite
+                texture={CreeperSoheiTexture}
+                height={CARD_WIDTH}
+                width={CARD_WIDTH}
+              />
+              <NumberContainer
+                fill={0x8f2a2a}
+                stroke={0x371717}
+                text="123"
+                x={CARD_WIDTH}
+                y={CARD_HEIGHT}
+              />
+            </Container>
           </SelectorToolTip>
         )}
       </Container>
