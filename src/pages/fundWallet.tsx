@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {useRecoilState} from "recoil"
 import Image from "next/image";
 
@@ -10,7 +10,8 @@ import SolanaLogo from "../../public/solana_logo.svg";
 import { TextInput } from "@/components/inputs/TextInput";
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { LAMPORTS_PER_SOL, SystemProgram, Transaction } from "@solana/web3.js";
-import { gameWallet as gameWalletAtom } from "../recoil/atoms";
+import { gameWallet as gameWalletAtom, gameWalletBalance as gameWalletBalanceAtom } from "../recoil/atoms";
+import { useFetchGameWalletBalance } from "@/hooks/useFetchGameWalletBalance";
 
 const inputContainerClass = "w-[409px] items-center";
 
@@ -19,6 +20,12 @@ const MIN_SOL_TRANSFER = 0.1;
 const FundWallet = () => {
   const [transferAmount, setTransferAmount] = useState(0);
   const [gameWallet, _] = useRecoilState(gameWalletAtom);
+  const [gameWalletBalance, _setGameWalletBalance] = useRecoilState(gameWalletBalanceAtom);
+  const fetchGameWalletBalance = useFetchGameWalletBalance();
+
+  useEffect(() => {
+    fetchGameWalletBalance()
+  }, []);
 
   const handleTransfer = useCallback(async () => {
     // Check that the transfer value is greater than 0
@@ -44,6 +51,7 @@ const FundWallet = () => {
     // TODO: Wrap transaction sending and confirming in DRY error handling
     const txId = await window.xnft.solana.sendAndConfirm(transaction);
     console.log(`Transaction ${txId} confirmed`);
+    await fetchGameWalletBalance();
 
   }, [transferAmount, gameWallet]);
 
@@ -88,7 +96,7 @@ const FundWallet = () => {
             className="mt-10"
           />
           <p className="mt-10 text-2xl text-black font-extrabold">SOL</p>
-          <p className="text-black text-xl">0</p>
+          <p className="text-black text-xl">{gameWalletBalance}</p>
           <PrimaryButton className="text-xl px-7 mt-10 mb-2" disabled>
             NEXT
           </PrimaryButton>
