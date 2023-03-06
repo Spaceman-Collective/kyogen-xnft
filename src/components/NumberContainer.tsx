@@ -1,4 +1,5 @@
 import * as PIXI from "pixi.js";
+import React from "react";
 import { useMemo } from "react";
 import { Container, CustomPIXIComponent, Text } from "react-pixi-fiber";
 import { keyDiff } from "../utils/keyDiff";
@@ -6,44 +7,63 @@ import { GraphicsProps } from "./PixiComponents";
 
 const baseStyle: Partial<PIXI.ITextStyle> = {
   fill: 0xffffff,
-  fontFamily: 'Inter',
+  fontFamily: "Inter",
   stroke: 0x000000,
   fontWeight: "900",
   strokeThickness: 5,
 };
-const numTextStyle = new PIXI.TextStyle({
-  ...baseStyle,
-  fontSize: 17,
-  lineHeight: 17,
-});
-const xTextStyle = new PIXI.TextStyle({
-  ...baseStyle,
-  fontSize: 14,
-  lineHeight: 14,
-});
-
-const xMetrics = PIXI.TextMetrics.measureText("x", xTextStyle);
 
 // I really dk what to call this.
-export const NumberContainer = ({
-  fill,
-  stroke,
-  text,
-  x = 0,
-  y = 0,
-}: {
-  fill: number;
-  stroke: number;
-  text: string;
-  x?: number;
-  y?: number;
-}) => {
-  numTextStyle.stroke = stroke;
-  xTextStyle.stroke = stroke;
+export const NumberContainer = React.forwardRef<
+  Container,
+  {
+    alpha?: number;
+    sign?: string;
+    fill: number;
+    stroke: number;
+    text: string;
+    textStroke?: number;
+    x?: number;
+    y?: number;
+  }
+>(function _NumberContainer(
+  {
+    alpha = 1,
+    sign = "x",
+    fill,
+    stroke,
+    textStroke = stroke,
+    text,
+    x = 0,
+    y = 0,
+  },
+  ref
+) {
+  const numTextStyle = useMemo(
+    () =>
+      new PIXI.TextStyle({
+        ...baseStyle,
+        fontSize: 17,
+        lineHeight: 17,
+        stroke: textStroke,
+      }),
+    [textStroke]
+  );
+  const xTextStyle = useMemo(
+    () =>
+      new PIXI.TextStyle({
+        ...baseStyle,
+        fontSize: 14,
+        lineHeight: 14,
+        stroke: textStroke,
+      }),
+    [textStroke]
+  );
   const textDims = useMemo(
     () => PIXI.TextMetrics.measureText(text, numTextStyle),
-    [text]
+    [numTextStyle, text]
   );
+  const xMetrics = PIXI.TextMetrics.measureText(sign, xTextStyle);
 
   // must scale down the dims since there's a lot of spacing around text glyphs
   const hexHeight = textDims.height - 5;
@@ -52,7 +72,12 @@ export const NumberContainer = ({
   const hexWidth = Math.max(textDims.width, hexRadius);
 
   return (
-    <Container x={x - hexWidth / 2} y={y - hexHeight / 2}>
+    <Container
+      ref={ref}
+      alpha={alpha}
+      x={x - hexWidth / 2}
+      y={y - hexHeight / 2}
+    >
       <Hexagon
         // hex for box shadow
         height={hexHeight}
@@ -81,12 +106,12 @@ export const NumberContainer = ({
           y={textDims.height - xMetrics.height}
           rotation={-0.175}
           style={xTextStyle}
-          text="x"
+          text={sign}
         />
       </Hexagon>
     </Container>
   );
-};
+});
 
 export interface HexagonProps extends GraphicsProps {
   width?: number;

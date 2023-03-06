@@ -2,7 +2,7 @@ import { Stage } from "react-pixi-fiber";
 import { KyogenViewport } from "./PixiViewport";
 import Creeper from "../../public/creeper_tmp_2x.webp";
 import { TileMap } from "./TileMap";
-import { UnitSprite } from "./UnitSprite";
+import { UnitSprite } from "./units/UnitSprite";
 import { TILE_LENGTH, TILE_SPACING } from "../constants";
 import { useWindowSize } from "usehooks-ts";
 import { SpawnSprite } from "./features/Spawn";
@@ -30,7 +30,7 @@ export const GameMap = () => {
         worldWidth={worldWidth}
       >
         <TileMap />
-        <UnitSprite initialX={0} initialY={0} src={Creeper.src} movement={1} />
+        <UnitSprite initialX={0} initialY={0} src={Creeper.src} movement={1} health={10} />
         <SpawnSprite
           x={TILE_LENGTH + TILE_SPACING}
           y={TILE_LENGTH + TILE_SPACING}

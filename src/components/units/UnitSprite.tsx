@@ -1,29 +1,31 @@
 import * as PIXI from "pixi.js";
 import { useCallback, useMemo, useState } from "react";
 import { Container, Sprite } from "react-pixi-fiber";
-import { TILE_LENGTH, UNIT_LENGTH } from "../constants";
-import { useGameConfig } from "../context/GameConfigContext";
+import { TILE_LENGTH, UNIT_LENGTH } from "../../constants";
+import { useGameConfig } from "../../context/GameConfigContext";
 import {
   calculateTileCoords,
   calculateUnitPositionOnTileCoords,
   calculateDistance,
   getMoveableTiles,
   normalizeGlobalPointFromViewport,
-} from "../utils/map";
-import { HealthBar, HealthBarWidth } from "./HealthBar";
-import { MoveHighlight } from "./MoveHighlight";
-import { getViewport } from "./PixiViewport";
+} from "../../utils/map";
+import { MoveHighlight } from "../MoveHighlight";
+import { getViewport } from "../PixiViewport";
+import { UnitHealth } from "./UnitHealth";
 
 export const UnitSprite = ({
   src,
   movement,
   initialX,
   initialY,
+  health,
 }: {
   src: PIXI.Texture<PIXI.Resource> | string;
   movement: number;
   initialX: number;
   initialY: number;
+  health: number;
 }) => {
   const gameConfig = useGameConfig();
   const [dragging, setDragging] = useState(false);
@@ -146,13 +148,7 @@ export const UnitSprite = ({
           x={unitOffset}
           y={unitOffset}
         />
-        {hovering && (
-          <HealthBar
-            percent={0.5}
-            x={(TILE_LENGTH - HealthBarWidth) / 2}
-            y={UNIT_LENGTH}
-          />
-        )}
+        <UnitHealth health={health} maxHealth={10} showHealthBar={hovering} />
       </Container>
     </>
   );
