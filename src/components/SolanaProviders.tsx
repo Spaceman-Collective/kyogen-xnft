@@ -6,7 +6,7 @@ import {
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { useEffect, useMemo } from "react";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 
 import "@solana/wallet-adapter-react-ui/styles.css";
 import { gameWallet as gameWalletAtom } from "../recoil/atoms";
@@ -19,7 +19,7 @@ export const SolanaProviders = ({
   children: React.ReactNode;
 }) => {
   const wallets = useMemo(() => [], []);
-  const [_, setGameWallet] = useRecoilState(gameWalletAtom);
+  const setGameWallet = useSetRecoilState(gameWalletAtom);
 
   useEffect(() => {
     const keypair = loadOrCreateGameWallet();
