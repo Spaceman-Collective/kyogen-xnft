@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
 import Image from "next/image";
 
 import { InputContainer } from "@/components/inputs/InputContainer";
@@ -8,9 +9,12 @@ import SolanaLogoLight from "../../public/solana_logo_light.svg";
 import SolanaLogo from "../../public/solana_logo.svg";
 import { TextInput } from "@/components/inputs/TextInput";
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
-import { useGameWallet } from "@/context/GameWalletContext";
 import { LAMPORTS_PER_SOL, SystemProgram, Transaction } from "@solana/web3.js";
-import { xnft } from "@/types";
+import {
+  gameWallet as gameWalletAtom,
+  gameWalletBalance as gameWalletBalanceAtom,
+} from "../recoil/atoms";
+import { useFetchGameWalletBalance } from "@/hooks/useFetchGameWalletBalance";
 
 const inputContainerClass = "w-[409px] items-center";
 
@@ -18,7 +22,15 @@ const MIN_SOL_TRANSFER = 0.1;
 
 const FundWallet = () => {
   const [transferAmount, setTransferAmount] = useState(0);
-  const { keypair: gameKeypair } = useGameWallet();
+  const gameWallet = useRecoilValue(gameWalletAtom);
+  const gameWalletBalance = useRecoilValue(
+    gameWalletBalanceAtom
+  );
+  const fetchGameWalletBalance = useFetchGameWalletBalance();
+
+  useEffect(() => {
+    fetchGameWalletBalance();
+  }, []);
 
   const handleTransfer = useCallback(async () => {
     // Check that the transfer value is greater than 0
@@ -27,7 +39,7 @@ const FundWallet = () => {
       console.error(`Must transfer at least ${MIN_SOL_TRANSFER}`);
       return;
     }
-    if (!gameKeypair) {
+    if (!gameWallet) {
       console.error("gameKeypair not found");
       return;
     }
@@ -36,7 +48,7 @@ const FundWallet = () => {
     const transaction = new Transaction();
     const transferInstruction = SystemProgram.transfer({
       fromPubkey: window.xnft.solana.publicKey,
-      toPubkey: gameKeypair.publicKey,
+      toPubkey: gameWallet.publicKey,
       lamports: LAMPORTS_PER_SOL * transferAmount,
     });
     transaction.add(transferInstruction);
@@ -44,8 +56,8 @@ const FundWallet = () => {
     // TODO: Wrap transaction sending and confirming in DRY error handling
     const txId = await window.xnft.solana.sendAndConfirm(transaction);
     console.log(`Transaction ${txId} confirmed`);
-    
-  }, [transferAmount, gameKeypair]);
+    await fetchGameWalletBalance();
+  }, [transferAmount, gameWallet]);
 
   return (
     <div className="font-millimetre bg-kyogen-fund-bg min-h-screen min-w-screen">
@@ -88,7 +100,7 @@ const FundWallet = () => {
             className="mt-10"
           />
           <p className="mt-10 text-2xl text-black font-extrabold">SOL</p>
-          <p className="text-black text-xl">0</p>
+          <p className="text-black text-xl">{gameWalletBalance}</p>
           <PrimaryButton className="text-xl px-7 mt-10 mb-2" disabled>
             NEXT
           </PrimaryButton>
