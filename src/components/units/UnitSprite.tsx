@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js";
 import { useCallback, useMemo, useState } from "react";
-import { Container, Sprite } from "react-pixi-fiber";
+import { Container } from "react-pixi-fiber";
 import { TILE_LENGTH, UNIT_LENGTH } from "../../constants";
 import { useGameConfig } from "../../context/GameConfigContext";
 import {
@@ -12,16 +12,15 @@ import {
 } from "../../utils/map";
 import { MoveHighlight } from "../MoveHighlight";
 import { getViewport } from "../PixiViewport";
+import { ClippedUnit } from "./ClippedUnit";
 import { UnitHealth } from "./UnitHealth";
 
 export const UnitSprite = ({
-  src,
   movement,
   initialX,
   initialY,
   health,
 }: {
-  src: PIXI.Texture<PIXI.Resource> | string;
   movement: number;
   initialX: number;
   initialY: number;
@@ -141,8 +140,7 @@ export const UnitSprite = ({
         y={initialY}
         interactive
       >
-        <Sprite
-          texture={typeof src === "string" ? PIXI.Texture.from(src) : src}
+        <ClippedUnit
           height={UNIT_LENGTH}
           width={UNIT_LENGTH}
           x={unitOffset}
