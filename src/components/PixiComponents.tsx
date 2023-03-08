@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { CustomPIXIComponent, PixiComponent } from "react-pixi-fiber";
+import { CustomPIXIComponent } from "react-pixi-fiber";
 import { keyDiff } from "../utils/keyDiff";
 
 export interface GraphicsProps {
@@ -9,6 +9,8 @@ export interface GraphicsProps {
   stroke?: number;
   alpha?: number;
   fill?: number;
+  fillAlpha?: number;
+  filters?: PIXI.Filter[];
 }
 
 export interface CircleProps extends GraphicsProps {
@@ -72,6 +74,7 @@ export const RoundedRect = CustomPIXIComponent<PIXI.Graphics, RoundedRectProps>(
           "strokeWidth",
           "stroke",
           "fill",
+          "fillAlpha",
           "topLeftRadius",
           "topRightRadius",
           "bottomLeftRadius",
@@ -85,7 +88,7 @@ export const RoundedRect = CustomPIXIComponent<PIXI.Graphics, RoundedRectProps>(
         obj
           .clear()
           .lineStyle({ width: newProps.strokeWidth, color: newProps.stroke })
-          .beginFill(newProps.fill)
+          .beginFill(newProps.fill, newProps.fillAlpha ?? 1)
           // move middle top
           .moveTo(x + width / 2, y)
           // arc top right corner
@@ -120,6 +123,7 @@ export const RoundedRect = CustomPIXIComponent<PIXI.Graphics, RoundedRectProps>(
             y,
             newProps.topLeftRadius || newProps.radius || 0
           )
+          .lineTo(x + width / 2, y)
           .endFill();
       }
 
@@ -128,6 +132,13 @@ export const RoundedRect = CustomPIXIComponent<PIXI.Graphics, RoundedRectProps>(
         oldProps?.alpha !== newProps.alpha
       ) {
         obj.alpha = newProps.alpha;
+      }
+
+      if (
+        typeof newProps.filters !== "undefined" &&
+        oldProps?.filters !== newProps.filters
+      ) {
+        obj.filters = newProps.filters;
       }
     },
   },
