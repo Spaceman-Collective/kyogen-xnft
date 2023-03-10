@@ -7,6 +7,7 @@ import { useWindowSize } from "usehooks-ts";
 import { SpawnSprite } from "./features/Spawn";
 import { useWorldDims } from "../hooks/useWorldDims";
 import { useRecoilBridgeAcrossReactRoots_UNSTABLE } from "recoil";
+import { SpawnLayer } from "./features/SpawnLayer";
 
 export const GameMap = () => {
   const BridgedRecoilRoot = useRecoilBridgeAcrossReactRoots_UNSTABLE();
@@ -34,15 +35,8 @@ export const GameMap = () => {
           worldWidth={worldWidth}
         >
           <TileMap />
+          <SpawnLayer />
           <UnitSprite initialX={0} initialY={0} movement={1} health={10} />
-          <SpawnSprite
-            x={TILE_LENGTH + TILE_SPACING}
-            y={TILE_LENGTH + TILE_SPACING}
-          />
-          <SpawnSprite
-            x={(TILE_LENGTH + TILE_SPACING) * 3}
-            y={(TILE_LENGTH + TILE_SPACING) * 3}
-          />
         </KyogenViewport>
       </BridgedRecoilRoot>
     </Stage>

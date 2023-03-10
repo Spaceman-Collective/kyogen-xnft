@@ -49,9 +49,16 @@ export interface Map {
 }
 
 export interface Tile {
-  clan: unknown;
+  clan: Clans;
   troop: unknown;
   spawnable: boolean;
   x: number;
   y: number;
+}
+
+export enum Clans {
+  Ancients = 0,
+  Wildings = 1,
+  Creepers = 2,
+  Synths = 3,
 }

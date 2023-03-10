@@ -6,22 +6,46 @@ import {
   FEATURE_LENGTH,
   TILE_LENGTH,
 } from "../../constants";
-import CreeperSpawn from "../../../public/building_spawn_creepers_2x.webp";
-import CreeperNinja from "../../../public/tile_creeper_ninja_2x.webp";
-import CreeperSohei from "../../../public/tile_creeper_sohei_2x.webp";
-import CreeperSamurai from "../../../public/tile_creeper_samurai_2x.webp";
-import { useCallback, useState } from "react";
+
+import { useCallback, useMemo, useState } from "react";
 import { SelectorToolTip } from "./SelectorToolTip";
 import { WorldOverlay } from "../WorldOverlay";
 import { NumberContainer } from "../NumberContainer";
+import { Clans } from "../../types";
+import {
+  AncientSpawnTexture,
+  CreeperNinjaTexture,
+  CreeperSamuraiTexture,
+  CreeperSoheiTexture,
+  CreeperSpawnTexture,
+  SynthSpawnTexture,
+  WildlingSpawnTexture,
+} from "../../textures";
 
-const CreeperSpawnTexture = PIXI.Texture.from(CreeperSpawn.src);
-const CreeperNinjaTexture = PIXI.Texture.from(CreeperNinja.src);
-const CreeperSoheiTexture = PIXI.Texture.from(CreeperSohei.src);
-const CreeperSamuraiTexture = PIXI.Texture.from(CreeperSamurai.src);
-
-export const SpawnSprite = ({ x, y }: { x: number; y: number }) => {
+export const SpawnSprite = ({
+  clan,
+  x,
+  y,
+}: {
+  clan: Clans;
+  x: number;
+  y: number;
+}) => {
   const [active, setActive] = useState(false);
+  const spawnTexture = useMemo(() => {
+    switch (clan) {
+      case Clans.Ancients:
+        return AncientSpawnTexture;
+      case Clans.Creepers:
+        return CreeperSpawnTexture;
+      case Clans.Synths:
+        return SynthSpawnTexture;
+      case Clans.Wildings:
+        return WildlingSpawnTexture;
+      default:
+        return CreeperSpawnTexture;
+    }
+  }, [clan]);
 
   const onSpawnClick: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
     useCallback((event) => {
@@ -51,7 +75,7 @@ export const SpawnSprite = ({ x, y }: { x: number; y: number }) => {
           // center within the tile
           x={featureOffset}
           y={featureOffset}
-          texture={CreeperSpawnTexture}
+          texture={spawnTexture}
           onclick={onSpawnClick}
           interactive
         />
