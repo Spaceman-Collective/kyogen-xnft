@@ -32,10 +32,12 @@ const Clan = ({
     <div
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
-      className={`relative flex flex-col items-center w-[250px] h-[505px] ${className}`}
+      className={`relative flex flex-col grow items-center ${
+        isHover ? "w-[329px]" : ""
+      } h-[505px] ${className}`}
     >
       {!isHover && (
-        <div className="absolute top-0 left-0 w-[250px] h-[505px] z-10 bg-kyogen-border opacity-60"></div>
+        <div className="absolute top-0 left-0 w-full h-full z-10 bg-kyogen-border opacity-60"></div>
       )}
       <div className="mt-6 z-50">
         <Image
@@ -65,7 +67,7 @@ const MeetTheClans = () => {
   return (
     <Page title="MEET THE CLANS">
       <div className="flex flex-col mt-24 items-center">
-        <div className="flex flex-row">
+        <div className="flex flex-row w-[1000px]">
           <Clan
             className="bg-[url('../../public/clans/login_bg_human_2x.webp')]"
             bonusSkill="Movement"
