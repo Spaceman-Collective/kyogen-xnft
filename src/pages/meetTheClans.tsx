@@ -25,12 +25,13 @@ const Clan = ({
 }) => {
   return (
     <div
-      className={`relative flex flex-col items-center w-[250px] max-w-[250px] h-[505px] ${className}`}
+      className={`relative flex flex-col items-center w-[250px] h-[505px] ${className}`}
     >
-      <div className="mt-6">
+      <div className="absolute top-0 left-0 w-[250px] h-[505px] z-10 bg-kyogen-border opacity-60"></div>
+      <div className="mt-6 z-50">
         <Image height={87} width={87} src={logoSrc} alt={`Kyogen ${title} Logo`} className="" />
       </div>
-      <div className="mt-3 z-10">
+      <div className="mt-3 z-50">
         <ContainerTitle>{title}</ContainerTitle>
       </div>
       <div className="absolute bottom-0 z-0">
