@@ -11,15 +11,17 @@ import Cyborgs from "../../public/clans/login_cyborgs_2x.webp";
 import CyborgsLogo from "../../public/clans/synths_logo_2x.webp";
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { ContainerTitle } from "@/components/typography/ContainerTitle";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 
 const Clan = ({
   className,
+  bonusSkill,
   imageSrc,
   logoSrc,
   title,
 }: {
   className: string;
+  bonusSkill: string;
   title: string;
   imageSrc: string | StaticImageData;
   logoSrc: string | StaticImageData;
@@ -47,6 +49,11 @@ const Clan = ({
       <div className="mt-3 z-50">
         <ContainerTitle>{title}</ContainerTitle>
       </div>
+      {isHover && (
+        <div className="absolute bottom-[20px] bg-white rounded-[30px] h-[40px] p-[10px] text-black text-center text-[20px] leading-[20px] font-bold z-50">
+          Bonus: {bonusSkill}
+        </div>
+      )}
       <div className="absolute bottom-0 z-0">
         <Image src={imageSrc} alt={`Kyogen ${title}`} className="" />
       </div>
@@ -61,24 +68,28 @@ const MeetTheClans = () => {
         <div className="flex flex-row">
           <Clan
             className="bg-[url('../../public/clans/login_bg_human_2x.webp')]"
+            bonusSkill="Movement"
             imageSrc={Humans}
             logoSrc={HumansLogo}
             title="ANCIENTS"
           />
           <Clan
             className="bg-[url('../../public/clans/login_bg_wildlings_2x.webp')]"
+            bonusSkill="Damage"
             imageSrc={Wildlings}
             logoSrc={WildlingsLogo}
             title="Wildlings"
           />
           <Clan
             className="bg-[url('../../public/clans/login_bg_creepers_2x.webp')]"
+            bonusSkill="Recovery"
             imageSrc={Creepers}
             logoSrc={CreepersLogo}
             title="Creepers"
           />
           <Clan
             className="bg-[url('../../public/clans/login_bg_cyborgs_2x.webp')]"
+            bonusSkill="HP"
             imageSrc={Cyborgs}
             logoSrc={CyborgsLogo}
             title="Cyborgs"
