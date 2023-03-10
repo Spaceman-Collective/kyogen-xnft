@@ -15,6 +15,7 @@ import {
   gameWalletBalance as gameWalletBalanceAtom,
 } from "../recoil/atoms";
 import { useFetchGameWalletBalance } from "@/hooks/useFetchGameWalletBalance";
+import Page from "@/components/Page";
 
 const inputContainerClass = "w-[409px] items-center";
 
@@ -60,18 +61,7 @@ const FundWallet = () => {
   }, [transferAmount, gameWallet]);
 
   return (
-    <div className="font-millimetre bg-kyogen-fund-bg min-h-screen min-w-screen">
-      <Image
-        src={KyogenLogo}
-        alt="Kyogen Clash"
-        className="mt-10 ml-10 absolute"
-      />
-      <div className="flex justify-center">
-        <p className="text-center mt-36 font-extrabold text-[#FF3D46] text-4xl">
-          FUND YOUR GAME WALLET
-        </p>
-      </div>
-
+    <Page title="FUND YOUR GAME WALLET">
       <div className="flex flex-row mt-36 justify-around">
         {/* TODO: change to flex column and adjust width for smaller screens */}
         <InputContainer className={inputContainerClass}>
@@ -106,7 +96,7 @@ const FundWallet = () => {
           </PrimaryButton>
         </InputContainer>
       </div>
-    </div>
+    </Page>
   );
 };
 
