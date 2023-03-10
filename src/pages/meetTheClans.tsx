@@ -11,6 +11,7 @@ import Cyborgs from "../../public/clans/login_cyborgs_2x.webp";
 import CyborgsLogo from "../../public/clans/synths_logo_2x.webp";
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { ContainerTitle } from "@/components/typography/ContainerTitle";
+import { useCallback, useState } from "react";
 
 const Clan = ({
   className,
@@ -23,13 +24,25 @@ const Clan = ({
   imageSrc: string | StaticImageData;
   logoSrc: string | StaticImageData;
 }) => {
+  const [isHover, setIsHover] = useState(false);
+
   return (
     <div
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
       className={`relative flex flex-col items-center w-[250px] h-[505px] ${className}`}
     >
-      <div className="absolute top-0 left-0 w-[250px] h-[505px] z-10 bg-kyogen-border opacity-60"></div>
+      {!isHover && (
+        <div className="absolute top-0 left-0 w-[250px] h-[505px] z-10 bg-kyogen-border opacity-60"></div>
+      )}
       <div className="mt-6 z-50">
-        <Image height={87} width={87} src={logoSrc} alt={`Kyogen ${title} Logo`} className="" />
+        <Image
+          height={87}
+          width={87}
+          src={logoSrc}
+          alt={`Kyogen ${title} Logo`}
+          className=""
+        />
       </div>
       <div className="mt-3 z-50">
         <ContainerTitle>{title}</ContainerTitle>
