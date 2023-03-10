@@ -1,11 +1,12 @@
 import { Texture } from "pixi.js";
 import { Container, Sprite } from "react-pixi-fiber";
+import { useRecoilValue } from "recoil";
 import MapTile from "../../public/MapTile.png";
 import { TILE_LENGTH, TILE_SPACING } from "../constants";
-import { useGameConfig } from "../context/GameConfigContext";
+import { selectMapDims } from "../recoil/selectors";
 
 export const TileMap = () => {
-  const { height, width } = useGameConfig();
+  const { height, width } = useRecoilValue(selectMapDims);
 
   return (
     <Container>

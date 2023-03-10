@@ -1,12 +1,13 @@
 import { useMemo } from "react";
+import { useRecoilValue } from "recoil";
 import { TILE_LENGTH, TILE_SPACING } from "../constants";
-import { useGameConfig } from "../context/GameConfigContext";
+import { selectMapDims } from "../recoil/selectors";
 
 /**
  * Get the height and width of the world based ont the map's dimensions.
  */
 export const useWorldDims = () => {
-  const { height, width } = useGameConfig();
+  const { height, width } = useRecoilValue(selectMapDims);
 
   return useMemo(
     () => ({

@@ -6,8 +6,10 @@ import { TILE_LENGTH, TILE_SPACING } from "../constants";
 import { useWindowSize } from "usehooks-ts";
 import { SpawnSprite } from "./features/Spawn";
 import { useWorldDims } from "../hooks/useWorldDims";
+import { useRecoilBridgeAcrossReactRoots_UNSTABLE } from "recoil";
 
 export const GameMap = () => {
+  const BridgedRecoilRoot = useRecoilBridgeAcrossReactRoots_UNSTABLE();
   const { height: worldHeight, width: worldWidth } = useWorldDims();
   const windowSize = useWindowSize();
   const stageHeight = Math.min(windowSize.height, worldHeight);
@@ -24,23 +26,25 @@ export const GameMap = () => {
         width: stageWidth,
       }}
     >
-      <KyogenViewport
-        screenHeight={stageHeight}
-        screenWidth={stageWidth}
-        worldHeight={worldHeight}
-        worldWidth={worldWidth}
-      >
-        <TileMap />
-        <UnitSprite initialX={0} initialY={0} movement={1} health={10} />
-        <SpawnSprite
-          x={TILE_LENGTH + TILE_SPACING}
-          y={TILE_LENGTH + TILE_SPACING}
-        />
-        <SpawnSprite
-          x={(TILE_LENGTH + TILE_SPACING) * 3}
-          y={(TILE_LENGTH + TILE_SPACING) * 3}
-        />
-      </KyogenViewport>
+      <BridgedRecoilRoot>
+        <KyogenViewport
+          screenHeight={stageHeight}
+          screenWidth={stageWidth}
+          worldHeight={worldHeight}
+          worldWidth={worldWidth}
+        >
+          <TileMap />
+          <UnitSprite initialX={0} initialY={0} movement={1} health={10} />
+          <SpawnSprite
+            x={TILE_LENGTH + TILE_SPACING}
+            y={TILE_LENGTH + TILE_SPACING}
+          />
+          <SpawnSprite
+            x={(TILE_LENGTH + TILE_SPACING) * 3}
+            y={(TILE_LENGTH + TILE_SPACING) * 3}
+          />
+        </KyogenViewport>
+      </BridgedRecoilRoot>
     </Stage>
   );
 };

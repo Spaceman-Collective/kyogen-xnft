@@ -1,8 +1,9 @@
 import * as PIXI from "pixi.js";
 import { useCallback, useMemo, useState } from "react";
 import { Container } from "react-pixi-fiber";
+import { useRecoilValue } from "recoil";
 import { TILE_LENGTH, UNIT_LENGTH } from "../../constants";
-import { useGameConfig } from "../../context/GameConfigContext";
+import { selectMapDims } from "../../recoil/selectors";
 import {
   calculateTileCoords,
   calculateUnitPositionOnTileCoords,
@@ -26,7 +27,7 @@ export const UnitSprite = ({
   initialY: number;
   health: number;
 }) => {
-  const gameConfig = useGameConfig();
+  const mapDims = useRecoilValue(selectMapDims);
   const [dragging, setDragging] = useState(false);
   const [startTile, setStartTile] = useState<[number, number] | null>(null);
   const [hovering, setHovering] = useState(false);
@@ -36,11 +37,11 @@ export const UnitSprite = ({
         ? getMoveableTiles(
             startTile,
             movement,
-            gameConfig.width,
-            gameConfig.height
+            mapDims.width,
+            mapDims.height
           )
         : [],
-    [dragging, gameConfig.height, gameConfig.width, movement, startTile]
+    [dragging, mapDims.height, mapDims.width, movement, startTile]
   );
 
   const onMouseOver: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =

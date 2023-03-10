@@ -1,8 +1,8 @@
 import dynamic from "next/dynamic";
 import { OnboardingUserGate } from "../../components/OnboardingUserGate";
-import { GameConfigProvider } from "../../context/GameConfigContext";
+import { useLoadGameState } from "../../hooks/useLoadGameState";
 
-// must use dynamic imports as `pixi-viewport` expects window object.
+// // must use dynamic imports as `pixi-viewport` expects window object.
 const GameMap = dynamic({
   loader: async () => {
     if (typeof window === "undefined") {
@@ -15,14 +15,14 @@ const GameMap = dynamic({
 });
 
 const Game = () => {
+  useLoadGameState("10492513215826697856");
+
   return (
     <>
       <div className="h-screen w-screen flex flex-col">
         <p>Game instance</p>
         <div className="flex flex-1 justify-center items-center">
-          <GameConfigProvider>
-            <GameMap />
-          </GameConfigProvider>
+          <GameMap />
         </div>
       </div>
       <OnboardingUserGate />

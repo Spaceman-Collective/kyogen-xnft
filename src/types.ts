@@ -41,3 +41,17 @@ declare global {
     xnft: xnft;
   }
 }
+
+export interface Map {
+  map_id: string;
+  structures: unknown[];
+  tiles: Tile[];
+}
+
+export interface Tile {
+  clan: unknown;
+  troop: unknown;
+  spawnable: boolean;
+  x: number;
+  y: number;
+}
