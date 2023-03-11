@@ -42,11 +42,11 @@ const selectedOpacity = (selected: boolean | undefined): string => {
 
 const selectedBonus = (selected: boolean | undefined): string => {
   if (selected === undefined) {
-    return "hover:block";
+    return "hidden hover:block";
   } else if (selected) {
     return "block";
   } else {
-    return "";
+    return "hidden";
   }
 };
 
@@ -89,7 +89,7 @@ const Clan = ({
         <ContainerTitle>{title}</ContainerTitle>
       </div>
       <div
-        className={`hidden ${selectedBonus(
+        className={`${selectedBonus(
           selected
         )} absolute bottom-[20px] bg-white rounded-[30px] h-[40px] p-[10px] text-black text-center text-[20px] leading-[20px] font-bold z-50`}
       >
