@@ -16,22 +16,27 @@ import {
 } from "../recoil/atoms";
 import { useFetchGameWalletBalance } from "@/hooks/useFetchGameWalletBalance";
 import Page from "@/components/Page";
+import { useRouter } from "next/router";
 
 const inputContainerClass = "w-[409px] items-center";
 
 const MIN_SOL_TRANSFER = 0.1;
 
 const FundWallet = () => {
-  const [transferAmount, setTransferAmount] = useState(0);
+  const router = useRouter();
   const gameWallet = useRecoilValue(gameWalletAtom);
-  const gameWalletBalance = useRecoilValue(
-    gameWalletBalanceAtom
-  );
+  const gameWalletBalance = useRecoilValue(gameWalletBalanceAtom);
   const fetchGameWalletBalance = useFetchGameWalletBalance();
+  const [transferAmount, setTransferAmount] = useState(0);
+  const [canProceed, setCanProceed] = useState(false);
 
   useEffect(() => {
     fetchGameWalletBalance();
   }, []);
+
+  useEffect(() => {
+    setCanProceed(gameWalletBalance > 0.25);
+  }, [gameWalletBalance]);
 
   const handleTransfer = useCallback(async () => {
     // Check that the transfer value is greater than 0
@@ -55,7 +60,9 @@ const FundWallet = () => {
     transaction.add(transferInstruction);
 
     // TODO: Wrap transaction sending and confirming in DRY error handling
-    const txId = await window.xnft.solana.sendAndConfirm(transaction, [], {commitment: "confirmed"});
+    const txId = await window.xnft.solana.sendAndConfirm(transaction, [], {
+      commitment: "confirmed",
+    });
     console.log(`Transaction ${txId} confirmed`);
     await fetchGameWalletBalance();
   }, [transferAmount, gameWallet]);
@@ -91,7 +98,11 @@ const FundWallet = () => {
           />
           <p className="mt-10 text-2xl text-black font-extrabold">SOL</p>
           <p className="text-black text-xl">{gameWalletBalance}</p>
-          <PrimaryButton className="text-xl px-7 mt-10 mb-2" disabled>
+          <PrimaryButton
+            className="text-xl px-7 mt-10 mb-2"
+            disabled={!canProceed}
+            onClick={() => {router.push('/meetTheClans')}}
+          >
             NEXT
           </PrimaryButton>
         </InputContainer>
