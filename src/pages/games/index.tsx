@@ -15,7 +15,7 @@ const GameMap = dynamic({
 });
 
 const Game = () => {
-  useLoadGameState("10492513215826697856");
+  useLoadGameState("15854314632436714090");
 
   return (
     <>

@@ -13,13 +13,22 @@ import { WorldOverlay } from "../WorldOverlay";
 import { NumberContainer } from "../NumberContainer";
 import { Clans } from "../../types";
 import {
+  AncientNinjaTexture,
+  AncientSamuraiTexture,
+  AncientSoheiTexture,
   AncientSpawnTexture,
   CreeperNinjaTexture,
   CreeperSamuraiTexture,
   CreeperSoheiTexture,
   CreeperSpawnTexture,
+  SynthNinjaTexture,
+  SynthSamuraiTexture,
+  SynthSoheiTexture,
   SynthSpawnTexture,
-  WildlingSpawnTexture,
+  WildingNinjaTexture,
+  WildingSamuraiTexture,
+  WildingSoheiTexture,
+  WildingSpawnTexture,
 } from "../../textures";
 
 export const SpawnSprite = ({
@@ -41,9 +50,51 @@ export const SpawnSprite = ({
       case Clans.Synths:
         return SynthSpawnTexture;
       case Clans.Wildings:
-        return WildlingSpawnTexture;
+        return WildingSpawnTexture;
       default:
         return CreeperSpawnTexture;
+    }
+  }, [clan]);
+  const ninjaTexture = useMemo(() => {
+    switch (clan) {
+      case Clans.Ancients:
+        return AncientNinjaTexture;
+      case Clans.Creepers:
+        return CreeperNinjaTexture;
+      case Clans.Synths:
+        return SynthNinjaTexture;
+      case Clans.Wildings:
+        return WildingNinjaTexture;
+      default:
+        return CreeperNinjaTexture;
+    }
+  }, [clan]);
+  const soheiTexture = useMemo(() => {
+    switch (clan) {
+      case Clans.Ancients:
+        return AncientSoheiTexture;
+      case Clans.Creepers:
+        return CreeperSoheiTexture;
+      case Clans.Synths:
+        return SynthSoheiTexture;
+      case Clans.Wildings:
+        return WildingSoheiTexture;
+      default:
+        return CreeperSoheiTexture;
+    }
+  }, [clan]);
+  const samuraiTexture = useMemo(() => {
+    switch (clan) {
+      case Clans.Ancients:
+        return AncientSamuraiTexture;
+      case Clans.Creepers:
+        return CreeperSamuraiTexture;
+      case Clans.Synths:
+        return SynthSamuraiTexture;
+      case Clans.Wildings:
+        return WildingSamuraiTexture;
+      default:
+        return CreeperSamuraiTexture;
     }
   }, [clan]);
 
@@ -88,7 +139,7 @@ export const SpawnSprite = ({
           >
             <Container>
               <Sprite
-                texture={CreeperNinjaTexture}
+                texture={ninjaTexture}
                 height={CARD_WIDTH}
                 width={CARD_WIDTH}
               />
@@ -102,7 +153,7 @@ export const SpawnSprite = ({
             </Container>
             <Container>
               <Sprite
-                texture={CreeperSamuraiTexture}
+                texture={samuraiTexture}
                 height={CARD_WIDTH}
                 width={CARD_WIDTH}
               />
@@ -116,7 +167,7 @@ export const SpawnSprite = ({
             </Container>
             <Container>
               <Sprite
-                texture={CreeperSoheiTexture}
+                texture={soheiTexture}
                 height={CARD_WIDTH}
                 width={CARD_WIDTH}
               />

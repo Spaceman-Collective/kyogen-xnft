@@ -15,6 +15,7 @@ import { MoveHighlight } from "../MoveHighlight";
 import { getViewport } from "../PixiViewport";
 import { ClippedUnit } from "./ClippedUnit";
 import { UnitHealth } from "./UnitHealth";
+import { useMoveUnit } from "../../hooks/useMoveUnit";
 
 export const UnitSprite = ({
   movement,
@@ -34,12 +35,7 @@ export const UnitSprite = ({
   const moveable = useMemo(
     () =>
       dragging && startTile
-        ? getMoveableTiles(
-            startTile,
-            movement,
-            mapDims.width,
-            mapDims.height
-          )
+        ? getMoveableTiles(startTile, movement, mapDims.width, mapDims.height)
         : [],
     [dragging, mapDims.height, mapDims.width, movement, startTile]
   );
@@ -90,10 +86,13 @@ export const UnitSprite = ({
           normalizeGlobalPointFromViewport(viewport, event.global)
         );
         const distance = calculateDistance(startTile!, coords);
-        const finalPosition = calculateUnitPositionOnTileCoords(
-          ...(distance <= movement ? coords : startTile!)
-        );
-        container.position = finalPosition;
+        if (distance <= movement) {
+          // unit could be moved
+          container.position = calculateUnitPositionOnTileCoords(...coords);
+          return;
+        }
+        // unit could not be moved
+        container.position = calculateUnitPositionOnTileCoords(...startTile!);
       },
       [movement, startTile]
     );

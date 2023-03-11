@@ -57,8 +57,8 @@ export interface Tile {
 }
 
 export enum Clans {
-  Ancients = 0,
-  Wildings = 1,
-  Creepers = 2,
-  Synths = 3,
+  Ancients = 'Ancients',
+  Wildings = 'Wildings',
+  Creepers = 'Creepers',
+  Synths = 'Synths',
 }
