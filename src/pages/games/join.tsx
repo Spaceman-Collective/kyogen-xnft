@@ -7,13 +7,13 @@ import { useCallback } from "react";
 import { useRecoilState } from "recoil";
 
 const JoinGamePage = () => {
-    const router = useRouter();
+  const router = useRouter();
   const [gameId, setGameId] = useRecoilState(gameIdAtom);
 
   const handleEnterGame = useCallback(() => {
-    if (!gameId || gameId === '') {
-        console.error("GameID cannot be blank");
-        return;
+    if (!gameId || gameId === "") {
+      console.error("GameID cannot be blank");
+      return;
     }
     // TODO: [nice to have] Check if game instance if valid on the blockchain
     router.push("/fundWallet");
