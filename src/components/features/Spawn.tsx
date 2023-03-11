@@ -7,7 +7,7 @@ import {
   TILE_LENGTH,
 } from "../../constants";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { SelectorToolTip } from "./SelectorToolTip";
 import { WorldOverlay } from "../WorldOverlay";
 import { NumberContainer } from "../NumberContainer";
@@ -35,19 +35,26 @@ import {
   selectCurrentPlayer,
   selectCurrentPlayerHand,
 } from "../../recoil/selectors";
+import { useSpawnUnit } from "../../hooks/useSpawnUnit";
+import { calculateUnitPositionOnTileCoords } from "../../utils/map";
+import { gameStateAtom } from "../../recoil";
 
 export const SpawnSprite = ({
   clan,
-  x,
-  y,
+  tileX,
+  tileY,
 }: {
   clan: Clans;
-  x: number;
-  y: number;
+  tileX: number;
+  tileY: number;
 }) => {
+  const coords = calculateUnitPositionOnTileCoords(tileX, tileY);
   const player = useRecoilValue(selectCurrentPlayer);
   const playerHand = useRecoilValue(selectCurrentPlayerHand);
+  const gameState = useRecoilValue(gameStateAtom);
+  let spawnLocked = useRef(false).current;
   const [active, setActive] = useState(false);
+  const spawnUnit = useSpawnUnit(BigInt(gameState!.get_tile_id(tileX, tileY)));
   const spawnTexture = useMemo(() => {
     switch (clan) {
       case Clans.Ancients:
@@ -62,55 +69,94 @@ export const SpawnSprite = ({
         return CreeperSpawnTexture;
     }
   }, [clan]);
-  const [ninjaTexture, ninjaCardCount] = useMemo(() => {
+  const [ninjaTexture, ninjaUnitName, ninjaCardCount] = useMemo(() => {
     switch (clan) {
       case Clans.Ancients:
-        return [AncientNinjaTexture, playerHand[UnitNames.AncientNinja] ?? 0];
+        return [
+          AncientNinjaTexture,
+          UnitNames.AncientNinja,
+          playerHand[UnitNames.AncientNinja] ?? 0,
+        ];
       case Clans.Creepers:
-        return [CreeperNinjaTexture, playerHand[UnitNames.CreeperNinja] ?? 0];
+        return [
+          CreeperNinjaTexture,
+          UnitNames.CreeperNinja,
+          playerHand[UnitNames.CreeperNinja] ?? 0,
+        ];
       case Clans.Synths:
-        return [SynthNinjaTexture, playerHand[UnitNames.SynthNinja] ?? 0];
+        return [
+          SynthNinjaTexture,
+          UnitNames.SynthNinja,
+          playerHand[UnitNames.SynthNinja] ?? 0,
+        ];
       case Clans.Wildings:
-        return [WildingNinjaTexture, playerHand[UnitNames.WildingNinja] ?? 0];
+        return [
+          WildingNinjaTexture,
+          UnitNames.WildingNinja,
+          playerHand[UnitNames.WildingNinja] ?? 0,
+        ];
       default:
-        return [CreeperNinjaTexture, 0];
+        return [CreeperNinjaTexture, UnitNames.CreeperNinja, 0];
     }
   }, [clan, playerHand]);
-  const [soheiTexture, soheiCardCount] = useMemo(() => {
+  const [soheiTexture, soheiUnitName, soheiCardCount] = useMemo(() => {
     switch (clan) {
       case Clans.Ancients:
-        return [AncientSoheiTexture, playerHand[UnitNames.AncientSohei] ?? 0];
+        return [
+          AncientSoheiTexture,
+          UnitNames.AncientSohei,
+          playerHand[UnitNames.AncientSohei] ?? 0,
+        ];
       case Clans.Creepers:
-        return [CreeperSoheiTexture, playerHand[UnitNames.CreeperSohei] ?? 0];
+        return [
+          CreeperSoheiTexture,
+          UnitNames.CreeperSohei,
+          playerHand[UnitNames.CreeperSohei] ?? 0,
+        ];
       case Clans.Synths:
-        return [SynthSoheiTexture, playerHand[UnitNames.SynthSohei] ?? 0];
+        return [
+          SynthSoheiTexture,
+          UnitNames.SynthSohei,
+          playerHand[UnitNames.SynthSohei] ?? 0,
+        ];
       case Clans.Wildings:
-        return [WildingSoheiTexture, playerHand[UnitNames.WildingSohei] ?? 0];
+        return [
+          WildingSoheiTexture,
+          UnitNames.WildingSohei,
+          playerHand[UnitNames.WildingSohei] ?? 0,
+        ];
       default:
-        return [CreeperSoheiTexture, 0];
+        return [CreeperSoheiTexture, UnitNames.CreeperSohei, 0];
     }
   }, [clan, playerHand]);
-  const [samuraiTexture, samuraiCardCount] = useMemo(() => {
+  const [samuraiTexture, samuraiUnitName, samuraiCardCount] = useMemo(() => {
     switch (clan) {
       case Clans.Ancients:
         return [
           AncientSamuraiTexture,
+          UnitNames.AncientSamurai,
           playerHand[UnitNames.AncientSamurai] ?? 0,
         ];
       case Clans.Creepers:
         return [
           CreeperSamuraiTexture,
+          UnitNames.CreeperSamurai,
           playerHand[UnitNames.CreeperSamurai] ?? 0,
         ];
       case Clans.Synths:
-        return [SynthSamuraiTexture, playerHand[UnitNames.SynthSamurai] ?? 0];
+        return [
+          SynthSamuraiTexture,
+          UnitNames.SynthSamurai,
+          playerHand[UnitNames.SynthSamurai] ?? 0,
+        ];
       case Clans.Wildings:
         return [
           WildingSamuraiTexture,
+          UnitNames.WildingSamurai,
           playerHand[UnitNames.WildingSamurai] ?? 0,
         ];
       default:
-        return [CreeperSamuraiTexture, 0];
+        return [CreeperSamuraiTexture, UnitNames.CreeperSamurai, 0];
     }
   }, [clan, playerHand]);
 
@@ -142,7 +188,7 @@ export const SpawnSprite = ({
         // for dismissal
         <WorldOverlay onclick={onDismiss} />
       )}
-      <Container x={x} y={y}>
+      <Container x={coords.x} y={coords.y}>
         <Sprite
           height={FEATURE_LENGTH}
           width={FEATURE_LENGTH}
@@ -165,6 +211,16 @@ export const SpawnSprite = ({
                 texture={ninjaTexture}
                 height={CARD_WIDTH}
                 width={CARD_WIDTH}
+                interactive
+                onclick={async (e) => {
+                  if (spawnLocked) {
+                    // prevent additional spawns
+                    return;
+                  }
+                  spawnLocked = true
+                  await spawnUnit(ninjaUnitName);
+                  spawnLocked = false
+                }}
               />
               <NumberContainer
                 fill={0x8f2a2a}
