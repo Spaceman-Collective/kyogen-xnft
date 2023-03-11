@@ -3,6 +3,7 @@ import { useSetRecoilState } from "recoil";
 import * as kyogenSdk from "kyogen-sdk";
 import { gameStateAtom } from "../recoil";
 import { useConnection } from "@solana/wallet-adapter-react";
+import { UnitNames } from "../types";
 
 /**
  *
@@ -27,6 +28,7 @@ export const useLoadGameState = (
       _instance
     );
     (async () => {
+      gamestate.add_blueprints(Object.values(UnitNames));
       await gamestate.load_state();
       // TODO error handling
       setGameState(gamestate);

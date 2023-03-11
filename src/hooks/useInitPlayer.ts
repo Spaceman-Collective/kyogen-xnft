@@ -2,34 +2,31 @@ import { useCallback } from "react";
 import { useRecoilValue } from "recoil";
 import * as anchor from "@coral-xyz/anchor";
 import { gameStateAtom, gameWallet as gameWalletAtom } from "../recoil";
+import { Clans } from "../types";
+import { ixWasmToJs, randomU64 } from "../utils/wasm";
 import { useKyogenInstructionSdk } from "./useKyogenInstructionSdk";
-import { ixWasmToJs } from "../utils/wasm";
 
-// TODO load player id
-const playerId = BigInt(0);
-export const useMoveUnit = (unitId: bigint) => {
-  const gameState = useRecoilValue(gameStateAtom);
+/**
+ * Initializes a player based on the current game wallet.
+ */
+export const useInitPlayer = () => {
   const gameWallet = useRecoilValue(gameWalletAtom);
-  const instructionSdk = useKyogenInstructionSdk();
+  const gameState = useRecoilValue(gameStateAtom);
+  const kyogenInstructions = useKyogenInstructionSdk();
 
   return useCallback(
-    async (sourceTileId: bigint, destinationTileId: bigint) => {
-      if (!gameWallet) {
-        throw Error("No game wallet found");
-        return;
-      }
-      if (!gameState) {
-        // TODO error handling
-        return;
+    async (clan: Clans) => {
+      if (!gameState || !gameWallet) {
+        throw new Error("Game wallet or Game state error");
       }
       const { connection } = window.xnft.solana;
+
       const ix = ixWasmToJs(
-        instructionSdk.move_unit(
+        kyogenInstructions.init_player(
           gameState.instance,
-          unitId,
-          playerId,
-          sourceTileId,
-          destinationTileId
+          randomU64(),
+          gameWallet?.publicKey.toString(),
+          clan
         )
       );
       const msg = new anchor.web3.TransactionMessage({
@@ -39,11 +36,12 @@ export const useMoveUnit = (unitId: bigint) => {
       }).compileToLegacyMessage();
       const tx = new anchor.web3.VersionedTransaction(msg);
       tx.sign([gameWallet]);
-      const sig = await connection.sendTransaction(tx);
+      const sig = await connection.sendRawTransaction(tx.serialize())
+      // const sig = await connection.sendTransaction(tx);
       await connection.confirmTransaction(sig);
-      console.log("Move Unit TX Confirmed: ", sig);
-      return sig
+      console.log("Init Player TX Confirmed: ", sig);
+      return sig;
     },
-    [gameState, gameWallet, instructionSdk, unitId]
+    [gameState, gameWallet, kyogenInstructions]
   );
 };

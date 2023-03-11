@@ -11,7 +11,7 @@ import { useCallback, useMemo, useState } from "react";
 import { SelectorToolTip } from "./SelectorToolTip";
 import { WorldOverlay } from "../WorldOverlay";
 import { NumberContainer } from "../NumberContainer";
-import { Clans } from "../../types";
+import { Clans, UnitNames } from "../../types";
 import {
   AncientNinjaTexture,
   AncientSamuraiTexture,
@@ -30,6 +30,11 @@ import {
   WildingSoheiTexture,
   WildingSpawnTexture,
 } from "../../textures";
+import { useRecoilValue } from "recoil";
+import {
+  selectCurrentPlayer,
+  selectCurrentPlayerHand,
+} from "../../recoil/selectors";
 
 export const SpawnSprite = ({
   clan,
@@ -40,6 +45,8 @@ export const SpawnSprite = ({
   x: number;
   y: number;
 }) => {
+  const player = useRecoilValue(selectCurrentPlayer);
+  const playerHand = useRecoilValue(selectCurrentPlayerHand);
   const [active, setActive] = useState(false);
   const spawnTexture = useMemo(() => {
     switch (clan) {
@@ -55,54 +62,70 @@ export const SpawnSprite = ({
         return CreeperSpawnTexture;
     }
   }, [clan]);
-  const ninjaTexture = useMemo(() => {
+  const [ninjaTexture, ninjaCardCount] = useMemo(() => {
     switch (clan) {
       case Clans.Ancients:
-        return AncientNinjaTexture;
+        return [AncientNinjaTexture, playerHand[UnitNames.AncientNinja] ?? 0];
       case Clans.Creepers:
-        return CreeperNinjaTexture;
+        return [CreeperNinjaTexture, playerHand[UnitNames.CreeperNinja] ?? 0];
       case Clans.Synths:
-        return SynthNinjaTexture;
+        return [SynthNinjaTexture, playerHand[UnitNames.SynthNinja] ?? 0];
       case Clans.Wildings:
-        return WildingNinjaTexture;
+        return [WildingNinjaTexture, playerHand[UnitNames.WildingNinja] ?? 0];
       default:
-        return CreeperNinjaTexture;
+        return [CreeperNinjaTexture, 0];
     }
-  }, [clan]);
-  const soheiTexture = useMemo(() => {
+  }, [clan, playerHand]);
+  const [soheiTexture, soheiCardCount] = useMemo(() => {
     switch (clan) {
       case Clans.Ancients:
-        return AncientSoheiTexture;
+        return [AncientSoheiTexture, playerHand[UnitNames.AncientSohei] ?? 0];
       case Clans.Creepers:
-        return CreeperSoheiTexture;
+        return [CreeperSoheiTexture, playerHand[UnitNames.CreeperSohei] ?? 0];
       case Clans.Synths:
-        return SynthSoheiTexture;
+        return [SynthSoheiTexture, playerHand[UnitNames.SynthSohei] ?? 0];
       case Clans.Wildings:
-        return WildingSoheiTexture;
+        return [WildingSoheiTexture, playerHand[UnitNames.WildingSohei] ?? 0];
       default:
-        return CreeperSoheiTexture;
+        return [CreeperSoheiTexture, 0];
     }
-  }, [clan]);
-  const samuraiTexture = useMemo(() => {
+  }, [clan, playerHand]);
+  const [samuraiTexture, samuraiCardCount] = useMemo(() => {
     switch (clan) {
       case Clans.Ancients:
-        return AncientSamuraiTexture;
+        return [
+          AncientSamuraiTexture,
+          playerHand[UnitNames.AncientSamurai] ?? 0,
+        ];
       case Clans.Creepers:
-        return CreeperSamuraiTexture;
+        return [
+          CreeperSamuraiTexture,
+          playerHand[UnitNames.CreeperSamurai] ?? 0,
+        ];
       case Clans.Synths:
-        return SynthSamuraiTexture;
+        return [SynthSamuraiTexture, playerHand[UnitNames.SynthSamurai] ?? 0];
       case Clans.Wildings:
-        return WildingSamuraiTexture;
+        return [
+          WildingSamuraiTexture,
+          playerHand[UnitNames.WildingSamurai] ?? 0,
+        ];
       default:
-        return CreeperSamuraiTexture;
+        return [CreeperSamuraiTexture, 0];
     }
-  }, [clan]);
+  }, [clan, playerHand]);
 
   const onSpawnClick: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
-    useCallback((event) => {
-      event.stopPropagation();
-      setActive(true);
-    }, []);
+    useCallback(
+      (event) => {
+        if (player?.clan !== clan) {
+          // player should not be able to click on spawn that's not theirs
+          return;
+        }
+        event.stopPropagation();
+        setActive(true);
+      },
+      [clan, player?.clan]
+    );
   const onDismiss: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
     useCallback(() => {
       setActive(false);
@@ -146,7 +169,7 @@ export const SpawnSprite = ({
               <NumberContainer
                 fill={0x8f2a2a}
                 stroke={0x371717}
-                text="0"
+                text={`${ninjaCardCount}`}
                 x={CARD_WIDTH}
                 y={CARD_HEIGHT}
               />
@@ -160,7 +183,7 @@ export const SpawnSprite = ({
               <NumberContainer
                 fill={0x8f2a2a}
                 stroke={0x371717}
-                text="2"
+                text={`${samuraiCardCount}`}
                 x={CARD_WIDTH}
                 y={CARD_HEIGHT}
               />
@@ -174,7 +197,7 @@ export const SpawnSprite = ({
               <NumberContainer
                 fill={0x8f2a2a}
                 stroke={0x371717}
-                text="123"
+                text={`${soheiCardCount}`}
                 x={CARD_WIDTH}
                 y={CARD_HEIGHT}
               />

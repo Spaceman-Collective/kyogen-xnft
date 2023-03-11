@@ -57,8 +57,34 @@ export interface Tile {
 }
 
 export enum Clans {
-  Ancients = 'Ancients',
-  Wildings = 'Wildings',
-  Creepers = 'Creepers',
-  Synths = 'Synths',
+  Ancients = "Ancients",
+  Wildings = "Wildings",
+  Creepers = "Creepers",
+  Synths = "Synths",
+}
+
+// Ninja named Shinobi due to set up scripts
+export enum UnitNames {
+  AncientNinja = 'Ancient Shinobi',
+  AncientSamurai = 'Ancient Samurai',
+  AncientSohei = 'Ancient Sohei',
+  CreeperNinja = 'Creeper Shinobi',
+  CreeperSamurai = 'Creeper Samurai',
+  CreeperSohei = 'Creeper Sohei',
+  SynthNinja = 'Synth Shinobi',
+  SynthSamurai = 'Synth Samurai',
+  SynthSohei = 'Synth Sohei',
+  WildingNinja = 'Wilding Shinobi',
+  WildingSamurai = 'Wilding Samurai',
+  WildingSohei = 'Wilding Sohei',
+}
+
+export interface Player {
+  cards: string[];
+  clan: Clans;
+  id: string;
+  name: string;
+  owner: string;
+  score: string;
+  solarite: string;
 }
