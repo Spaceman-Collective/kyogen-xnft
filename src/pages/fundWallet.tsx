@@ -55,7 +55,7 @@ const FundWallet = () => {
     transaction.add(transferInstruction);
 
     // TODO: Wrap transaction sending and confirming in DRY error handling
-    const txId = await window.xnft.solana.sendAndConfirm(transaction);
+    const txId = await window.xnft.solana.sendAndConfirm(transaction, [], {commitment: "confirmed"});
     console.log(`Transaction ${txId} confirmed`);
     await fetchGameWalletBalance();
   }, [transferAmount, gameWallet]);
