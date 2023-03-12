@@ -1,0 +1,301 @@
+{
+  "version": "0.1.0",
+  "name": "structures",
+  "instructions": [
+    {
+      "name": "initialize",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "config",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "componentKeys",
+          "type": {
+            "defined": "StructuresComponentKeys"
+          }
+        }
+      ]
+    },
+    {
+      "name": "initIndex",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "config",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "structureIndex",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "registryProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "registryIndex",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "abRegistration",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "instance",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initStructure",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "config",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "structureIndex",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "kyogenConfig",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "structureBlueprint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "registryConfig",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "registryProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "structureRegistration",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "coreds",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "registryInstance",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "structureEntity",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "entityId",
+          "type": "u64"
+        },
+        {
+          "name": "location",
+          "type": {
+            "defined": "(u8,u8)"
+          }
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Config",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "components",
+            "type": {
+              "defined": "StructuresComponentKeys"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "StructureIndex",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "instance",
+            "type": "u64"
+          },
+          {
+            "name": "portal",
+            "type": {
+              "vec": "u64"
+            }
+          },
+          {
+            "name": "healer",
+            "type": {
+              "vec": "u64"
+            }
+          },
+          {
+            "name": "lootable",
+            "type": {
+              "vec": "u64"
+            }
+          },
+          {
+            "name": "meteor",
+            "type": {
+              "vec": "u64"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "ComponentStructure",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "cost",
+            "type": "u64"
+          },
+          {
+            "name": "structure",
+            "type": {
+              "defined": "StructureType"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "StructuresComponentKeys",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "structure",
+            "type": "publicKey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "StructureType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Portal",
+            "fields": [
+              {
+                "name": "channel",
+                "type": "u8"
+              }
+            ]
+          },
+          {
+            "name": "Healer",
+            "fields": [
+              {
+                "name": "heal_amt",
+                "type": "u64"
+              }
+            ]
+          },
+          {
+            "name": "Lootable",
+            "fields": [
+              {
+                "name": "ancients_pack",
+                "type": "publicKey"
+              },
+              {
+                "name": "wildings_pack",
+                "type": "publicKey"
+              },
+              {
+                "name": "creepers_pack",
+                "type": "publicKey"
+              },
+              {
+                "name": "synths_pack",
+                "type": "publicKey"
+              }
+            ]
+          },
+          {
+            "name": "Meteor",
+            "fields": [
+              {
+                "name": "solarite_per_use",
+                "type": "u64"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
