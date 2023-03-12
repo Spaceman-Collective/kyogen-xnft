@@ -12,12 +12,13 @@ import CyborgsLogo from "../../public/clans/synths_logo_2x.webp";
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { ContainerTitle } from "@/components/typography/ContainerTitle";
 import { useCallback, useState } from "react";
+import { Clans } from "@/types";
 
-enum ClanEnum {
-  "Ancients" = 0,
-  "Creepers" = 1,
-  "Wildlings" = 2,
-  "Synths" = 3,
+const clanMap: Record<number, Clans> = {
+  0: Clans.Ancients,
+  1: Clans.Wildings,
+  2: Clans.Creepers,
+  3: Clans.Synths
 }
 
 const selectedWitdth = (selected: boolean | undefined): string => {
@@ -103,11 +104,11 @@ const Clan = ({
 };
 
 const MeetTheClans = () => {
-  const [clan, setClan] = useState<string | undefined>();
+  const [clan, setClan] = useState<Clans | undefined>();
 
   const handleRandomizeClan = useCallback(() => {
     const clanInt = Math.floor(Math.random() * 4);
-    setClan(ClanEnum[clanInt]);
+    setClan(clanMap[clanInt]);
   }, [setClan]);
 
   return (
@@ -120,7 +121,7 @@ const MeetTheClans = () => {
             imageSrc={Humans}
             logoSrc={HumansLogo}
             title="Ancients"
-            selected={clan ? clan === ClanEnum[ClanEnum.Ancients] : undefined}
+            selected={clan ? clan === Clans.Ancients : undefined}
           />
           <Clan
             className="bg-[url('../../public/clans/login_bg_wildlings_2x.webp')]"
@@ -128,7 +129,7 @@ const MeetTheClans = () => {
             imageSrc={Wildlings}
             logoSrc={WildlingsLogo}
             title="Wildlings"
-            selected={clan ? clan === ClanEnum[ClanEnum.Wildlings] : undefined}
+            selected={clan ? clan === Clans.Wildings : undefined}
           />
           <Clan
             className="bg-[url('../../public/clans/login_bg_creepers_2x.webp')]"
@@ -136,7 +137,7 @@ const MeetTheClans = () => {
             imageSrc={Creepers}
             logoSrc={CreepersLogo}
             title="Creepers"
-            selected={clan ? clan === ClanEnum[ClanEnum.Creepers] : undefined}
+            selected={clan ? clan === Clans.Creepers : undefined}
           />
           <Clan
             className="bg-[url('../../public/clans/login_bg_cyborgs_2x.webp')]"
@@ -144,7 +145,7 @@ const MeetTheClans = () => {
             imageSrc={Cyborgs}
             logoSrc={CyborgsLogo}
             title="Cyborgs"
-            selected={clan ? clan === ClanEnum[ClanEnum.Synths] : undefined}
+            selected={clan ? clan === Clans.Synths : undefined}
           />
         </div>
         {clan ? (
