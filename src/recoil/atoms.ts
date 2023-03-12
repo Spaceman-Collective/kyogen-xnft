@@ -1,6 +1,7 @@
 import { Keypair } from "@solana/web3.js";
 import * as kyogenSdk from "kyogen-sdk";
 import { atom } from "recoil";
+import { Notification } from "@/types";
 
 export const gameIdAtom = atom<bigint|undefined>({
   key: "gameIdAtom",
@@ -22,3 +23,10 @@ export const gameStateAtom = atom<kyogenSdk.GameState | null>({
   default: null,
   dangerouslyAllowMutability: true,
 });
+
+////// Notifications
+
+export const notificationsAtom = atom<Notification[]>({
+  key: "notificationsAtom",
+  default: []
+})

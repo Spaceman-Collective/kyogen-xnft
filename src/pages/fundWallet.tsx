@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import Image from "next/image";
 
 import { InputContainer } from "@/components/inputs/InputContainer";
@@ -13,6 +13,7 @@ import { LAMPORTS_PER_SOL, SystemProgram, Transaction } from "@solana/web3.js";
 import {
   gameWallet as gameWalletAtom,
   gameWalletBalance as gameWalletBalanceAtom,
+  notificationsAtom,
 } from "../recoil/atoms";
 import { useFetchGameWalletBalance } from "@/hooks/useFetchGameWalletBalance";
 import Page from "@/components/Page";
@@ -26,6 +27,7 @@ const FundWallet = () => {
   const router = useRouter();
   const gameWallet = useRecoilValue(gameWalletAtom);
   const gameWalletBalance = useRecoilValue(gameWalletBalanceAtom);
+  const setNotifications = useSetRecoilState(notificationsAtom);
   const fetchGameWalletBalance = useFetchGameWalletBalance();
   const [transferAmount, setTransferAmount] = useState(0);
   const [canProceed, setCanProceed] = useState(false);
@@ -63,9 +65,12 @@ const FundWallet = () => {
     const txId = await window.xnft.solana.sendAndConfirm(transaction, [], {
       commitment: "confirmed",
     });
-    console.log(`Transaction ${txId} confirmed`);
+    setNotifications((notifications) => [
+      ...notifications,
+      { role: "success", message: `Transaction ${txId.substring(0,8)}.. confirmed` },
+    ]);
     await fetchGameWalletBalance();
-  }, [transferAmount, gameWallet]);
+  }, [transferAmount, gameWallet, setNotifications]);
 
   return (
     <Page title="FUND YOUR GAME WALLET">
@@ -101,7 +106,9 @@ const FundWallet = () => {
           <PrimaryButton
             className="text-xl px-7 mt-10 mb-2"
             disabled={!canProceed}
-            onClick={() => {router.push('/meetTheClans')}}
+            onClick={() => {
+              router.push("/meetTheClans");
+            }}
           >
             NEXT
           </PrimaryButton>

@@ -2,10 +2,12 @@ import React from "react";
 import Image from "next/image";
 
 import KyogenLogo from "../../public/kyogen-logo.svg";
+import { Notifications } from "./Toast";
 
 const Page = ({ children, title }: { children: React.ReactNode, title: string }) => {
   return (
     <div className="font-millimetre bg-kyogen-fund-bg min-h-screen min-w-screen">
+      <Notifications />
       <Image
         src={KyogenLogo}
         alt="Kyogen Clash"
