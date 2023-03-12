@@ -1,49 +1,51 @@
 import { useCallback } from "react";
 import { useRecoilValue } from "recoil";
-import * as anchor from "@coral-xyz/anchor";
 import { gameStateAtom, gameWallet as gameWalletAtom } from "../recoil";
 import { useKyogenInstructionSdk } from "./useKyogenInstructionSdk";
 import { ixWasmToJs } from "../utils/wasm";
+import { selectCurrentPlayer } from "../recoil/selectors";
+import { useSendAndConfirmGameWalletTransaction } from "./useSendTransaction";
 
-// TODO load player id
-const playerId = BigInt(0);
-export const useMoveUnit = (unitId: bigint) => {
+export const useMoveUnit = (unitId: string, tileX: number, tileY: number) => {
+  const currentPlayer = useRecoilValue(selectCurrentPlayer);
   const gameState = useRecoilValue(gameStateAtom);
   const gameWallet = useRecoilValue(gameWalletAtom);
   const instructionSdk = useKyogenInstructionSdk();
+  const sendTransaction = useSendAndConfirmGameWalletTransaction();
+  console.log("tay ", currentPlayer, gameState?.get_players());
 
   return useCallback(
-    async (sourceTileId: bigint, destinationTileId: bigint) => {
+    async (destinationTileId: string) => {
       if (!gameWallet) {
         throw Error("No game wallet found");
-        return;
+      }
+      if (!currentPlayer) {
+        throw Error("No player initialized");
       }
       if (!gameState) {
         // TODO error handling
         return;
       }
-      const { connection } = window.xnft.solana;
       const ix = ixWasmToJs(
         instructionSdk.move_unit(
           gameState.instance,
-          unitId,
-          playerId,
-          sourceTileId,
-          destinationTileId
+          BigInt(unitId),
+          BigInt(currentPlayer.id),
+          BigInt(gameState.get_tile_id(tileX, tileY)),
+          BigInt(destinationTileId)
         )
       );
-      const msg = new anchor.web3.TransactionMessage({
-        payerKey: gameWallet.publicKey,
-        recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
-        instructions: [ix],
-      }).compileToLegacyMessage();
-      const tx = new anchor.web3.VersionedTransaction(msg);
-      tx.sign([gameWallet]);
-      const sig = await connection.sendTransaction(tx);
-      await connection.confirmTransaction(sig);
-      console.log("Move Unit TX Confirmed: ", sig);
-      return sig
+      sendTransaction([ix]);
     },
-    [gameState, gameWallet, instructionSdk, unitId]
+    [
+      currentPlayer,
+      gameState,
+      gameWallet,
+      instructionSdk,
+      sendTransaction,
+      tileX,
+      tileY,
+      unitId,
+    ]
   );
 };

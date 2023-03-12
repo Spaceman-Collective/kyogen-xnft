@@ -3,6 +3,8 @@ import { useCallback, useMemo, useState } from "react";
 import { Container } from "react-pixi-fiber";
 import { useRecoilValue } from "recoil";
 import { TILE_LENGTH, UNIT_LENGTH } from "../../constants";
+import { useMoveUnit } from "../../hooks/useMoveUnit";
+import { gameStateAtom } from "../../recoil";
 import { selectMapDims } from "../../recoil/selectors";
 import { Troop } from "../../types";
 import {
@@ -28,9 +30,11 @@ export const UnitSprite = ({
 }) => {
   const coords = calculateUnitPositionOnTileCoords(tileX, tileY);
   const mapDims = useRecoilValue(selectMapDims);
+  const gameState = useRecoilValue(gameStateAtom);
   const [dragging, setDragging] = useState(false);
   const [startTile, setStartTile] = useState<[number, number] | null>(null);
   const [hovering, setHovering] = useState(false);
+  const moveUnit = useMoveUnit(troop.id, tileX, tileY);
   const movement = Number(troop.movement);
   const moveable = useMemo(
     () =>
@@ -72,7 +76,7 @@ export const UnitSprite = ({
 
   const onDragEnd: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
     useCallback(
-      (event) => {
+      async (event) => {
         event.stopPropagation();
         const container = event.currentTarget as PIXI.DisplayObject;
         const viewport = getViewport(container);
@@ -88,13 +92,26 @@ export const UnitSprite = ({
         const distance = calculateDistance(startTile!, coords);
         if (distance <= movement) {
           // unit could be moved
-          container.position = calculateUnitPositionOnTileCoords(...coords);
-          return;
+          const destinationTileId = gameState!.get_tile_id(
+            coords[0],
+            coords[1]
+          );
+
+          try {
+            await moveUnit(destinationTileId);
+            container.position = calculateUnitPositionOnTileCoords(...coords);
+            return;
+          } catch (err) {
+            // TODO better error handling
+            container.position = calculateUnitPositionOnTileCoords(
+              ...startTile!
+            );
+          }
         }
         // unit could not be moved
         container.position = calculateUnitPositionOnTileCoords(...startTile!);
       },
-      [movement, startTile]
+      [gameState, moveUnit, movement, startTile]
     );
 
   const onDragMove: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
