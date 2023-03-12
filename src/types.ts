@@ -11,6 +11,14 @@ import {
 } from "@solana/web3.js";
 
 export type xnft = {
+  metadata: {
+    avatarUrl: string;
+    isDarkMode: boolean;
+    jwt: string;
+    userId: string;
+    username: string;
+    version: number
+  };
   ethereum: {};
   solana: {
     connection: Connection;

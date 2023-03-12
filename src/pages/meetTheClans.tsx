@@ -11,7 +11,47 @@ import Cyborgs from "../../public/clans/login_cyborgs_2x.webp";
 import CyborgsLogo from "../../public/clans/synths_logo_2x.webp";
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { ContainerTitle } from "@/components/typography/ContainerTitle";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { Clans } from "@/types";
+import { useInitPlayer } from "@/hooks/useInitPlayer";
+import { useRouter } from "next/router";
+
+const clanMap: Record<number, Clans> = {
+  0: Clans.Ancients,
+  1: Clans.Wildings,
+  2: Clans.Creepers,
+  3: Clans.Synths,
+};
+
+const selectedWitdth = (selected: boolean | undefined): string => {
+  if (selected === undefined) {
+    return "hover:w-[329px]";
+  } else if (selected) {
+    return "w-[329px]";
+  } else {
+    return "";
+  }
+};
+
+const selectedOpacity = (selected: boolean | undefined): string => {
+  if (selected === undefined) {
+    return "opacity-60  hover:opacity-0";
+  } else if (selected) {
+    return "opacity-0";
+  } else {
+    return "opacity-60";
+  }
+};
+
+const selectedBonus = (selected: boolean | undefined): string => {
+  if (selected === undefined) {
+    return "hidden hover:block";
+  } else if (selected) {
+    return "block";
+  } else {
+    return "hidden";
+  }
+};
 
 const Clan = ({
   className,
@@ -19,26 +59,26 @@ const Clan = ({
   imageSrc,
   logoSrc,
   title,
+  selected,
 }: {
   className: string;
   bonusSkill: string;
   title: string;
   imageSrc: string | StaticImageData;
   logoSrc: string | StaticImageData;
+  selected?: boolean;
 }) => {
-  const [isHover, setIsHover] = useState(false);
-
   return (
     <div
-      onMouseEnter={() => setIsHover(true)}
-      onMouseLeave={() => setIsHover(false)}
-      className={`relative flex flex-col grow items-center ${
-        isHover ? "w-[329px]" : ""
-      } h-[505px] ${className}`}
+      className={`relative flex flex-col grow items-center ${selectedWitdth(
+        selected
+      )} h-[505px] ${className}`}
     >
-      {!isHover && (
-        <div className="absolute top-0 left-0 w-full h-full z-10 bg-kyogen-border opacity-60"></div>
-      )}
+      <div
+        className={`absolute top-0 left-0 w-full h-full z-10 bg-kyogen-border ${selectedOpacity(
+          selected
+        )}`}
+      ></div>
       <div className="mt-6 z-50">
         <Image
           height={87}
@@ -51,11 +91,13 @@ const Clan = ({
       <div className="mt-3 z-50">
         <ContainerTitle>{title}</ContainerTitle>
       </div>
-      {isHover && (
-        <div className="absolute bottom-[20px] bg-white rounded-[30px] h-[40px] p-[10px] text-black text-center text-[20px] leading-[20px] font-bold z-50">
-          Bonus: {bonusSkill}
-        </div>
-      )}
+      <div
+        className={`${selectedBonus(
+          selected
+        )} absolute bottom-[20px] bg-white rounded-[30px] h-[40px] p-[10px] text-black text-center text-[20px] leading-[20px] font-bold z-50`}
+      >
+        Bonus: {bonusSkill}
+      </div>
       <div className="absolute bottom-0 z-0">
         <Image src={imageSrc} alt={`Kyogen ${title}`} className="" />
       </div>
@@ -64,6 +106,22 @@ const Clan = ({
 };
 
 const MeetTheClans = () => {
+  const router = useRouter();
+  const initPlayerAction = useInitPlayer();
+  const [clan, setClan] = useState<Clans | undefined>();
+
+  const handleRandomizeClan = useCallback(() => {
+    const clanInt = Math.floor(Math.random() * 4);
+    setClan(clanMap[clanInt]);
+  }, [setClan]);
+
+  const handleInitPlayer = useCallback(async () => {
+    if (!clan) return;
+    const txId = await initPlayerAction(clan);
+    // Drop the user into the game
+    router.push("/games")
+  }, [clan, initPlayerAction, router]);
+
   return (
     <Page title="MEET THE CLANS">
       <div className="flex flex-col mt-24 items-center">
@@ -73,7 +131,8 @@ const MeetTheClans = () => {
             bonusSkill="Movement"
             imageSrc={Humans}
             logoSrc={HumansLogo}
-            title="ANCIENTS"
+            title="Ancients"
+            selected={clan ? clan === Clans.Ancients : undefined}
           />
           <Clan
             className="bg-[url('../../public/clans/login_bg_wildlings_2x.webp')]"
@@ -81,6 +140,7 @@ const MeetTheClans = () => {
             imageSrc={Wildlings}
             logoSrc={WildlingsLogo}
             title="Wildlings"
+            selected={clan ? clan === Clans.Wildings : undefined}
           />
           <Clan
             className="bg-[url('../../public/clans/login_bg_creepers_2x.webp')]"
@@ -88,6 +148,7 @@ const MeetTheClans = () => {
             imageSrc={Creepers}
             logoSrc={CreepersLogo}
             title="Creepers"
+            selected={clan ? clan === Clans.Creepers : undefined}
           />
           <Clan
             className="bg-[url('../../public/clans/login_bg_cyborgs_2x.webp')]"
@@ -95,9 +156,18 @@ const MeetTheClans = () => {
             imageSrc={Cyborgs}
             logoSrc={CyborgsLogo}
             title="Cyborgs"
+            selected={clan ? clan === Clans.Synths : undefined}
           />
         </div>
-        <PrimaryButton className="mt-24">Randomize Clan</PrimaryButton>
+        {clan ? (
+          <PrimaryButton className="mt-24" onClick={handleInitPlayer}>
+            Initialize Player
+          </PrimaryButton>
+        ) : (
+          <PrimaryButton className="mt-24" onClick={handleRandomizeClan}>
+            Randomize Clan
+          </PrimaryButton>
+        )}
       </div>
     </Page>
   );

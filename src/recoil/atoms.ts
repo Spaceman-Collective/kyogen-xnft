@@ -2,7 +2,7 @@ import { Keypair } from "@solana/web3.js";
 import * as kyogenSdk from "kyogen-sdk";
 import { atom } from "recoil";
 
-export const gameIdAtom = atom<string|undefined>({
+export const gameIdAtom = atom<bigint|undefined>({
   key: "gameIdAtom",
   default: undefined,
 })

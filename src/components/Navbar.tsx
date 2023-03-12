@@ -61,14 +61,6 @@ export const Navbar = () => {
               </Menu.Item>
               <Menu.Item>
                 <Link
-                  href="/meetTheClans"
-                  className="mt-4 block text-right text-white hover:text-opacity-50 lg:mr-4 lg:mt-0 lg:inline-block"
-                >
-                  Meet The Clans
-                </Link>
-              </Menu.Item>
-              <Menu.Item>
-                <Link
                   href="/games/join"
                   className="mt-4 block text-right text-white hover:text-opacity-50 lg:mr-4 lg:mt-0 lg:inline-block"
                 >
