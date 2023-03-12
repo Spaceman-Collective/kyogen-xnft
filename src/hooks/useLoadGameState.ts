@@ -28,6 +28,7 @@ export const useLoadGameState = () => {
     (async () => {
       gamestate.add_blueprints(Object.values(UnitNames));
       await gamestate.load_state();
+      console.log("gamestate ", gamestate.get_map());
       // TODO error handling
       setGameState(gamestate);
     })();

@@ -4,6 +4,7 @@ import { Container } from "react-pixi-fiber";
 import { useRecoilValue } from "recoil";
 import { TILE_LENGTH, UNIT_LENGTH } from "../../constants";
 import { selectMapDims } from "../../recoil/selectors";
+import { Troop } from "../../types";
 import {
   calculateTileCoords,
   calculateUnitPositionOnTileCoords,
@@ -15,23 +16,24 @@ import { MoveHighlight } from "../MoveHighlight";
 import { getViewport } from "../PixiViewport";
 import { ClippedUnit } from "./ClippedUnit";
 import { UnitHealth } from "./UnitHealth";
-import { useMoveUnit } from "../../hooks/useMoveUnit";
 
+// TODO use proper unit texture
 export const UnitSprite = ({
-  movement,
-  initialX,
-  initialY,
-  health,
-}: {
-  movement: number;
-  initialX: number;
-  initialY: number;
-  health: number;
+  tileX,
+  tileY,
+  troop,
+}:
+{
+  tileX: number;
+  tileY: number;
+  troop: Troop;
 }) => {
+  const coords = calculateUnitPositionOnTileCoords(tileX, tileY);
   const mapDims = useRecoilValue(selectMapDims);
   const [dragging, setDragging] = useState(false);
   const [startTile, setStartTile] = useState<[number, number] | null>(null);
   const [hovering, setHovering] = useState(false);
+  const movement = Number(troop.movement);
   const moveable = useMemo(
     () =>
       dragging && startTile
@@ -136,8 +138,8 @@ export const UnitSprite = ({
         onpointermove={onDragMove}
         onmouseover={onMouseOver}
         onmouseout={onMouseOut}
-        x={initialX}
-        y={initialY}
+        x={coords.x}
+        y={coords.y}
         interactive
       >
         <ClippedUnit
@@ -146,7 +148,11 @@ export const UnitSprite = ({
           x={unitOffset}
           y={unitOffset}
         />
-        <UnitHealth health={health} maxHealth={10} showHealthBar={hovering} />
+        <UnitHealth
+          health={Number(troop.health)}
+          maxHealth={10}
+          showHealthBar={hovering}
+        />
       </Container>
     </>
   );

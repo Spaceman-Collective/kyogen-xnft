@@ -17,7 +17,7 @@ export type xnft = {
     jwt: string;
     userId: string;
     username: string;
-    version: number
+    version: number;
   };
   ethereum: {};
   solana: {
@@ -64,7 +64,7 @@ export interface Map {
 
 export interface Tile {
   clan: Clans;
-  troop: unknown;
+  troop: Troop;
   spawnable: boolean;
   x: number;
   y: number;
@@ -79,18 +79,18 @@ export enum Clans {
 
 // Ninja named Shinobi due to set up scripts
 export enum UnitNames {
-  AncientNinja = 'Ancient Shinobi',
-  AncientSamurai = 'Ancient Samurai',
-  AncientSohei = 'Ancient Sohei',
-  CreeperNinja = 'Creeper Shinobi',
-  CreeperSamurai = 'Creeper Samurai',
-  CreeperSohei = 'Creeper Sohei',
-  SynthNinja = 'Synth Shinobi',
-  SynthSamurai = 'Synth Samurai',
-  SynthSohei = 'Synth Sohei',
-  WildingNinja = 'Wilding Shinobi',
-  WildingSamurai = 'Wilding Samurai',
-  WildingSohei = 'Wilding Sohei',
+  AncientNinja = "Ancient Shinobi",
+  AncientSamurai = "Ancient Samurai",
+  AncientSohei = "Ancient Sohei",
+  CreeperNinja = "Creeper Shinobi",
+  CreeperSamurai = "Creeper Samurai",
+  CreeperSohei = "Creeper Sohei",
+  SynthNinja = "Synth Shinobi",
+  SynthSamurai = "Synth Samurai",
+  SynthSohei = "Synth Sohei",
+  WildingNinja = "Wilding Shinobi",
+  WildingSamurai = "Wilding Samurai",
+  WildingSohei = "Wilding Sohei",
 }
 
 export interface Player {
@@ -101,4 +101,23 @@ export interface Player {
   owner: string;
   score: string;
   solarite: string;
+}
+
+export interface Troop {
+  active: boolean;
+  attack_range: number;
+  bonus_samurai: string;
+  bonus_shinobi: string;
+  bonus_sohei: string;
+  health: string;
+  id: string;
+  last_used: string;
+  max_damage: string;
+  min_damage: string;
+  movement: string;
+  name: string;
+  player_id: string;
+  player_key: string;
+  recovery: string;
+  troop_class: string;
 }

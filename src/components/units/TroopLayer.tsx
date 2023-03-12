@@ -1,17 +1,16 @@
 import { useRecoilValue } from "recoil";
 import { selectTiles } from "../../recoil/selectors";
-import { SpawnSprite } from "./Spawn";
+import { UnitSprite } from "./UnitSprite";
 
-export const SpawnLayer = () => {
+export const TroopLayer = () => {
   const tiles = useRecoilValue(selectTiles);
-
   return (
     <>
       {tiles.map((tile, index) =>
-        tile.spawnable ? (
-          <SpawnSprite
+        tile.troop ? (
+          <UnitSprite
             key={index}
-            clan={tile.clan}
+            troop={tile.troop}
             tileX={tile.x}
             tileY={tile.y}
           />
