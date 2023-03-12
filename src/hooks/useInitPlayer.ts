@@ -5,6 +5,8 @@ import { gameIdAtom, gameWallet as gameWalletAtom } from "../recoil";
 import { Clans } from "../types";
 import { ixWasmToJs, randomU64 } from "../utils/wasm";
 import { useKyogenInstructionSdk } from "./useKyogenInstructionSdk";
+import { sendAndConfirmRawTransaction } from "@solana/web3.js";
+import { bs58 } from "@coral-xyz/anchor/dist/cjs/utils/bytes";
 
 /**
  * Initializes a player based on the current game wallet.
@@ -29,18 +31,27 @@ export const useInitPlayer = () => {
           clan
         )
       );
+      const latestBlockInfo = await connection.getLatestBlockhash();
       const msg = new anchor.web3.TransactionMessage({
         payerKey: gameWallet.publicKey,
-        recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
+        recentBlockhash: latestBlockInfo.blockhash,
         instructions: [ix],
       }).compileToLegacyMessage();
       const tx = new anchor.web3.VersionedTransaction(msg);
       tx.sign([gameWallet]);
-      const sig = await connection.sendRawTransaction(tx.serialize())
-      // const sig = await connection.sendTransaction(tx);
-      await connection.confirmTransaction(sig);
-      console.log("Init Player TX Confirmed: ", sig);
-      return sig;
+      const txSig = bs58.encode(tx.signatures[0]);
+      const confirmationStrategy = {
+        signature: txSig,
+        blockhash: latestBlockInfo.blockhash,
+        lastValidBlockHeight: latestBlockInfo.lastValidBlockHeight + 50,
+      };
+      await sendAndConfirmRawTransaction(
+        connection,
+        Buffer.from(tx.serialize()),
+        confirmationStrategy
+      )
+      console.log("Init Player TX Confirmed: ", txSig);
+      return txSig;
     },
     [gameId, gameWallet, kyogenInstructions]
   );

@@ -14,6 +14,7 @@ import { ContainerTitle } from "@/components/typography/ContainerTitle";
 import { useCallback, useState } from "react";
 import { Clans } from "@/types";
 import { useInitPlayer } from "@/hooks/useInitPlayer";
+import { useRouter } from "next/router";
 
 const clanMap: Record<number, Clans> = {
   0: Clans.Ancients,
@@ -105,6 +106,7 @@ const Clan = ({
 };
 
 const MeetTheClans = () => {
+  const router = useRouter();
   const initPlayerAction = useInitPlayer();
   const [clan, setClan] = useState<Clans | undefined>();
 
@@ -116,8 +118,9 @@ const MeetTheClans = () => {
   const handleInitPlayer = useCallback(async () => {
     if (!clan) return;
     const txId = await initPlayerAction(clan);
-    // TODO: Drop the user into the game
-  }, [clan, initPlayerAction]);
+    // Drop the user into the game
+    router.push("/games")
+  }, [clan, initPlayerAction, router]);
 
   return (
     <Page title="MEET THE CLANS">
