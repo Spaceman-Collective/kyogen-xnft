@@ -1,3 +1,4 @@
+import useListenToGameEvents from "@/hooks/useListenToGameEvents";
 import dynamic from "next/dynamic";
 import { useLoadGameState } from "../../hooks/useLoadGameState";
 
@@ -15,6 +16,7 @@ const GameMap = dynamic({
 
 const Game = () => {
   useLoadGameState();
+  useListenToGameEvents();
 
   return (
     <>
