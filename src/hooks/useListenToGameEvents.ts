@@ -55,7 +55,7 @@ const useListenToGameEvents = () => {
     const { connection: xNFTconnection } = window.xnft.solana;
     const connection = new Connection(xNFTconnection.rpcEndpoint);
 
-    connection.onLogs(
+    const id = connection.onLogs(
       new PublicKey(process.env.NEXT_PUBLIC_KYOGEN_ID as string),
       (logs, ctx) => {
         for (let log of logs.logs) {
@@ -71,7 +71,10 @@ const useListenToGameEvents = () => {
       },
       "confirmed"
     );
-  }, []);
+    return () => {
+      connection.removeOnLogsListener(id);
+    };
+  }, [handleEvent]);
 };
 
 export default useListenToGameEvents;
