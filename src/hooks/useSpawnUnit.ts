@@ -18,7 +18,7 @@ export const useSpawnUnit = (tileId: bigint) => {
       if (!gameState || !player) {
         return;
       }
-      // tile is tile to spawn to
+      const unitKey = gameState.get_blueprint_key(unitName);
 
       const ix = ixWasmToJs(
         kyogenInstructions.spawn_unit(
@@ -26,7 +26,7 @@ export const useSpawnUnit = (tileId: bigint) => {
           randomU64(),
           tileId,
           BigInt(player.id),
-          unitName
+          unitKey
         )
       );
       await sendTransaction([ix]);

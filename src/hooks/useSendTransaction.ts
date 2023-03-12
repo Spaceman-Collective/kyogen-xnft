@@ -20,8 +20,7 @@ export const useSendGameWalletTransaction = () => {
       }).compileToLegacyMessage();
       const tx = new anchor.web3.VersionedTransaction(msg);
       tx.sign([gameWallet]);
-      // const sig = await connection.sendRawTransaction(tx.serialize());
-      const sig = await connection.sendTransaction(tx);
+      const sig = await connection.sendRawTransaction(tx.serialize());
       console.log("TX sig ", sig);
       await connection.confirmTransaction(sig);
       // TODO add error and success handling
