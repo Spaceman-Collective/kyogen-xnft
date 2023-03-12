@@ -12,3 +12,6 @@ export const CARD_WIDTH = 100;
 export const CARD_HEIGHT = 100;
 /** Viewport enforced boundaries */
 export const WORLD_OVERFLOW = 200;
+
+/** The local storage  key for game id */
+export const LOCAL_GAME_KEY = "kyogen-gameId";
