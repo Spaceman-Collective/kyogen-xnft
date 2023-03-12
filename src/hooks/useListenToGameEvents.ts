@@ -12,6 +12,7 @@ const useListenToGameEvents = () => {
   const handleEvent = useCallback(
     (event: any) => {
       console.log("EVENT: ", event);
+      if (!gameState) return;
       if (event.data.instance.toString() != gameState.instance.toString()) {
         return;
       }
