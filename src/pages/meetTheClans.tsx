@@ -35,11 +35,11 @@ const selectedWitdth = (selected: boolean | undefined): string => {
 
 const selectedOpacity = (selected: boolean | undefined): string => {
   if (selected === undefined) {
-    return "hover:opacity-0";
+    return "opacity-60  hover:opacity-0";
   } else if (selected) {
     return "opacity-0";
   } else {
-    return "";
+    return "opacity-60";
   }
 };
 
@@ -75,7 +75,7 @@ const Clan = ({
       )} h-[505px] ${className}`}
     >
       <div
-        className={`absolute top-0 left-0 w-full h-full z-10 bg-kyogen-border opacity-60 ${selectedOpacity(
+        className={`absolute top-0 left-0 w-full h-full z-10 bg-kyogen-border ${selectedOpacity(
           selected
         )}`}
       ></div>

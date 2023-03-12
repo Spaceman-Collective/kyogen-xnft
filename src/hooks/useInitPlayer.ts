@@ -21,15 +21,13 @@ export const useInitPlayer = () => {
       if (!gameId || !gameWallet) {
         throw new Error("Game wallet or Game Id error");
       }
-      const { connection } = window.xnft.solana;
+      const {
+        solana: { connection },
+        metadata: { username },
+      } = window.xnft;
 
       const ix = ixWasmToJs(
-        kyogenInstructions.init_player(
-          gameId,
-          randomU64(),
-          gameWallet?.publicKey.toString(),
-          clan
-        )
+        kyogenInstructions.init_player(gameId, randomU64(), username, clan)
       );
       const latestBlockInfo = await connection.getLatestBlockhash();
       const msg = new anchor.web3.TransactionMessage({
@@ -49,7 +47,7 @@ export const useInitPlayer = () => {
         connection,
         Buffer.from(tx.serialize()),
         confirmationStrategy
-      )
+      );
       console.log("Init Player TX Confirmed: ", txSig);
       return txSig;
     },
