@@ -49,6 +49,12 @@ declare global {
     xnft: xnft;
   }
 }
+export type Role = "success" | "danger" | "warning";
+
+export interface Notification {
+  role: Role;
+  message: string;
+}
 
 export interface Map {
   map_id: string;
