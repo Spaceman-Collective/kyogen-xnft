@@ -5,13 +5,13 @@ import { selectCurrentPlayer } from "../recoil/selectors";
 import { UnitNames } from "../types";
 import { ixWasmToJs, randomU64 } from "../utils/wasm";
 import { useKyogenInstructionSdk } from "./useKyogenInstructionSdk";
-import { useSendGameWalletTransaction } from "./useSendTransaction";
+import { useSendAndConfirmGameWalletTransaction } from "./useSendTransaction";
 
 export const useSpawnUnit = (tileId: bigint) => {
   const player = useRecoilValue(selectCurrentPlayer);
   const kyogenInstructions = useKyogenInstructionSdk();
   const gameState = useRecoilValue(gameStateAtom);
-  const sendTransaction = useSendGameWalletTransaction();
+  const sendTransaction = useSendAndConfirmGameWalletTransaction();
 
   return useCallback(
     async (unitName: UnitNames) => {
