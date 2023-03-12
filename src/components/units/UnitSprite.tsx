@@ -17,13 +17,11 @@ import { getViewport } from "../PixiViewport";
 import { ClippedUnit } from "./ClippedUnit";
 import { UnitHealth } from "./UnitHealth";
 
-// TODO use proper unit texture
 export const UnitSprite = ({
   tileX,
   tileY,
   troop,
-}:
-{
+}: {
   tileX: number;
   tileY: number;
   troop: Troop;
@@ -145,6 +143,7 @@ export const UnitSprite = ({
         <ClippedUnit
           height={UNIT_LENGTH}
           width={UNIT_LENGTH}
+          name={troop.name}
           x={unitOffset}
           y={unitOffset}
         />

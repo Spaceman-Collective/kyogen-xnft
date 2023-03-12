@@ -115,7 +115,7 @@ export interface Troop {
   max_damage: string;
   min_damage: string;
   movement: string;
-  name: string;
+  name: UnitNames;
   player_id: string;
   player_key: string;
   recovery: string;

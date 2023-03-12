@@ -1,13 +1,43 @@
 import * as PIXI from "pixi.js";
 import { useEffect, useRef, useState } from "react";
 import { Container, Sprite } from "react-pixi-fiber";
-import CreeperSohei from "../../../public/creeper_sohei.webp";
 import { UNIT_LENGTH } from "../../constants";
+import {
+  AncientNinjaTexture,
+  AncientSamuraiTexture,
+  AncientSoheiTexture,
+  CreeperNinjaTexture,
+  CreeperSamuraiTexture,
+  CreeperSoheiTexture,
+  SynthNinjaTexture,
+  SynthSamuraiTexture,
+  SynthSoheiTexture,
+  WildingNinjaTexture,
+  WildingSamuraiTexture,
+  WildingSoheiTexture,
+} from "../../textures";
+import { UnitNames } from "../../types";
 import { RoundedRect } from "../PixiComponents";
 
-const CreeperSoheiTexture = PIXI.Texture.from(CreeperSohei.src);
+const nameToTextureMap = {
+  [UnitNames.AncientNinja]: AncientNinjaTexture,
+  [UnitNames.AncientSohei]: AncientSoheiTexture,
+  [UnitNames.AncientSamurai]: AncientSamuraiTexture,
+  [UnitNames.CreeperNinja]: CreeperNinjaTexture,
+  [UnitNames.CreeperSohei]: CreeperSoheiTexture,
+  [UnitNames.CreeperSamurai]: CreeperSamuraiTexture,
+  [UnitNames.SynthNinja]: SynthNinjaTexture,
+  [UnitNames.SynthSohei]: SynthSoheiTexture,
+  [UnitNames.SynthSamurai]: SynthSamuraiTexture,
+  [UnitNames.WildingNinja]: WildingNinjaTexture,
+  [UnitNames.WildingSohei]: WildingSoheiTexture,
+  [UnitNames.WildingSamurai]: WildingSamuraiTexture,
+};
 
-export const ClippedUnit = ({ ...props }: Container) => {
+export const ClippedUnit = ({
+  name,
+  ...props
+}: Container & { name: UnitNames }) => {
   const [, forceUpdate] = useState(0);
   const maskRef = useRef(null);
   useEffect(() => {
@@ -20,7 +50,7 @@ export const ClippedUnit = ({ ...props }: Container) => {
   return (
     <Container {...props}>
       <Sprite
-        texture={CreeperSoheiTexture}
+        texture={nameToTextureMap[name]}
         height={UNIT_LENGTH}
         width={UNIT_LENGTH}
         mask={maskRef.current}
