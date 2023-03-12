@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useRecoilValue } from "recoil";
 import * as anchor from "@coral-xyz/anchor";
-import { gameStateAtom, gameWallet as gameWalletAtom } from "../recoil";
+import { gameIdAtom, gameWallet as gameWalletAtom } from "../recoil";
 import { Clans } from "../types";
 import { ixWasmToJs, randomU64 } from "../utils/wasm";
 import { useKyogenInstructionSdk } from "./useKyogenInstructionSdk";
@@ -11,19 +11,19 @@ import { useKyogenInstructionSdk } from "./useKyogenInstructionSdk";
  */
 export const useInitPlayer = () => {
   const gameWallet = useRecoilValue(gameWalletAtom);
-  const gameState = useRecoilValue(gameStateAtom);
+  const gameId = useRecoilValue(gameIdAtom);
   const kyogenInstructions = useKyogenInstructionSdk();
 
   return useCallback(
     async (clan: Clans) => {
-      if (!gameState || !gameWallet) {
-        throw new Error("Game wallet or Game state error");
+      if (!gameId || !gameWallet) {
+        throw new Error("Game wallet or Game Id error");
       }
       const { connection } = window.xnft.solana;
 
       const ix = ixWasmToJs(
         kyogenInstructions.init_player(
-          gameState.instance,
+          gameId,
           randomU64(),
           gameWallet?.publicKey.toString(),
           clan
@@ -42,6 +42,6 @@ export const useInitPlayer = () => {
       console.log("Init Player TX Confirmed: ", sig);
       return sig;
     },
-    [gameState, gameWallet, kyogenInstructions]
+    [gameId, gameWallet, kyogenInstructions]
   );
 };

@@ -13,13 +13,14 @@ import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { ContainerTitle } from "@/components/typography/ContainerTitle";
 import { useCallback, useState } from "react";
 import { Clans } from "@/types";
+import { useInitPlayer } from "@/hooks/useInitPlayer";
 
 const clanMap: Record<number, Clans> = {
   0: Clans.Ancients,
   1: Clans.Wildings,
   2: Clans.Creepers,
-  3: Clans.Synths
-}
+  3: Clans.Synths,
+};
 
 const selectedWitdth = (selected: boolean | undefined): string => {
   if (selected === undefined) {
@@ -104,12 +105,19 @@ const Clan = ({
 };
 
 const MeetTheClans = () => {
+  const initPlayerAction = useInitPlayer();
   const [clan, setClan] = useState<Clans | undefined>();
 
   const handleRandomizeClan = useCallback(() => {
     const clanInt = Math.floor(Math.random() * 4);
     setClan(clanMap[clanInt]);
   }, [setClan]);
+
+  const handleInitPlayer = useCallback(async () => {
+    if (!clan) return;
+    const txId = await initPlayerAction(clan);
+    // TODO: Drop the user into the game
+  }, [clan, initPlayerAction]);
 
   return (
     <Page title="MEET THE CLANS">
@@ -149,7 +157,9 @@ const MeetTheClans = () => {
           />
         </div>
         {clan ? (
-          <PrimaryButton className="mt-24">Initialize Player</PrimaryButton>
+          <PrimaryButton className="mt-24" onClick={handleInitPlayer}>
+            Initialize Player
+          </PrimaryButton>
         ) : (
           <PrimaryButton className="mt-24" onClick={handleRandomizeClan}>
             Randomize Clan
