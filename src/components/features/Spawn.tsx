@@ -217,9 +217,9 @@ export const SpawnSprite = ({
                     // prevent additional spawns
                     return;
                   }
-                  spawnLocked = true
+                  spawnLocked = true;
                   await spawnUnit(ninjaUnitName);
-                  spawnLocked = false
+                  spawnLocked = false;
                 }}
               />
               <NumberContainer
@@ -235,6 +235,16 @@ export const SpawnSprite = ({
                 texture={samuraiTexture}
                 height={CARD_WIDTH}
                 width={CARD_WIDTH}
+                interactive
+                onclick={async (e) => {
+                  if (spawnLocked) {
+                    // prevent additional spawns
+                    return;
+                  }
+                  spawnLocked = true;
+                  await spawnUnit(samuraiUnitName);
+                  spawnLocked = false;
+                }}
               />
               <NumberContainer
                 fill={0x8f2a2a}
@@ -249,6 +259,16 @@ export const SpawnSprite = ({
                 texture={soheiTexture}
                 height={CARD_WIDTH}
                 width={CARD_WIDTH}
+                interactive
+                onclick={async (e) => {
+                  if (spawnLocked) {
+                    // prevent additional spawns
+                    return;
+                  }
+                  spawnLocked = true;
+                  await spawnUnit(soheiUnitName);
+                  spawnLocked = false;
+                }}
               />
               <NumberContainer
                 fill={0x8f2a2a}
