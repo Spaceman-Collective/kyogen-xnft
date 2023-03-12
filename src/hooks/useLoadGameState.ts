@@ -4,12 +4,14 @@ import * as kyogenSdk from "kyogen-sdk";
 import { gameIdAtom, gameStateAtom } from "../recoil";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { UnitNames } from "../types";
+import useSetGameIdFromLocalStorage from "./useSetGameIdFromLocalStorage";
 
 /**
  *
  * @param instance - instance ID of the game
  */
 export const useLoadGameState = () => {
+  useSetGameIdFromLocalStorage();
   const { connection } = useConnection();
   const setGameState = useSetRecoilState(gameStateAtom);
   const gameId = useRecoilValue(gameIdAtom);

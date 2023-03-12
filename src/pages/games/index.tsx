@@ -1,5 +1,4 @@
 import dynamic from "next/dynamic";
-import { OnboardingUserGate } from "../../components/OnboardingUserGate";
 import { useLoadGameState } from "../../hooks/useLoadGameState";
 
 // // must use dynamic imports as `pixi-viewport` expects window object.
@@ -25,7 +24,6 @@ const Game = () => {
           <GameMap />
         </div>
       </div>
-      <OnboardingUserGate />
     </>
   );
 };

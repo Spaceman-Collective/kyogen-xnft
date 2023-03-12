@@ -1,20 +1,24 @@
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { TextInput } from "@/components/inputs/TextInput";
 import Page from "@/components/Page";
+import { LOCAL_GAME_KEY } from "@/constants";
 import { gameIdAtom } from "@/recoil";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { useRecoilState } from "recoil";
+import { useLocalStorage } from "usehooks-ts";
 
 const JoinGamePage = () => {
   const router = useRouter();
   const [gameId, setGameId] = useRecoilState(gameIdAtom);
+  const [_, setLocalGameId] = useLocalStorage(LOCAL_GAME_KEY, "");
 
   const handleEnterGame = useCallback(() => {
     if (!gameId) {
       console.error("GameID cannot be blank");
       return;
     }
+    setLocalGameId(gameId.toString());
     // TODO: [nice to have] Check if game instance if valid on the blockchain
     router.push("/fundWallet");
   }, [gameId]);
