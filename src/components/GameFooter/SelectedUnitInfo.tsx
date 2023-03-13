@@ -1,10 +1,10 @@
 import { useRecoilValue } from "recoil";
 
 import InfoSquare from "./InfoSquare";
-import DamageIcon from "../../../public/icons/sword.png";
-import MoveIcon from "../../../public/icons/move.png";
-import RangeIcon from "../../../public/icons/range.png";
-import CoolDownIcon from "../../../public/icons/cooldown.png";
+import DamageIcon from "../../../public/icons/damage.svg";
+import MoveIcon from "../../../public/icons/move_range.svg";
+import RangeIcon from "../../../public/icons/attack_range.svg";
+import CoolDownIcon from "../../../public/icons/cool_down.svg";
 import { ImageProps } from "next/image";
 import { selectTroopFromSelectedTile } from "@/recoil/selectors";
 import { usePreviousDefined } from "@/hooks/usePreviousDefined";
