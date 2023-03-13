@@ -3,9 +3,8 @@ import { useRecoilValue } from "recoil";
 import {
   gameWallet as gameWalletAtom,
   gameStateAtom,
-  selectedUnitAtom,
 } from "../recoil";
-import { selectCurrentPlayer } from "../recoil/selectors";
+import { selectCurrentPlayer, selectTroopFromSelectedTile } from "../recoil/selectors";
 import { ixWasmToJs } from "../utils/wasm";
 import { useKyogenInstructionSdk } from "./useKyogenInstructionSdk";
 import { useSendAndConfirmGameWalletTransaction } from "./useSendTransaction";
@@ -15,8 +14,8 @@ export const useAttackUnit = (
   tileX: number,
   tileY: number
 ) => {
-  const selectedUnit = useRecoilValue(selectedUnitAtom);
-  const currentPlayer = useRecoilValue(selectCurrentPlayer);
+  const selectedUnit = useRecoilValue(selectTroopFromSelectedTile);
+  const currentPlayer = useRecoilValue(selectCurrentPlayer);5
   const gameState = useRecoilValue(gameStateAtom);
   const gameWallet = useRecoilValue(gameWalletAtom);
   const instructionSdk = useKyogenInstructionSdk();

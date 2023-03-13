@@ -24,11 +24,6 @@ export const gameStateAtom = atom<kyogenSdk.GameState | null>({
   dangerouslyAllowMutability: true,
 });
 
-export const selectedUnitAtom = atom<Troop | null>({
-  key: "selectedUnitAtom",
-  default: null,
-});
-
 export const selectedTileIdAtom = atom<string>({
   key: "selectedTileIdAtom",
   default: "",

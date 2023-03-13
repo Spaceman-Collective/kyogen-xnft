@@ -5,7 +5,6 @@ import {
   playerIdsAtom,
   playersAtomFamily,
   selectedTileIdAtom,
-  selectedUnitAtom,
   tileIdsAtom,
   tilesAtomFamily,
 } from "./atoms";
@@ -92,7 +91,7 @@ export const selectTilesWithEnemies = selector({
 export const selectTilesWithEnemiesInSelectedUnitAttackRange = selector({
   key: "selectTilesWithEnemiesInSelectedUnitAttackRange",
   get: ({ get }) => {
-    const selectedUnit = get(selectedUnitAtom);
+    const selectedUnit = get(selectTroopFromSelectedTile);
     const selectedTileId = get(selectedTileIdAtom);
     const selectedTile = get(tilesAtomFamily(selectedTileId));
     const currentPlayer = get(selectCurrentPlayer);
