@@ -35,6 +35,7 @@ import WildlingsFrameMedal from "../../../public/clans/wildlings/frame_medal.svg
 import WildlingsFrameKnot from "../../../public/clans/wildlings/frame_knot.svg";
 import Image, { StaticImageData } from "next/image";
 import { selectCurrentPlayer } from "@/recoil/selectors";
+import InfoSquare from "./InfoSquare";
 
 const UnitNameToImageMap = (name: UnitNames): StaticImageData => {
   switch (name) {
@@ -74,6 +75,8 @@ const HealthBar = ({
   currentHealth: string;
   maxHealth: string;
 }) => {
+  // TODO: Change color based on percentage
+
   const healthPercentage =
     (parseFloat(currentHealth) / parseFloat(maxHealth)) * 100;
   return (
@@ -83,7 +86,7 @@ const HealthBar = ({
           className={`absolute top-0 h-full rounded-[8px] bg-[#7DD75D] border-kyogen-border border-[1px] z-20`}
           style={{ width: `${healthPercentage}%` }}
         ></div>
-        <p className="relative z-50 w-full text-center leading-[20px] text-[18px] font-extrabold font-outline-2 outline-none">
+        <p className="relative z-50 w-full text-center leading-[20px] text-[18px] font-extrabold font-outline-1 outline-none font-inter">
           {currentHealth} / {maxHealth}
         </p>
       </div>
@@ -192,9 +195,31 @@ const HorizontalBorder = () => {
   );
 };
 
+const SelectedUnitInfo = () => {
+  const selectedUnit = useRecoilValue(selectedUnitAtom);
+  if (!selectedUnit) return null;
+
+  return (
+    <div className="pt-[35px] pl-[32px]">
+      <p className="font-normal text-[30px] leading-[30px]">
+        {selectedUnit.name}
+      </p>
+      <div className="flex flex-row items-center">
+        <InfoSquare />
+        <div className="ml-[12px]">
+          <p>Damage</p>
+          <p>
+            {selectedUnit.min_damage} - {selectedUnit.max_damage}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const GameFooter = () => {
   return (
-    <div className="relative flex flex-row grow max-h-[275px]">
+    <div className="relative flex flex-row grow max-h-[275px] font-millimetre">
       <HorizontalBorder />
       <VerticalBorder />
       <div className="grow">Mini Map</div>
@@ -204,7 +229,7 @@ const GameFooter = () => {
       </div>
       <div className="grow relative">
         <VerticalBorder />
-        Unit Info
+        <SelectedUnitInfo />
       </div>
       <div className="grow relative">
         <VerticalBorder />

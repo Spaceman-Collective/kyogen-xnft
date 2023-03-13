@@ -24,6 +24,7 @@ module.exports = {
       },
       fontFamily: {
         millimetre: ["Millimetre", "sans-serif"],
+        inter: ["Inter", "sans-serif"]
       },
     },
   },
