@@ -74,3 +74,15 @@ export const currentSlotAtom = atom({
   key: "currentSlotAtom",
   default: 0,
 });
+
+export const gameFeedAtom = atom<GameFeedItem[]>({
+  key: "gameFeedAtom",
+  default: []
+})
+
+export type GameFeedItem = {
+  type:string,
+  players: string[],
+  msg: string,
+  timestamp: number,
+}

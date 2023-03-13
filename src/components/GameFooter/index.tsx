@@ -36,6 +36,7 @@ import Image, { StaticImageData } from "next/image";
 import { selectCurrentPlayer, selectTroopFromSelectedTile } from "@/recoil/selectors";
 import SelectedUnitInfo from "./SelectedUnitInfo";
 import { usePreviousDefined } from "@/hooks/usePreviousDefined";
+import { GameFeed } from "./GameFeed";
 
 const UnitNameToImageMap = (name: UnitNames): StaticImageData => {
   switch (name) {
@@ -203,8 +204,7 @@ const GameFooter = () => {
   return (
     <div className="relative flex flex-row grow max-h-[275px] font-millimetre bg-kyogen-fund-bg">
       <HorizontalBorder />
-      <VerticalBorder />
-      <div className="grow">Mini Map</div>
+     
       <div className="relative min-w-[245px]">
         <VerticalBorder />
         <SelectedUnit className="relative pl-[9px] pt-[2px]" />
@@ -215,8 +215,7 @@ const GameFooter = () => {
       </div>
       <div className="grow relative">
         <VerticalBorder />
-        Game feed
-        <VerticalBorder side="right" />
+        <GameFeed />
       </div>
     </div>
   );
