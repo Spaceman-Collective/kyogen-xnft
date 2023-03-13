@@ -12,7 +12,6 @@ export const useMoveUnit = (unitId: string, tileX: number, tileY: number) => {
   const gameWallet = useRecoilValue(gameWalletAtom);
   const instructionSdk = useKyogenInstructionSdk();
   const sendTransaction = useSendAndConfirmGameWalletTransaction();
-  console.log("tay ", currentPlayer, gameState?.get_players());
 
   return useCallback(
     async (destinationTileId: string) => {

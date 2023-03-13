@@ -1,22 +1,24 @@
 import { selector } from "recoil";
-import { gameStateAtom, gameWallet } from "./atoms";
-import { Map, Player, UnitNames } from "../types";
-
-export const selectTiles = selector({
-  key: "selectTiles",
-  get: ({ get }) =>
-    (get(gameStateAtom)?.get_map() as Map | undefined)?.tiles ?? [],
-});
+import {
+  gameStateAtom,
+  gameWallet,
+  playerIdsAtom,
+  playersAtomFamily,
+  tileIdsAtom,
+  tilesAtomFamily,
+} from "./atoms";
+import { Player, Tile, UnitNames } from "../types";
 
 export const selectCurrentPlayer = selector<Player | null>({
   key: "selectCurrentPlayer",
   get: ({ get }) => {
     const wallet = get(gameWallet);
-    const gameState = get(gameStateAtom);
-    const players = gameState?.get_players() as Player[];
+    const ids = get(playerIdsAtom);
+    const players = ids.map((id) => get(playersAtomFamily(id)));
     return (
-      players.find((player) => player.owner === wallet?.publicKey.toString()) ??
-      null
+      players.find(
+        (player) => player && player.owner === wallet?.publicKey.toString()
+      ) ?? null
     );
   },
 });
@@ -41,7 +43,8 @@ export const selectCurrentPlayerHand = selector<Record<UnitNames, number>>({
 export const selectMapDims = selector({
   key: "selectMapDims",
   get: ({ get }) => {
-    const tiles = get(selectTiles);
+    const tileIds = get(tileIdsAtom);
+    const tiles = tileIds.map((id) => get(tilesAtomFamily(id))) as Tile[];
     return tiles.reduce(
       (acc, tile) => {
         if (tile.y >= acc.height) {

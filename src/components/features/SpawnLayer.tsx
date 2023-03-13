@@ -1,22 +1,15 @@
 import { useRecoilValue } from "recoil";
-import { selectTiles } from "../../recoil/selectors";
-import { SpawnSprite } from "./Spawn";
+import { tileIdsAtom } from "../../recoil";
+import { Spawn } from "./Spawn";
 
 export const SpawnLayer = () => {
-  const tiles = useRecoilValue(selectTiles);
+  const tileIds = useRecoilValue(tileIdsAtom);
 
   return (
     <>
-      {tiles.map((tile, index) =>
-        tile.spawnable ? (
-          <SpawnSprite
-            key={index}
-            clan={tile.clan}
-            tileX={tile.x}
-            tileY={tile.y}
-          />
-        ) : null
-      )}
+      {tileIds.map((tileId) => (
+        <Spawn key={tileId} tileId={tileId} />
+      ))}
     </>
   );
 };
