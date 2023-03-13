@@ -4,6 +4,7 @@ import useListenToGameEvents from "@/hooks/useListenToGameEvents";
 import dynamic from "next/dynamic";
 import { GameOverlay } from "../../components/GameOverlay";
 import { useLoadGameState } from "../../hooks/useLoadGameState";
+import { useTrackSlotChange } from "../../hooks/useTrackSlotChange";
 
 // // must use dynamic imports as `pixi-viewport` expects window object.
 const GameMap = dynamic({
@@ -20,6 +21,7 @@ const GameMap = dynamic({
 const Game = () => {
   useLoadGameState();
   useListenToGameEvents();
+  useTrackSlotChange();
   const gameContainerRef = useRef<HTMLDivElement>(null);
   const [containerDims, setContainerDims] = useState({ height: 0, width: 0 });
 
