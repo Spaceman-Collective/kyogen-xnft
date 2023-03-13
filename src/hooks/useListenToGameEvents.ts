@@ -1,8 +1,8 @@
-import { gameStateAtom } from "@/recoil";
+import { gameFeedAtom, gameStateAtom } from "@/recoil";
 import { KyogenEventCoder } from "@/utils/anchorEvents";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useCallback, useEffect } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useUpdatePlayers, useUpdateTiles } from "../recoil/transactions";
 
 const LOG_START_INDEX = "Program data: ".length;
@@ -11,7 +11,7 @@ const useListenToGameEvents = () => {
   const gameState = useRecoilValue(gameStateAtom);
   const updateTiles = useUpdateTiles(false);
   const updatePlayers = useUpdatePlayers();
-
+  const setGameFeed = useSetRecoilState(gameFeedAtom);
   const handleEvent = useCallback(
     async (event: any) => {
       if (!gameState) {
@@ -22,10 +22,17 @@ const useListenToGameEvents = () => {
       if (event.data.instance.toString() != gameState.instance.toString()) {
         return;
       }
-
+      const timestamp = Date.now();
+      
       switch (event.name) {
         case "NewPlayer":
           // TODO:
+          setGameFeed((curr) => ([...curr, {
+            type: 'NewPlayer',
+            players: [event.data ? '' : ''],
+            msg: "",
+            timestamp,
+          }]))
           break;
         case "GameStateChanged":
           if (event.data.newState.play) {
