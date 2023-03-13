@@ -1,3 +1,4 @@
+import GameFooter from "@/components/GameFooter";
 import useListenToGameEvents from "@/hooks/useListenToGameEvents";
 import dynamic from "next/dynamic";
 import { useLoadGameState } from "../../hooks/useLoadGameState";
@@ -25,6 +26,7 @@ const Game = () => {
         <div className="flex flex-1 justify-center items-center">
           <GameMap />
         </div>
+        <GameFooter />
       </div>
     </>
   );

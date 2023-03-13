@@ -1,10 +1,10 @@
 import * as PIXI from "pixi.js";
 import { useCallback, useMemo, useState } from "react";
 import { Container } from "react-pixi-fiber";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { TILE_LENGTH, UNIT_LENGTH } from "../../constants";
 import { useMoveUnit } from "../../hooks/useMoveUnit";
-import { gameStateAtom, tilesAtomFamily } from "../../recoil";
+import { gameStateAtom, selectedUnitAtom, tilesAtomFamily } from "../../recoil";
 import { selectMapDims } from "../../recoil/selectors";
 import { Troop } from "../../types";
 import {
@@ -40,6 +40,7 @@ export const UnitSprite = ({
   const coords = calculateUnitPositionOnTileCoords(tileX, tileY);
   const mapDims = useRecoilValue(selectMapDims);
   const gameState = useRecoilValue(gameStateAtom);
+  const setSelectedUnit = useSetRecoilState(selectedUnitAtom);
   const [dragging, setDragging] = useState(false);
   const [startTile, setStartTile] = useState<[number, number] | null>(null);
   const [hovering, setHovering] = useState(false);
@@ -87,6 +88,9 @@ export const UnitSprite = ({
     useCallback(
       async (event) => {
         event.stopPropagation();
+        // Set the selected unit
+        setSelectedUnit(troop);
+
         const container = event.currentTarget as PIXI.DisplayObject;
         const viewport = getViewport(container);
         if (!viewport) {
@@ -119,7 +123,7 @@ export const UnitSprite = ({
           container.position = calculateUnitPositionOnTileCoords(...startTile!);
         }
       },
-      [gameState, moveUnit, movement, startTile]
+      [gameState, moveUnit, movement, troop, startTile]
     );
 
   const onDragMove: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =

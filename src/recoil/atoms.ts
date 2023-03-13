@@ -24,6 +24,11 @@ export const gameStateAtom = atom<kyogenSdk.GameState | null>({
   dangerouslyAllowMutability: true,
 });
 
+export const selectedUnitAtom = atom<Troop|null>({
+  key: "selectedUnitAtom",
+  default: null
+})
+
 export const tilesAtomFamily = atomFamily<Tile | null, string>({
   key: "tilesAtomFamily",
   default: null,
