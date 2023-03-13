@@ -10,7 +10,7 @@ import { useMemo } from "react";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import { XnftGameWalletProvider } from "@/context/GameWalletProvider";
 
-const endpoint = "http://localhost:8899";
+const endpoint = "http://10.28.186.218:8899";
 
 
 export const SolanaProviders = ({
