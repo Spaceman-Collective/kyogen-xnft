@@ -1,4 +1,4 @@
-import { Keypair } from "@solana/web3.js";
+import { Connection, Keypair } from "@solana/web3.js";
 import * as kyogenSdk from "kyogen-sdk";
 import { atom, atomFamily } from "recoil";
 import { Notification, Player, Tile, Troop } from "@/types";
@@ -60,4 +60,17 @@ export const troopsAtomFamily = atomFamily<Troop | null, string>({
 export const notificationsAtom = atom<Notification[]>({
   key: "notificationsAtom",
   default: [],
+});
+
+/* Local solana state */
+export const connectionAtom = atom({
+  key: "connectionAtom",
+  default: new Connection("http://localhost:8899"),
+  // connection mutates itself, so must have this
+  dangerouslyAllowMutability: true,
+});
+
+export const currentSlotAtom = atom({
+  key: "currentSlotAtom",
+  default: 0,
 });
