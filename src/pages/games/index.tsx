@@ -1,6 +1,7 @@
 import GameFooter from "@/components/GameFooter";
 import useListenToGameEvents from "@/hooks/useListenToGameEvents";
 import dynamic from "next/dynamic";
+import { GameOverlay } from "../../components/GameOverlay";
 import { useLoadGameState } from "../../hooks/useLoadGameState";
 
 // // must use dynamic imports as `pixi-viewport` expects window object.
@@ -23,8 +24,9 @@ const Game = () => {
     <>
       <div className="h-screen w-screen flex flex-col">
         <p>Game instance</p>
-        <div className="flex flex-1 justify-center items-center">
+        <div className="bg-[#eae6d5] relative flex flex-1 justify-center items-center">
           <GameMap />
+          <GameOverlay />
         </div>
         <GameFooter />
       </div>
