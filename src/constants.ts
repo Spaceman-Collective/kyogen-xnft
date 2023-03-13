@@ -6,6 +6,9 @@ export const TILE_SPACING = 4;
 export const FEATURE_LENGTH = 72;
 /** Length of unit within tile */
 export const UNIT_LENGTH = 72;
+/** Since the unit sprite should be centered within the tile,
+ * we will need to offset it and any other relative graphics. */
+export const UNIT_OFFSET = (TILE_LENGTH - UNIT_LENGTH) / 2;
 /** Width of card */
 export const CARD_WIDTH = 100;
 /** Height of card */

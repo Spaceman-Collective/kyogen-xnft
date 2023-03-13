@@ -6,6 +6,7 @@ import { useWorldDims } from "../hooks/useWorldDims";
 import { useRecoilBridgeAcrossReactRoots_UNSTABLE } from "recoil";
 import { SpawnLayer } from "./features/SpawnLayer";
 import { TroopLayer } from "./units/TroopLayer";
+import { AttackButtonLayer } from "./units/AttackButtonLayer";
 
 export const GameMap = () => {
   const BridgedRecoilRoot = useRecoilBridgeAcrossReactRoots_UNSTABLE();
@@ -35,6 +36,7 @@ export const GameMap = () => {
           <TileMap />
           <SpawnLayer />
           <TroopLayer />
+          <AttackButtonLayer />
         </KyogenViewport>
       </BridgedRecoilRoot>
     </Stage>

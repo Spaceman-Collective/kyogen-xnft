@@ -2,9 +2,14 @@ import * as PIXI from "pixi.js";
 import { useCallback, useMemo, useState } from "react";
 import { Container } from "react-pixi-fiber";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { TILE_LENGTH, UNIT_LENGTH } from "../../constants";
+import { TILE_LENGTH, UNIT_LENGTH, UNIT_OFFSET } from "../../constants";
 import { useMoveUnit } from "../../hooks/useMoveUnit";
-import { gameStateAtom, selectedUnitAtom, tilesAtomFamily } from "../../recoil";
+import {
+  gameStateAtom,
+  selectedTileIdAtom,
+  selectedUnitAtom,
+  tilesAtomFamily,
+} from "../../recoil";
 import {
   selectCurrentPlayer,
   selectMapDims,
@@ -49,8 +54,12 @@ export const UnitSprite = ({
   const mapDims = useRecoilValue(selectMapDims);
   const gameState = useRecoilValue(gameStateAtom);
   const setSelectedUnit = useSetRecoilState(selectedUnitAtom);
+  const setSelectedTileId = useSetRecoilState(selectedTileIdAtom);
   const [dragging, setDragging] = useState(false);
-  const [startTile, setStartTile] = useState<[number, number] | null>(null);
+  const [startTile, setStartTile] = useState<[number, number] | null>([
+    tileX,
+    tileY,
+  ]);
   const [hovering, setHovering] = useState(false);
   const moveUnit = useMoveUnit(troop.id, tileX, tileY);
   const movement = Number(troop.movement);
@@ -102,25 +111,24 @@ export const UnitSprite = ({
   const onDragEnd: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
     useCallback(
       async (event) => {
-        setSelectedUnit(troop);
-        if (!ownedByCurrentPlayer) {
-          // skip rest if enemy unit
-          return;
-        }
-        event.stopPropagation();
-        // Set the selected unit
-
         const container = event.currentTarget as PIXI.DisplayObject;
         const viewport = getViewport(container);
+        setSelectedUnit(troop);
         if (!viewport) {
           return;
         }
-        container.alpha = 1;
-        setDragging(false);
-        // snap sprite to tile
         const coords = calculateTileCoords(
           normalizeGlobalPointFromViewport(viewport, event.global)
         );
+        const destinationTileId = gameState!.get_tile_id(coords[0], coords[1]);
+        setSelectedTileId(destinationTileId);
+        // prevent viewport from moving
+        event.stopPropagation();
+        // Set the selected unit
+
+        container.alpha = 1;
+        setDragging(false);
+        // snap sprite to tile
         const distance = calculateDistance(startTile!, coords);
         if (
           distance > movement ||
@@ -131,8 +139,6 @@ export const UnitSprite = ({
           return;
         }
         // unit could be moved
-        const destinationTileId = gameState!.get_tile_id(coords[0], coords[1]);
-
         try {
           await moveUnit(destinationTileId);
           container.position = calculateUnitPositionOnTileCoords(...coords);
@@ -145,10 +151,10 @@ export const UnitSprite = ({
       [
         setSelectedUnit,
         troop,
-        ownedByCurrentPlayer,
+        gameState,
+        setSelectedTileId,
         startTile,
         movement,
-        gameState,
         moveUnit,
       ]
     );
@@ -174,10 +180,6 @@ export const UnitSprite = ({
       [dragging]
     );
 
-  // Since the unit sprite should be centered within the tile, we will need to
-  // offset it and any other relative graphics.
-  const unitOffset = (TILE_LENGTH - UNIT_LENGTH) / 2;
-
   return (
     <>
       {ownedByCurrentPlayer && (
@@ -202,8 +204,8 @@ export const UnitSprite = ({
           height={UNIT_LENGTH}
           width={UNIT_LENGTH}
           name={troop.name}
-          x={unitOffset}
-          y={unitOffset}
+          x={UNIT_OFFSET}
+          y={UNIT_OFFSET}
         />
         {!ownedByCurrentPlayer && (
           <Circle
@@ -211,8 +213,8 @@ export const UnitSprite = ({
             radius={5}
             stroke={0x000000}
             strokeWidth={1}
-            x={unitOffset + 12}
-            y={unitOffset + 12}
+            x={UNIT_OFFSET + 12}
+            y={UNIT_OFFSET + 12}
           />
         )}
         <UnitHealth
