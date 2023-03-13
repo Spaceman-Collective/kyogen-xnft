@@ -4,6 +4,8 @@ import AncientSamurai from "../../../public/ancient_samurai.webp";
 import CreeperSamurai from "../../../public/creeper_samurai.webp";
 import SynthSamurai from "../../../public/synth_samurai.webp";
 import WildingSamurai from "../../../public/wildling_samurai.webp";
+import Solarite from "../../../public/ui/solarite.webp";
+import Skull from "../../../public/ui/skull.webp";
 import { selectCurrentPlayer } from "../../recoil/selectors";
 import { Clans } from "../../types";
 
@@ -35,6 +37,26 @@ export const GameOverlay = () => {
           </div>
           <div className="relative flex flex-row items-center mt-8">
             <div className="bg-[#15172E] absolute top-[-10px] bottom-0 w-[60px] rounded-tl-lg rounded-bl-lg rounded-tr-3xl" />
+            <Image
+              className="absolute ml-1"
+              height={50}
+              width={50}
+              src={Skull}
+              alt="score"
+            />
+            <StatusTextContainer className="rounded-bl-lg ml-4">
+              {currentPlayer.score}
+            </StatusTextContainer>
+          </div>
+          <div className="relative flex flex-row items-center mt-8">
+            <div className="bg-[#15172E] absolute top-[-10px] bottom-0 w-[60px] rounded-tl-lg rounded-bl-lg rounded-tr-3xl" />
+            <Image
+              className="absolute ml-1"
+              height={50}
+              width={50}
+              src={Solarite}
+              alt="solarite"
+            />
             <StatusTextContainer className="rounded-bl-lg ml-4">
               {currentPlayer.solarite}
             </StatusTextContainer>

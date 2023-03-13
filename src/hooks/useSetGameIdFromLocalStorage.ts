@@ -10,7 +10,7 @@ const useSetGameIdFromLocalStorage = () => {
 
     useEffect(() => {
         if (typeof gameId !== "undefined") return;
-        if (typeof localGameId === "undefined" || localGameId === "" ) return;
+        if (!localGameId) return;
 
         setGameId(BigInt(localGameId))
         
