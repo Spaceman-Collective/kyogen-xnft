@@ -120,27 +120,27 @@ const VerticalBorder = ({ side = "left" }: { side?: "left" | "right" }) => {
   let borderAssets = {
     frameBorder: AncientsBorderImgY,
     frameMedal: AncientsFrameMedal,
-    frameKnot: AncientsFrameKnot
-  }
+    frameKnot: AncientsFrameKnot,
+  };
 
   if (clan === Clans.Creepers) {
     borderAssets = {
       frameBorder: CreepersBorderImgY,
       frameMedal: CreepersFrameMedal,
-      frameKnot: CreepersFrameKnot
-    } 
+      frameKnot: CreepersFrameKnot,
+    };
   } else if (clan === Clans.Synths) {
     borderAssets = {
       frameBorder: SynthsBorderImgY,
       frameMedal: SynthsFrameMedal,
-      frameKnot: SynthsFrameKnot
-    } 
+      frameKnot: SynthsFrameKnot,
+    };
   } else if (clan === Clans.Wildings) {
     borderAssets = {
       frameBorder: WildlingsBorderImgY,
       frameMedal: WildlingsFrameMedal,
-      frameKnot: WildlingsFrameKnot
-    } 
+      frameKnot: WildlingsFrameKnot,
+    };
   }
 
   let borderSideAdjustment = "left-[-9px]";
@@ -174,7 +174,7 @@ const VerticalBorder = ({ side = "left" }: { side?: "left" | "right" }) => {
 const HorizontalBorder = () => {
   const player = useRecoilValue(selectCurrentPlayer);
   if (!player) return null;
-  
+
   const clan = player.clan;
   let frameBorder = AncientsBorderImg;
   if (clan === Clans.Creepers) {
@@ -193,14 +193,12 @@ const HorizontalBorder = () => {
 };
 
 const GameFooter = () => {
-  // TODO: Unit section should show even when no unit is selected
-
   return (
     <div className="relative flex flex-row grow max-h-[275px]">
       <HorizontalBorder />
       <VerticalBorder />
       <div className="grow">Mini Map</div>
-      <div className="relative">
+      <div className="relative min-w-[245px]">
         <VerticalBorder />
         <SelectedUnit className="relative pl-[9px] pt-[2px]" />
       </div>
