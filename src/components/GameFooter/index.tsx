@@ -1,6 +1,6 @@
 import { useRecoilValue } from "recoil";
 import { selectedUnitAtom } from "@/recoil";
-import { UnitNames } from "@/types";
+import { Clans, UnitNames } from "@/types";
 
 import AncientNinja from "../../../public/ancient_ninja.webp";
 import CreeperNinja from "../../../public/creeper_ninja.webp";
@@ -29,11 +29,12 @@ import SynthsBorderImgY from "../../../public/clans/synths/frame_border_y.svg";
 import SynthsFrameMedal from "../../../public/clans/synths/frame_medal.svg";
 import SynthsFrameKnot from "../../../public/clans/synths/frame_knot.svg";
 
-import WildlingsBorderImg from "../../../public/clans/wildlings/frame_border.svg";
+import WildlingsBorderImg from "../../../public/clans/wildlings/frame_border_x.svg";
 import WildlingsBorderImgY from "../../../public/clans/wildlings/frame_border_y.svg";
 import WildlingsFrameMedal from "../../../public/clans/wildlings/frame_medal.svg";
 import WildlingsFrameKnot from "../../../public/clans/wildlings/frame_knot.svg";
 import Image, { StaticImageData } from "next/image";
+import { selectCurrentPlayer } from "@/recoil/selectors";
 
 const UnitNameToImageMap = (name: UnitNames): StaticImageData => {
   switch (name) {
@@ -111,41 +112,87 @@ const SelectedUnit = ({ className }: { className?: string }) => {
 };
 
 const VerticalBorder = ({ side = "left" }: { side?: "left" | "right" }) => {
+  const player = useRecoilValue(selectCurrentPlayer);
+  if (!player) return null;
+
+  const clan = player.clan;
+
+  let borderAssets = {
+    frameBorder: AncientsBorderImgY,
+    frameMedal: AncientsFrameMedal,
+    frameKnot: AncientsFrameKnot
+  }
+
+  if (clan === Clans.Creepers) {
+    borderAssets = {
+      frameBorder: CreepersBorderImgY,
+      frameMedal: CreepersFrameMedal,
+      frameKnot: CreepersFrameKnot
+    } 
+  } else if (clan === Clans.Synths) {
+    borderAssets = {
+      frameBorder: SynthsBorderImgY,
+      frameMedal: SynthsFrameMedal,
+      frameKnot: SynthsFrameKnot
+    } 
+  } else if (clan === Clans.Wildings) {
+    borderAssets = {
+      frameBorder: WildlingsBorderImgY,
+      frameMedal: WildlingsFrameMedal,
+      frameKnot: WildlingsFrameKnot
+    } 
+  }
+
   let borderSideAdjustment = "left-[-9px]";
   let medalSideAdjustment = "left-[-11px]";
   let knotSideAdjustment = "left-[-21.5px]";
   if (side === "right") {
-    borderSideAdjustment = "right-[8px]"
+    borderSideAdjustment = "right-[8px]";
     medalSideAdjustment = "right-[5px]";
     knotSideAdjustment = "right-[-5px]";
   }
   return (
-  <>
-    <div
-      className={`absolute ${borderSideAdjustment} top-[5px] w-[28px] h-full z-50`}
-      style={{ backgroundImage: `url('${CreepersBorderImgY.src}')` }}
-    ></div>
-    <Image
-      className={`absolute top-[-14px] z-50 ${medalSideAdjustment}`}
-      src={CreepersFrameMedal}
-      alt="Frame Medal"
-    />
-    <Image className={`absolute top-0 z-50 ${knotSideAdjustment}`} src={CreepersFrameKnot} alt="Frame Knot" />
-  </>
-)};
+    <>
+      <div
+        className={`absolute ${borderSideAdjustment} top-[5px] w-[28px] h-full z-50`}
+        style={{ backgroundImage: `url('${borderAssets.frameBorder.src}')` }}
+      ></div>
+      <Image
+        className={`absolute top-[-14px] z-50 ${medalSideAdjustment}`}
+        src={borderAssets.frameMedal}
+        alt="Frame Medal"
+      />
+      <Image
+        className={`absolute top-0 z-50 ${knotSideAdjustment}`}
+        src={borderAssets.frameKnot}
+        alt="Frame Knot"
+      />
+    </>
+  );
+};
 
 const HorizontalBorder = () => {
+  const player = useRecoilValue(selectCurrentPlayer);
+  if (!player) return null;
+  
+  const clan = player.clan;
+  let frameBorder = AncientsBorderImg;
+  if (clan === Clans.Creepers) {
+    frameBorder = CreepersBorderImg;
+  } else if (clan === Clans.Synths) {
+    frameBorder = SynthsBorderImg;
+  } else if (clan === Clans.Wildings) {
+    frameBorder = WildlingsBorderImg;
+  }
   return (
     <div
-        className="absolute top-[-9px] w-full h-[18px] bg-repeat-x z-40"
-        style={{ backgroundImage: `url('${CreepersBorderImg.src}')` }}
-      ></div>
-  )
-}
+      className="absolute top-[-9px] w-full h-[18px] bg-repeat-x z-40"
+      style={{ backgroundImage: `url('${frameBorder.src}')` }}
+    ></div>
+  );
+};
 
 const GameFooter = () => {
-  // TODO: Use clan to change frame
-
   // TODO: Unit section should show even when no unit is selected
 
   return (
