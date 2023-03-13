@@ -37,7 +37,16 @@ import {
 } from "../../recoil/selectors";
 import { useSpawnUnit } from "../../hooks/useSpawnUnit";
 import { calculateUnitPositionOnTileCoords } from "../../utils/map";
-import { gameStateAtom } from "../../recoil";
+import { gameStateAtom, tilesAtomFamily } from "../../recoil";
+
+export const Spawn = ({ tileId }: { tileId: string }) => {
+  const tile = useRecoilValue(tilesAtomFamily(tileId));
+
+  if (!tile || !tile.spawnable || !tile.clan) {
+    return null;
+  }
+  return <SpawnSprite clan={tile.clan} tileX={tile.x} tileY={tile.y} />;
+};
 
 export const SpawnSprite = ({
   clan,

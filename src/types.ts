@@ -63,8 +63,8 @@ export interface Map {
 }
 
 export interface Tile {
-  clan: Clans;
-  troop: Troop;
+  clan: Clans | undefined;
+  troop: Troop | undefined;
   spawnable: boolean;
   x: number;
   y: number;

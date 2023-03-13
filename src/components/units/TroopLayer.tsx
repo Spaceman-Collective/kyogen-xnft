@@ -1,21 +1,14 @@
 import { useRecoilValue } from "recoil";
-import { selectTiles } from "../../recoil/selectors";
-import { UnitSprite } from "./UnitSprite";
+import { tileIdsAtom } from "../../recoil";
+import { TroopUnit } from "./UnitSprite";
 
 export const TroopLayer = () => {
-  const tiles = useRecoilValue(selectTiles);
+  const tileIds = useRecoilValue(tileIdsAtom);
   return (
     <>
-      {tiles.map((tile, index) =>
-        tile.troop ? (
-          <UnitSprite
-            key={index}
-            troop={tile.troop}
-            tileX={tile.x}
-            tileY={tile.y}
-          />
-        ) : null
-      )}
+      {tileIds.map((tileId) => (
+        <TroopUnit key={tileId} tileId={tileId} />
+      ))}
     </>
   );
 };

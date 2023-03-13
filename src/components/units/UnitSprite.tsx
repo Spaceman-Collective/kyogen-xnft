@@ -4,7 +4,7 @@ import { Container } from "react-pixi-fiber";
 import { useRecoilValue } from "recoil";
 import { TILE_LENGTH, UNIT_LENGTH } from "../../constants";
 import { useMoveUnit } from "../../hooks/useMoveUnit";
-import { gameStateAtom } from "../../recoil";
+import { gameStateAtom, tilesAtomFamily } from "../../recoil";
 import { selectMapDims } from "../../recoil/selectors";
 import { Troop } from "../../types";
 import {
@@ -18,6 +18,15 @@ import { MoveHighlight } from "../MoveHighlight";
 import { getViewport } from "../PixiViewport";
 import { ClippedUnit } from "./ClippedUnit";
 import { UnitHealth } from "./UnitHealth";
+
+export const TroopUnit = ({ tileId }: { tileId: string }) => {
+  const tile = useRecoilValue(tilesAtomFamily(tileId));
+
+  if (!tile || !tile.troop) {
+    return null;
+  }
+  return <UnitSprite tileX={tile.x} tileY={tile.y} troop={tile.troop} />;
+};
 
 export const UnitSprite = ({
   tileX,
@@ -90,26 +99,25 @@ export const UnitSprite = ({
           normalizeGlobalPointFromViewport(viewport, event.global)
         );
         const distance = calculateDistance(startTile!, coords);
-        if (distance <= movement) {
-          // unit could be moved
-          const destinationTileId = gameState!.get_tile_id(
-            coords[0],
-            coords[1]
-          );
-
-          try {
-            await moveUnit(destinationTileId);
-            container.position = calculateUnitPositionOnTileCoords(...coords);
-            return;
-          } catch (err) {
-            // TODO better error handling
-            container.position = calculateUnitPositionOnTileCoords(
-              ...startTile!
-            );
-          }
+        if (
+          distance > movement ||
+          (startTile![0] === coords[0] && startTile![1] === coords[1])
+        ) {
+          // unit could not be moved or was moved to starting tile
+          container.position = calculateUnitPositionOnTileCoords(...startTile!);
+          return;
         }
-        // unit could not be moved
-        container.position = calculateUnitPositionOnTileCoords(...startTile!);
+        // unit could be moved
+        const destinationTileId = gameState!.get_tile_id(coords[0], coords[1]);
+
+        try {
+          await moveUnit(destinationTileId);
+          container.position = calculateUnitPositionOnTileCoords(...coords);
+          return;
+        } catch (err) {
+          // TODO better error handling
+          container.position = calculateUnitPositionOnTileCoords(...startTile!);
+        }
       },
       [gameState, moveUnit, movement, startTile]
     );

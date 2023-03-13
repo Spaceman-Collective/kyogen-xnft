@@ -3,8 +3,9 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import * as kyogenSdk from "kyogen-sdk";
 import { gameIdAtom, gameStateAtom } from "../recoil";
 import { useConnection } from "@solana/wallet-adapter-react";
-import { UnitNames } from "../types";
+import { Map, UnitNames } from "../types";
 import useSetGameIdFromLocalStorage from "./useSetGameIdFromLocalStorage";
+import { useUpdatePlayers, useUpdateTiles } from "../recoil/transactions";
 
 /**
  *
@@ -15,6 +16,8 @@ export const useLoadGameState = () => {
   const { connection } = useConnection();
   const setGameState = useSetRecoilState(gameStateAtom);
   const gameId = useRecoilValue(gameIdAtom);
+  const updateTiles = useUpdateTiles(true);
+  const updatePlayers = useUpdatePlayers();
 
   useEffect(() => {
     if (typeof gameId === "undefined") {
@@ -33,6 +36,15 @@ export const useLoadGameState = () => {
       console.log("gamestate ", gamestate.get_map());
       // TODO error handling
       setGameState(gamestate);
+      const map = gamestate.get_map() as Map;
+      updateTiles(map.tiles);
+      updatePlayers({ players: gamestate.get_players(), updateIdList: true });
     })();
-  }, [connection.rpcEndpoint, gameId, setGameState]);
+  }, [
+    connection.rpcEndpoint,
+    gameId,
+    setGameState,
+    updatePlayers,
+    updateTiles,
+  ]);
 };
