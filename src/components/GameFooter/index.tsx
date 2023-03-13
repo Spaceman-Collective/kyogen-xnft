@@ -16,6 +16,8 @@ import SynthSamurai from "../../../public/synth_samurai.webp";
 import WildingSamurai from "../../../public/wildling_samurai.webp";
 import CreepersBorderImg from "../../../public/clans/creepers/game_border.svg";
 import CreepersBorderImgY from "../../../public/clans/creepers/game_border_y.svg";
+import CreepersFrameMedal from "../../../public/clans/creepers/frame_medal.svg";
+import CreepersFrameKnot from "../../../public/clans/creepers/frame_knot.svg";
 import Image, { StaticImageData } from "next/image";
 
 const UnitNameToImageMap = (name: UnitNames): StaticImageData => {
@@ -93,22 +95,39 @@ const SelectedUnit = ({ className }: { className?: string }) => {
   );
 };
 
-const VerticalBorder = ({ side = "left" }: { side?: "left" | "right" }) => (
-  <div
-    className={`absolute ${side === "left" ? "left-[-9px]" : ""} ${
-      side === "right" ? "right-[8px]" : ""
-    } top-[5px] w-[28px] h-full z-40`}
-    style={{ backgroundImage: `url('${CreepersBorderImgY.src}')` }}
-  ></div>
-);
+const VerticalBorder = ({ side = "left" }: { side?: "left" | "right" }) => {
+  let borderSideAdjustment = "left-[-9px]";
+  let medalSideAdjustment = "left-[-11px]";
+  let knotSideAdjustment = "left-[-21.5px]";
+  if (side === "right") {
+    borderSideAdjustment = "right-[8px]"
+    medalSideAdjustment = "right-[5px]";
+    knotSideAdjustment = "right-[-5px]";
+  }
+  return (
+  <>
+    <div
+      className={`absolute ${borderSideAdjustment} top-[5px] w-[28px] h-full z-50`}
+      style={{ backgroundImage: `url('${CreepersBorderImgY.src}')` }}
+    ></div>
+    <Image
+      className={`absolute top-[-14px] z-50 ${medalSideAdjustment}`}
+      src={CreepersFrameMedal}
+      alt="Frame Medal"
+    />
+    <Image className={`absolute top-0 z-50 ${knotSideAdjustment}`} src={CreepersFrameKnot} alt="Frame Knot" />
+  </>
+)};
 
 const GameFooter = () => {
-  // TODO: Use clan to change border
+  // TODO: Use clan to change frame
+
+  // TODO: Unit section should show even when no unit is selected
 
   return (
     <div className="relative flex flex-row grow max-h-[275px]">
       <div
-        className="absolute top-[-9px] w-full h-[18px] bg-repeat-x z-50"
+        className="absolute top-[-9px] w-full h-[18px] bg-repeat-x z-40"
         style={{ backgroundImage: `url('${CreepersBorderImg.src}')` }}
       ></div>
       <VerticalBorder />
