@@ -20,10 +20,14 @@ export const normalizeGlobalPointFromViewport = (
  * @param x
  * @param y
  */
-export const calculateTileCoords = (point: PIXI.Point): [number, number] => {
+export const calculateTileCoords = (
+  point: PIXI.Point,
+  scaleX = 1,
+  scaleY = 1
+): [number, number] => {
   const tileBoundary = TILE_LENGTH + TILE_SPACING / 2;
-  const i = Math.floor(point.x / tileBoundary);
-  const j = Math.floor(point.y / tileBoundary);
+  const i = Math.floor(point.x / (tileBoundary * scaleX));
+  const j = Math.floor(point.y / (tileBoundary * scaleY));
   return [i, j];
 };
 

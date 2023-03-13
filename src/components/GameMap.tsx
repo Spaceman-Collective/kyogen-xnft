@@ -1,19 +1,23 @@
 import { Stage } from "react-pixi-fiber";
 import { KyogenViewport } from "./PixiViewport";
 import { TileMap } from "./TileMap";
-import { useWindowSize } from "usehooks-ts";
 import { useWorldDims } from "../hooks/useWorldDims";
 import { useRecoilBridgeAcrossReactRoots_UNSTABLE } from "recoil";
 import { SpawnLayer } from "./features/SpawnLayer";
 import { TroopLayer } from "./units/TroopLayer";
 import { AttackButtonLayer } from "./units/AttackButtonLayer";
 
-export const GameMap = () => {
+export const GameMap = ({
+  height,
+  width,
+}: {
+  height: number;
+  width: number;
+}) => {
   const BridgedRecoilRoot = useRecoilBridgeAcrossReactRoots_UNSTABLE();
   const { height: worldHeight, width: worldWidth } = useWorldDims();
-  const windowSize = useWindowSize();
-  const stageHeight = Math.min(windowSize.height, worldHeight);
-  const stageWidth = Math.min(windowSize.width, worldWidth);
+  const stageHeight = Math.min(height, worldHeight);
+  const stageWidth = Math.min(width, worldWidth);
 
   return (
     <Stage

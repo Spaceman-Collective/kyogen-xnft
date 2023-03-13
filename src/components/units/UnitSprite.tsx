@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import { useCallback, useMemo, useState } from "react";
 import { Container } from "react-pixi-fiber";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { TILE_LENGTH, UNIT_LENGTH, UNIT_OFFSET } from "../../constants";
+import { UNIT_LENGTH, UNIT_OFFSET } from "../../constants";
 import { useMoveUnit } from "../../hooks/useMoveUnit";
 import {
   gameStateAtom,
@@ -86,11 +86,19 @@ export const UnitSprite = ({
       (event) => {
         const container = event.currentTarget as PIXI.DisplayObject;
         const viewport = getViewport(container);
-        if (!viewport) return;
-        const coords = calculateTileCoords(
-          normalizeGlobalPointFromViewport(viewport, event.global)
+        if (!viewport) {
+          return;
+        }
+
+        const _startTile = calculateTileCoords(
+          normalizeGlobalPointFromViewport(viewport, event.global),
+          viewport.lastViewport?.scaleX,
+          viewport.lastViewport?.scaleY
         );
-        const startTileId = gameState!.get_tile_id(coords[0], coords[1]);
+        const startTileId = gameState!.get_tile_id(
+          _startTile[0],
+          _startTile[1]
+        );
         setSelectedTileId(startTileId);
 
         if (!ownedByCurrentPlayer) {
@@ -99,7 +107,7 @@ export const UnitSprite = ({
         }
         event.stopPropagation();
 
-        setStartTile(coords);
+        setStartTile(_startTile);
         container.alpha = 0.5;
         setDragging(true);
       },
@@ -115,7 +123,9 @@ export const UnitSprite = ({
           return;
         }
         const coords = calculateTileCoords(
-          normalizeGlobalPointFromViewport(viewport, event.global)
+          normalizeGlobalPointFromViewport(viewport, event.global),
+          viewport.lastViewport?.scaleX,
+          viewport.lastViewport?.scaleY
         );
         const destinationTileId = gameState!.get_tile_id(coords[0], coords[1]);
         // prevent viewport from moving
@@ -158,12 +168,14 @@ export const UnitSprite = ({
           if (!viewport) {
             return;
           }
+          const scaleX = viewport.lastViewport?.scaleX ?? 1;
+          const scaleY = viewport.lastViewport?.scaleY ?? 1;
           const position = normalizeGlobalPointFromViewport(
             viewport,
             event.global
           );
-          container.x = position.x - TILE_LENGTH / 2;
-          container.y = position.y - TILE_LENGTH / 2;
+          container.x = position.x / scaleX - UNIT_LENGTH / 2;
+          container.y = position.y / scaleY - UNIT_LENGTH / 2;
         }
       },
       [dragging]

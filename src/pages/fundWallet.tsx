@@ -34,7 +34,7 @@ const FundWallet = () => {
 
   useEffect(() => {
     fetchGameWalletBalance();
-  }, []);
+  }, [fetchGameWalletBalance]);
 
   useEffect(() => {
     setCanProceed(gameWalletBalance > 0.25);
@@ -70,7 +70,10 @@ const FundWallet = () => {
       { role: "success", message: `Transaction ${txId.substring(0,8)}.. confirmed` },
     ]);
     await fetchGameWalletBalance();
-  }, [transferAmount, gameWallet, setNotifications]);
+    setTimeout(() => {
+      fetchGameWalletBalance();
+    }, 2_000)
+  }, [gameWallet, fetchGameWalletBalance, setNotifications, transferAmount]);
 
   return (
     <Page title="FUND YOUR GAME WALLET">

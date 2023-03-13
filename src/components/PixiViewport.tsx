@@ -33,10 +33,10 @@ const DisplayObjectViewport = CustomPIXIComponent<
         screenWidth: screenWidth,
         worldWidth: worldWidth,
         worldHeight: worldHeight,
-        interaction: application.renderer.events,
+        events: application.renderer.events,
         ticker: application.ticker,
       })
-        .drag()
+        .drag({ underflow: "center" })
         .pinch()
         .wheel()
         .decelerate({ bounce: 0.95 })
@@ -47,6 +47,7 @@ const DisplayObjectViewport = CustomPIXIComponent<
             worldWidth + WORLD_OVERFLOW,
             worldHeight + WORLD_OVERFLOW
           ),
+          underflow: "center",
         });
       return viewport;
     },

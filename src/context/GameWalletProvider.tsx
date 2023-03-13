@@ -12,18 +12,18 @@ export const XnftGameWalletProvider = ({
 
   useEffect(() => {
     (async () => {
-      // TODO: [nice to have] on initiatl xNFT load this key is undefined. Could make setting the 
+      // TODO: [nice to have] on initiatl xNFT load this key is undefined. Could make setting the
       //  game wallet more event driven.
       await new Promise((resolve, reject) => {
-       const intervalId = setInterval(() => {
-        if (!window.xnft.solana.publicKey) return;
-        clearInterval(intervalId);
-        resolve(true)
-       }, 500) 
-      })
+        const intervalId = setInterval(() => {
+          if (!window.xnft.solana.publicKey) return;
+          clearInterval(intervalId);
+          resolve(true);
+        }, 500);
+      });
 
-    const keypair = loadOrCreateGameWallet(window.xnft.solana.publicKey);
-    setGameWallet(keypair);
+      const keypair = loadOrCreateGameWallet(window.xnft.solana.publicKey);
+      setGameWallet(keypair);
     })();
   }, [setGameWallet]);
 
