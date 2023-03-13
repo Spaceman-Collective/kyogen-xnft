@@ -6,7 +6,8 @@ import DamageIcon from "../../../public/icons/sword.png";
 import MoveIcon from "../../../public/icons/move.png";
 import RangeIcon from "../../../public/icons/range.png";
 import CoolDownIcon from "../../../public/icons/cooldown.png";
-import { ImageProps, StaticImageData } from "next/image";
+import { ImageProps } from "next/image";
+import { selectTroopFromSelectedTile } from "@/recoil/selectors";
 
 const InfoContainer = ({
   icon,
@@ -22,35 +23,35 @@ const InfoContainer = ({
 );
 
 const SelectedUnitInfo = () => {
-  const selectedUnit = useRecoilValue(selectedUnitAtom);
-  if (!selectedUnit) return null;
+  const selectedTroop = useRecoilValue(selectTroopFromSelectedTile);
+  if (!selectedTroop) return null;
 
   return (
     <div className="pt-[35px] pl-[32px]">
       <p className="font-normal text-[30px] leading-[30px]">
-        {selectedUnit.name}
+        {selectedTroop.name}
       </p>
       <div className="flex flex-row mr-[20px] mt-[23px]">
         <div className="flex flex-col mr-[12px]">
           <InfoContainer icon={{ src: DamageIcon, alt: "Damage Icon" }}>
             <p>Damage</p>
             <p>
-              {selectedUnit.min_damage} - {selectedUnit.max_damage}
+              {selectedTroop.min_damage} - {selectedTroop.max_damage}
             </p>
           </InfoContainer>
           <InfoContainer icon={{ src: MoveIcon, alt: "Move Icon" }}>
             <p>Move</p>
-            <p>{selectedUnit.movement}</p>
+            <p>{selectedTroop.movement}</p>
           </InfoContainer>
         </div>
         <div className="flex flex-col">
           <InfoContainer icon={{ src: RangeIcon, alt: "Rang Icon" }}>
             <p>Attack Range</p>
-            <p>{selectedUnit.attack_range}</p>
+            <p>{selectedTroop.attack_range}</p>
           </InfoContainer>
           <InfoContainer icon={{ src: CoolDownIcon, alt: "Cool Down Icon" }}>
             <p>Cool down</p>
-            <p>{selectedUnit.recovery}s</p>
+            <p>{selectedTroop.recovery}s</p>
           </InfoContainer>
         </div>
       </div>

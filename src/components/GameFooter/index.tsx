@@ -1,5 +1,4 @@
 import { useRecoilValue } from "recoil";
-import { selectedUnitAtom } from "@/recoil";
 import { Clans, UnitNames } from "@/types";
 
 import AncientNinja from "../../../public/ancient_ninja.webp";
@@ -34,8 +33,7 @@ import WildlingsBorderImgY from "../../../public/clans/wildlings/frame_border_y.
 import WildlingsFrameMedal from "../../../public/clans/wildlings/frame_medal.svg";
 import WildlingsFrameKnot from "../../../public/clans/wildlings/frame_knot.svg";
 import Image, { StaticImageData } from "next/image";
-import { selectCurrentPlayer } from "@/recoil/selectors";
-import InfoSquare from "./InfoSquare";
+import { selectCurrentPlayer, selectTroopFromSelectedTile } from "@/recoil/selectors";
 import SelectedUnitInfo from "./SelectedUnitInfo";
 
 const UnitNameToImageMap = (name: UnitNames): StaticImageData => {
@@ -96,20 +94,20 @@ const HealthBar = ({
 };
 
 const SelectedUnit = ({ className }: { className?: string }) => {
-  const selectedUnit = useRecoilValue(selectedUnitAtom);
-  if (!selectedUnit) return null;
+  const selectedTroop = useRecoilValue(selectTroopFromSelectedTile);
+  if (!selectedTroop) return null;
 
   return (
     <div className={className}>
       <Image
-        src={UnitNameToImageMap(selectedUnit.name)}
-        alt={selectedUnit.name}
+        src={UnitNameToImageMap(selectedTroop.name)}
+        alt={selectedTroop.name}
         height={236}
         width={236}
       />
       <HealthBar
-        currentHealth={selectedUnit.health}
-        maxHealth={selectedUnit.max_health}
+        currentHealth={selectedTroop.health}
+        maxHealth={selectedTroop.max_health}
       />
     </div>
   );
@@ -206,7 +204,7 @@ const GameFooter = () => {
         <VerticalBorder />
         <SelectedUnit className="relative pl-[9px] pt-[2px]" />
       </div>
-      <div className="relative">
+      <div className="relative min-w-[245px]">
         <VerticalBorder />
         <SelectedUnitInfo />
       </div>

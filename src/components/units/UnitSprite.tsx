@@ -7,7 +7,6 @@ import { useMoveUnit } from "../../hooks/useMoveUnit";
 import {
   gameStateAtom,
   selectedTileIdAtom,
-  selectedUnitAtom,
   tilesAtomFamily,
 } from "../../recoil";
 import {
@@ -53,7 +52,6 @@ export const UnitSprite = ({
   const troopPlayerColor = useRecoilValue(selectPlayerColor(troop.player_id));
   const mapDims = useRecoilValue(selectMapDims);
   const gameState = useRecoilValue(gameStateAtom);
-  const setSelectedUnit = useSetRecoilState(selectedUnitAtom);
   const setSelectedTileId = useSetRecoilState(selectedTileIdAtom);
   const [dragging, setDragging] = useState(false);
   const [startTile, setStartTile] = useState<[number, number] | null>([
@@ -97,15 +95,16 @@ export const UnitSprite = ({
         if (!viewport) {
           return;
         }
-        setStartTile(
-          calculateTileCoords(
-            normalizeGlobalPointFromViewport(viewport, event.global)
-          )
+        const coords = calculateTileCoords(
+          normalizeGlobalPointFromViewport(viewport, event.global)
         );
+        const startTileId = gameState!.get_tile_id(coords[0], coords[1]);
+        setStartTile(coords);
         container.alpha = 0.5;
         setDragging(true);
+        setSelectedTileId(startTileId);
       },
-      [ownedByCurrentPlayer]
+      [gameState, ownedByCurrentPlayer, setSelectedTileId]
     );
 
   const onDragEnd: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
@@ -113,7 +112,6 @@ export const UnitSprite = ({
       async (event) => {
         const container = event.currentTarget as PIXI.DisplayObject;
         const viewport = getViewport(container);
-        setSelectedUnit(troop);
         if (!viewport) {
           return;
         }
@@ -121,7 +119,6 @@ export const UnitSprite = ({
           normalizeGlobalPointFromViewport(viewport, event.global)
         );
         const destinationTileId = gameState!.get_tile_id(coords[0], coords[1]);
-        setSelectedTileId(destinationTileId);
         // prevent viewport from moving
         event.stopPropagation();
         // Set the selected unit
@@ -142,21 +139,14 @@ export const UnitSprite = ({
         try {
           await moveUnit(destinationTileId);
           container.position = calculateUnitPositionOnTileCoords(...coords);
+          setSelectedTileId(destinationTileId);
           return;
         } catch (err) {
           // TODO better error handling
           container.position = calculateUnitPositionOnTileCoords(...startTile!);
         }
       },
-      [
-        setSelectedUnit,
-        troop,
-        gameState,
-        setSelectedTileId,
-        startTile,
-        movement,
-        moveUnit,
-      ]
+      [gameState, startTile, movement, moveUnit, setSelectedTileId]
     );
 
   const onDragMove: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
