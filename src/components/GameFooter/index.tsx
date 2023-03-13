@@ -15,6 +15,7 @@ import CreeperSamurai from "../../../public/creeper_samurai.webp";
 import SynthSamurai from "../../../public/synth_samurai.webp";
 import WildingSamurai from "../../../public/wildling_samurai.webp";
 import CreepersBorderImg from "../../../public/clans/creepers/game_border.svg";
+import CreepersBorderImgY from "../../../public/clans/creepers/game_border_y.svg";
 import Image, { StaticImageData } from "next/image";
 
 const UnitNameToImageMap = (name: UnitNames): StaticImageData => {
@@ -98,6 +99,10 @@ const GameFooter = () => {
       <div
         className="absolute top-[-9px] w-full h-[18px] bg-repeat-x z-10"
         style={{ backgroundImage: `url('${CreepersBorderImg.src}')` }}
+      ></div>
+      <div
+        className="absolute left-[-9px] top-[5px] w-[28px] h-full  z-0 "
+        style={{ backgroundImage: `url('${CreepersBorderImgY.src}')` }}
       ></div>
       <div className="grow">Mini Map</div>
       <div>
