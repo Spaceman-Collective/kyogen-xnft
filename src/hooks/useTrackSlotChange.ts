@@ -8,7 +8,7 @@ export const useTrackSlotChange = () => {
 
   useEffect(() => {
     const id = connection.onSlotUpdate((slotUpdate) => {
-      if (slotUpdate.type === "root") {
+      if (slotUpdate.type === "completed") {
         setCurrentSlot(slotUpdate.slot);
       }
     });

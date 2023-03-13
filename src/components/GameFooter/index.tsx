@@ -108,7 +108,7 @@ const HorizontalBorder = () => {
 
 const GameFooter = () => {
   return (
-    <div className="relative flex flex-row grow max-h-[275px] font-millimetre bg-kyogen-fund-bg">
+    <div className="relative flex flex-row grow max-h-[275px] font-millimetre bg-kyogen-fund-bg min-h-[275px]">
       <HorizontalBorder />
       <VerticalBorder />
       <div className="grow">Mini Map</div>

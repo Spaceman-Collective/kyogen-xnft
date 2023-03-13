@@ -2,7 +2,7 @@ import { usePreviousDefined } from "@/hooks/usePreviousDefined";
 import { selectTroopFromSelectedTile } from "@/recoil/selectors";
 import { useRecoilValue } from "recoil";
 import Image, { StaticImageData } from "next/image";
-import { UnitNames } from "@/types";
+import { Troop, UnitNames } from "@/types";
 
 import AncientNinja from "../../../public/ancient_ninja.webp";
 import CreeperNinja from "../../../public/creeper_ninja.webp";
@@ -16,6 +16,7 @@ import AncientSamurai from "../../../public/ancient_samurai.webp";
 import CreeperSamurai from "../../../public/creeper_samurai.webp";
 import SynthSamurai from "../../../public/synth_samurai.webp";
 import WildingSamurai from "../../../public/wildling_samurai.webp";
+import { currentSlotAtom } from "@/recoil";
 
 const UnitNameToImageMap = (name: UnitNames): StaticImageData => {
   switch (name) {
@@ -75,6 +76,30 @@ const HealthBar = ({
     </div>
   );
 };
+
+const UnitImage = ({ troop }: { troop: Troop }) => {
+  const currentSlot = useRecoilValue(currentSlotAtom);
+
+  let coolDownPercentage =
+    ((currentSlot - parseInt(troop.last_used)) / parseInt(troop.recovery)) *
+    100;
+  coolDownPercentage = coolDownPercentage > 100 ? 100 : coolDownPercentage;
+
+  return (
+    <div className="relative">
+      <div
+        className="absolute top-0 h-full bg-black/75"
+        style={{ width: `${100 - coolDownPercentage}%` }}
+      ></div>
+      <Image
+        src={UnitNameToImageMap(troop.name)}
+        alt={troop.name}
+        height={236}
+        width={236}
+      />
+    </div>
+  );
+};
 const SelectedUnit = ({ className }: { className?: string }) => {
   const selectedTroop = useRecoilValue(selectTroopFromSelectedTile);
   const prevSelectedTroop = usePreviousDefined(selectedTroop);
@@ -83,12 +108,7 @@ const SelectedUnit = ({ className }: { className?: string }) => {
 
   return (
     <div className={className}>
-      <Image
-        src={UnitNameToImageMap(troop.name)}
-        alt={troop.name}
-        height={236}
-        width={236}
-      />
+      <UnitImage troop={troop} />
       <HealthBar currentHealth={troop.health} maxHealth={troop.max_health} />
     </div>
   );
