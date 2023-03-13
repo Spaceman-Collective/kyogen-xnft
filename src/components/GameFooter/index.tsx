@@ -37,6 +37,9 @@ import Image, { StaticImageData } from "next/image";
 import { selectCurrentPlayer } from "@/recoil/selectors";
 import InfoSquare from "./InfoSquare";
 
+// Unit Info Icons
+import DamageIcon from "../../../public/icons/sword.png";
+
 const UnitNameToImageMap = (name: UnitNames): StaticImageData => {
   switch (name) {
     case UnitNames.AncientNinja:
@@ -205,7 +208,7 @@ const SelectedUnitInfo = () => {
         {selectedUnit.name}
       </p>
       <div className="flex flex-row items-center">
-        <InfoSquare />
+        <InfoSquare backgroundImage={{src: DamageIcon, alt: "Damage Icon"}}/>
         <div className="ml-[12px]">
           <p>Damage</p>
           <p>
