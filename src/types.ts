@@ -110,6 +110,7 @@ export interface Troop {
   bonus_shinobi: string;
   bonus_sohei: string;
   health: string;
+  max_health: string;
   id: string;
   last_used: string;
   max_damage: string;

@@ -21,6 +21,9 @@
   .font-outline-3 {
     -webkit-text-stroke: 3px #15171c;
   }
+  .font-outline-2 {
+    -webkit-text-stroke: 2px #15171c;
+  }
 }
 
 :root {

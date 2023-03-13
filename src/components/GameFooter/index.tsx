@@ -47,6 +47,29 @@ const UnitNameToImageMap = (name: UnitNames): StaticImageData => {
   }
 };
 
+const HealthBar = ({
+  currentHealth,
+  maxHealth,
+}: {
+  currentHealth: string;
+  maxHealth: string;
+}) => {
+  const healthPercentage = parseFloat(currentHealth)/parseFloat(maxHealth) * 100;
+  return (
+    <div className="relative bg-[#384269] w-full h-[36px] p-[8px]">
+      <div className="relative bg-kyogen-border h-[20px] rounded-[8px] rounded-tr-[0px] z-10">
+        <div
+          className={`absolute top-0 h-full rounded-[8px] bg-[#7DD75D] border-kyogen-border border-[1px] z-20`}
+          style={{ width: `${healthPercentage}%` }}
+        ></div>
+        <p className="relative z-50 w-full text-center leading-[20px] text-[18px] font-extrabold font-outline-2 outline-none">
+          {currentHealth} / {maxHealth}
+        </p>
+      </div>
+    </div>
+  );
+};
+
 const SelectedUnit = () => {
   const selectedUnit = useRecoilValue(selectedUnitAtom);
   if (!selectedUnit) return null;
@@ -58,6 +81,10 @@ const SelectedUnit = () => {
         alt={selectedUnit.name}
         height={236}
         width={236}
+      />
+      <HealthBar
+        currentHealth={selectedUnit.health}
+        maxHealth={selectedUnit.max_health}
       />
     </div>
   );
