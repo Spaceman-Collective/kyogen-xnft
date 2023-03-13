@@ -28,7 +28,7 @@ const InfoSquare = ({
           height="58"
           rx="11"
           stroke="black"
-          stroke-width="2"
+          strokeWidth="2"
         />
         <defs>
           <filter
@@ -38,7 +38,7 @@ const InfoSquare = ({
             width={size}
             height={size}
             filterUnits="userSpaceOnUse"
-            color-interpolation-filters="sRGB"
+            colorInterpolationFilters="sRGB"
           >
             <feFlood floodOpacity="0" result="BackgroundImageFix" />
             <feBlend
