@@ -59,7 +59,7 @@ const HealthBar = ({
   const healthPercentage =
     (parseFloat(currentHealth) / parseFloat(maxHealth)) * 100;
   return (
-    <div className="relative bg-[#384269] w-full h-[36px] p-[8px]">
+    <div className="relative bg-[#384269] w-full h-full p-[8px]">
       <div className="relative bg-kyogen-border h-[20px] rounded-[8px] rounded-tr-[0px] z-10">
         <div
           className={`absolute top-0 h-full rounded-[8px] bg-[#7DD75D] border-kyogen-border border-[1px] z-20`}
@@ -96,13 +96,15 @@ const SelectedUnit = ({ className }: { className?: string }) => {
 const VerticalBorder = ({ side = "left" }: { side?: "left" | "right" }) => (
   <div
     className={`absolute ${side === "left" ? "left-[-9px]" : ""} ${
-      side === "right" ? "right-[9px]" : ""
+      side === "right" ? "right-[8px]" : ""
     } top-[5px] w-[28px] h-full z-40`}
     style={{ backgroundImage: `url('${CreepersBorderImgY.src}')` }}
   ></div>
 );
 
 const GameFooter = () => {
+  // TODO: Use clan to change border
+
   return (
     <div className="relative flex flex-row grow max-h-[275px]">
       <div
@@ -113,7 +115,7 @@ const GameFooter = () => {
       <div className="grow">Mini Map</div>
       <div className="relative">
         <VerticalBorder />
-        <SelectedUnit className="relative top-[7px]" />
+        <SelectedUnit className="relative pl-[9px] pt-[2px]" />
       </div>
       <div className="grow relative">
         <VerticalBorder />
