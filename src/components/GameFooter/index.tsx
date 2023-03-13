@@ -73,12 +73,12 @@ const HealthBar = ({
   );
 };
 
-const SelectedUnit = () => {
+const SelectedUnit = ({ className }: { className?: string }) => {
   const selectedUnit = useRecoilValue(selectedUnitAtom);
   if (!selectedUnit) return null;
 
   return (
-    <div>
+    <div className={className}>
       <Image
         src={UnitNameToImageMap(selectedUnit.name)}
         alt={selectedUnit.name}
@@ -93,23 +93,37 @@ const SelectedUnit = () => {
   );
 };
 
+const VerticalBorder = ({ side = "left" }: { side?: "left" | "right" }) => (
+  <div
+    className={`absolute ${side === "left" ? "left-[-9px]" : ""} ${
+      side === "right" ? "right-[9px]" : ""
+    } top-[5px] w-[28px] h-full z-40`}
+    style={{ backgroundImage: `url('${CreepersBorderImgY.src}')` }}
+  ></div>
+);
+
 const GameFooter = () => {
   return (
     <div className="relative flex flex-row grow max-h-[275px]">
       <div
-        className="absolute top-[-9px] w-full h-[18px] bg-repeat-x z-10"
+        className="absolute top-[-9px] w-full h-[18px] bg-repeat-x z-50"
         style={{ backgroundImage: `url('${CreepersBorderImg.src}')` }}
       ></div>
-      <div
-        className="absolute left-[-9px] top-[5px] w-[28px] h-full  z-0 "
-        style={{ backgroundImage: `url('${CreepersBorderImgY.src}')` }}
-      ></div>
+      <VerticalBorder />
       <div className="grow">Mini Map</div>
-      <div>
-        <SelectedUnit />
+      <div className="relative">
+        <VerticalBorder />
+        <SelectedUnit className="relative top-[7px]" />
       </div>
-      <div className="grow">Unit Info</div>
-      <div className="grow">Game feed</div>
+      <div className="grow relative">
+        <VerticalBorder />
+        Unit Info
+      </div>
+      <div className="grow relative">
+        <VerticalBorder />
+        Game feed
+        <VerticalBorder side="right" />
+      </div>
     </div>
   );
 };
