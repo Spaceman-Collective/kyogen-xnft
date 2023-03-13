@@ -36,9 +36,7 @@ import WildlingsFrameKnot from "../../../public/clans/wildlings/frame_knot.svg";
 import Image, { StaticImageData } from "next/image";
 import { selectCurrentPlayer } from "@/recoil/selectors";
 import InfoSquare from "./InfoSquare";
-
-// Unit Info Icons
-import DamageIcon from "../../../public/icons/sword.png";
+import SelectedUnitInfo from "./SelectedUnitInfo";
 
 const UnitNameToImageMap = (name: UnitNames): StaticImageData => {
   switch (name) {
@@ -198,28 +196,6 @@ const HorizontalBorder = () => {
   );
 };
 
-const SelectedUnitInfo = () => {
-  const selectedUnit = useRecoilValue(selectedUnitAtom);
-  if (!selectedUnit) return null;
-
-  return (
-    <div className="pt-[35px] pl-[32px]">
-      <p className="font-normal text-[30px] leading-[30px]">
-        {selectedUnit.name}
-      </p>
-      <div className="flex flex-row items-center">
-        <InfoSquare backgroundImage={{src: DamageIcon, alt: "Damage Icon"}}/>
-        <div className="ml-[12px]">
-          <p>Damage</p>
-          <p>
-            {selectedUnit.min_damage} - {selectedUnit.max_damage}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const GameFooter = () => {
   return (
     <div className="relative flex flex-row grow max-h-[275px] font-millimetre">
@@ -230,7 +206,7 @@ const GameFooter = () => {
         <VerticalBorder />
         <SelectedUnit className="relative pl-[9px] pt-[2px]" />
       </div>
-      <div className="grow relative">
+      <div className="relative">
         <VerticalBorder />
         <SelectedUnitInfo />
       </div>

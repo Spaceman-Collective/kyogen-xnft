@@ -68,7 +68,7 @@ const InfoSquare = ({
         </defs>
       </svg>
       <Image
-        className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]"
+        className={`absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] max-w-[${size-15}px] max-h-[${size-15}px]`}
         width={size - 15}
         height={size - 15}
         {...backgroundImage}
