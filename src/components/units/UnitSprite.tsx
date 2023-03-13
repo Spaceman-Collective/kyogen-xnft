@@ -174,7 +174,7 @@ export const UnitSprite = ({
         />
         <UnitHealth
           health={Number(troop.health)}
-          maxHealth={10}
+          maxHealth={Number(troop.max_health)}
           showHealthBar={hovering}
         />
       </Container>
