@@ -146,11 +146,19 @@ export const UnitSprite = ({
         }
         // unit could be moved
         try {
+          setSelectedTileId(destinationTileId);
           await moveUnit(destinationTileId);
           container.position = calculateUnitPositionOnTileCoords(...coords);
-          setSelectedTileId(destinationTileId);
           return;
         } catch (err) {
+          if (startTile) {
+            // NOTE: if the user clicks on another tile and the move TX errors, then the selected unit will revert.
+            // TODO find a better way to handle this.
+            setSelectedTileId(
+              gameState!.get_tile_id(startTile[0], startTile[1])
+            );
+          }
+          console.log(err);
           // TODO better error handling
           container.position = calculateUnitPositionOnTileCoords(...startTile!);
         }

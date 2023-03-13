@@ -12,7 +12,7 @@ export const useSetInnerConnection = () => {
   useEffect(() => {
     if (window?.xnft?.solana) {
       setConnection(
-        new Connection(window?.xnft?.solana.connection.rpcEndpoint)
+        new Connection(window?.xnft?.solana?.connection?.rpcEndpoint)
       );
     }
   }, [setConnection]);
