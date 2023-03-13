@@ -35,6 +35,8 @@ import WildlingsFrameMedal from "../../../public/clans/wildlings/frame_medal.svg
 import WildlingsFrameKnot from "../../../public/clans/wildlings/frame_knot.svg";
 import Image, { StaticImageData } from "next/image";
 import { selectCurrentPlayer } from "@/recoil/selectors";
+import InfoSquare from "./InfoSquare";
+import SelectedUnitInfo from "./SelectedUnitInfo";
 
 const UnitNameToImageMap = (name: UnitNames): StaticImageData => {
   switch (name) {
@@ -74,6 +76,8 @@ const HealthBar = ({
   currentHealth: string;
   maxHealth: string;
 }) => {
+  // TODO: Change color based on percentage
+
   const healthPercentage =
     (parseFloat(currentHealth) / parseFloat(maxHealth)) * 100;
   return (
@@ -83,7 +87,7 @@ const HealthBar = ({
           className={`absolute top-0 h-full rounded-[8px] bg-[#7DD75D] border-kyogen-border border-[1px] z-20`}
           style={{ width: `${healthPercentage}%` }}
         ></div>
-        <p className="relative z-50 w-full text-center leading-[20px] text-[18px] font-extrabold font-outline-2 outline-none">
+        <p className="relative z-50 w-full text-center leading-[20px] text-[18px] font-extrabold font-outline-1 outline-none font-inter">
           {currentHealth} / {maxHealth}
         </p>
       </div>
@@ -194,7 +198,7 @@ const HorizontalBorder = () => {
 
 const GameFooter = () => {
   return (
-    <div className="relative flex flex-row grow max-h-[275px]">
+    <div className="relative flex flex-row grow max-h-[275px] font-millimetre bg-kyogen-fund-bg">
       <HorizontalBorder />
       <VerticalBorder />
       <div className="grow">Mini Map</div>
@@ -202,9 +206,9 @@ const GameFooter = () => {
         <VerticalBorder />
         <SelectedUnit className="relative pl-[9px] pt-[2px]" />
       </div>
-      <div className="grow relative">
+      <div className="relative">
         <VerticalBorder />
-        Unit Info
+        <SelectedUnitInfo />
       </div>
       <div className="grow relative">
         <VerticalBorder />
