@@ -14,10 +14,25 @@ import AncientSamurai from "../../../public/ancient_samurai.webp";
 import CreeperSamurai from "../../../public/creeper_samurai.webp";
 import SynthSamurai from "../../../public/synth_samurai.webp";
 import WildingSamurai from "../../../public/wildling_samurai.webp";
-import CreepersBorderImg from "../../../public/clans/creepers/game_border.svg";
-import CreepersBorderImgY from "../../../public/clans/creepers/game_border_y.svg";
+import CreepersBorderImg from "../../../public/clans/creepers/frame_border.svg";
+import CreepersBorderImgY from "../../../public/clans/creepers/frame_border_y.svg";
 import CreepersFrameMedal from "../../../public/clans/creepers/frame_medal.svg";
 import CreepersFrameKnot from "../../../public/clans/creepers/frame_knot.svg";
+
+import AncientsBorderImg from "../../../public/clans/ancients/frame_border_x.svg";
+import AncientsBorderImgY from "../../../public/clans/ancients/frame_border_y.svg";
+import AncientsFrameMedal from "../../../public/clans/ancients/frame_medal.svg";
+import AncientsFrameKnot from "../../../public/clans/ancients/frame_knot.svg";
+
+import SynthsBorderImg from "../../../public/clans/synths/frame_border_x.svg";
+import SynthsBorderImgY from "../../../public/clans/synths/frame_border_y.svg";
+import SynthsFrameMedal from "../../../public/clans/synths/frame_medal.svg";
+import SynthsFrameKnot from "../../../public/clans/synths/frame_knot.svg";
+
+import WildlingsBorderImg from "../../../public/clans/wildlings/frame_border.svg";
+import WildlingsBorderImgY from "../../../public/clans/wildlings/frame_border_y.svg";
+import WildlingsFrameMedal from "../../../public/clans/wildlings/frame_medal.svg";
+import WildlingsFrameKnot from "../../../public/clans/wildlings/frame_knot.svg";
 import Image, { StaticImageData } from "next/image";
 
 const UnitNameToImageMap = (name: UnitNames): StaticImageData => {
@@ -119,6 +134,15 @@ const VerticalBorder = ({ side = "left" }: { side?: "left" | "right" }) => {
   </>
 )};
 
+const HorizontalBorder = () => {
+  return (
+    <div
+        className="absolute top-[-9px] w-full h-[18px] bg-repeat-x z-40"
+        style={{ backgroundImage: `url('${CreepersBorderImg.src}')` }}
+      ></div>
+  )
+}
+
 const GameFooter = () => {
   // TODO: Use clan to change frame
 
@@ -126,10 +150,7 @@ const GameFooter = () => {
 
   return (
     <div className="relative flex flex-row grow max-h-[275px]">
-      <div
-        className="absolute top-[-9px] w-full h-[18px] bg-repeat-x z-40"
-        style={{ backgroundImage: `url('${CreepersBorderImg.src}')` }}
-      ></div>
+      <HorizontalBorder />
       <VerticalBorder />
       <div className="grow">Mini Map</div>
       <div className="relative">
