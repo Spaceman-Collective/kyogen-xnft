@@ -6,6 +6,8 @@ import { selectTilesWithEnemiesInSelectedUnitAttackRange } from "../../recoil/se
 import { calculateUnitPositionOnTileCoords } from "../../utils/map";
 import { Circle } from "../PixiComponents";
 import { Container } from "react-pixi-fiber";
+import { useAttackUnit } from "../../hooks/useAttackUnit";
+import { Troop } from "../../types";
 
 export const AttackButtonLayer = () => {
   const attackableTiles = useRecoilValue(
@@ -23,6 +25,7 @@ export const AttackButtonLayer = () => {
           key={`${tile.x}_${tile.y}`}
           tileX={tile.x}
           tileY={tile.y}
+          troop={tile.troop}
         />
       ))}
     </>
@@ -30,8 +33,17 @@ export const AttackButtonLayer = () => {
 };
 
 const radius = 10;
-const AttackButton = ({ tileX, tileY }: { tileX: number; tileY: number }) => {
+const AttackButton = ({
+  tileX,
+  tileY,
+  troop,
+}: {
+  tileX: number;
+  tileY: number;
+  troop: Troop | undefined;
+}) => {
   const coords = calculateUnitPositionOnTileCoords(tileX, tileY);
+  const attackUnit = useAttackUnit(troop?.id ?? "", tileX, tileY);
   const onPointerDown: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
     useCallback((event) => {
       event.stopPropagation();
@@ -41,12 +53,20 @@ const AttackButton = ({ tileX, tileY }: { tileX: number; tileY: number }) => {
     }, []);
 
   const onPointerUp: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
-    useCallback((event) => {
-      event.stopPropagation();
-      console.log(event);
-      const button = event.currentTarget as PIXI.DisplayObject;
-      button.alpha = 1;
-    }, []);
+    useCallback(
+      async (event) => {
+        event.stopPropagation();
+        console.log(event);
+        const button = event.currentTarget as PIXI.DisplayObject;
+        button.alpha = 1;
+        await attackUnit();
+      },
+      [attackUnit]
+    );
+
+  if (!troop) {
+    return null;
+  }
 
   return (
     <Container

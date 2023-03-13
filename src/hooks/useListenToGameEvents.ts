@@ -45,7 +45,7 @@ const useListenToGameEvents = () => {
           break;
         case "UnitSpawned":
           console.log("UnitSpawned", event);
-          const tileId = BigInt(event.data.tile);
+          const spawnedTileId = BigInt(event.data.tile);
           await gameState.update_entity(BigInt(event.data.tile));
           // Update Unit Entity (Create if doesn't exist)
           await gameState.update_entity(BigInt(event.data.unit));
@@ -53,7 +53,7 @@ const useListenToGameEvents = () => {
           await gameState.update_entity(BigInt(event.data.player));
           // Update kyogen index
           await gameState.update_kyogen_index();
-          updateTiles([gameState.get_tile_json(tileId)]);
+          updateTiles([gameState.get_tile_json(spawnedTileId)]);
           updatePlayers({
             players: [gameState.get_player_json(BigInt(event.data.player))],
           });
@@ -72,7 +72,12 @@ const useListenToGameEvents = () => {
           ]);
           break;
         case "UnitAttacked":
-          // TODO:
+          console.log("UNIT ATTACKED", event);
+          const defendingTileId = BigInt(event.data.tile);
+          await gameState.update_entity(BigInt(event.data.attacker));
+          await gameState.update_entity(BigInt(event.data.defender));
+          await gameState.update_entity(defendingTileId);
+          updateTiles([gameState.get_tile_json(defendingTileId)]);
           break;
       }
     },

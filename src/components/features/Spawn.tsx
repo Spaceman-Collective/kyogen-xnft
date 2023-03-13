@@ -228,6 +228,7 @@ export const SpawnSprite = ({
                   }
                   spawnLocked = true;
                   await spawnUnit(ninjaUnitName);
+                  setActive(false);
                   spawnLocked = false;
                 }}
               />
@@ -252,6 +253,7 @@ export const SpawnSprite = ({
                   }
                   spawnLocked = true;
                   await spawnUnit(samuraiUnitName);
+                  setActive(false);
                   spawnLocked = false;
                 }}
               />
@@ -276,6 +278,7 @@ export const SpawnSprite = ({
                   }
                   spawnLocked = true;
                   await spawnUnit(soheiUnitName);
+                  setActive(false);
                   spawnLocked = false;
                 }}
               />
