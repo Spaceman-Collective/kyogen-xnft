@@ -14,6 +14,7 @@ import AncientSamurai from "../../../public/ancient_samurai.webp";
 import CreeperSamurai from "../../../public/creeper_samurai.webp";
 import SynthSamurai from "../../../public/synth_samurai.webp";
 import WildingSamurai from "../../../public/wildling_samurai.webp";
+import CreepersBorderImg from "../../../public/clans/creepers/game_border.svg";
 import Image, { StaticImageData } from "next/image";
 
 const UnitNameToImageMap = (name: UnitNames): StaticImageData => {
@@ -54,7 +55,8 @@ const HealthBar = ({
   currentHealth: string;
   maxHealth: string;
 }) => {
-  const healthPercentage = parseFloat(currentHealth)/parseFloat(maxHealth) * 100;
+  const healthPercentage =
+    (parseFloat(currentHealth) / parseFloat(maxHealth)) * 100;
   return (
     <div className="relative bg-[#384269] w-full h-[36px] p-[8px]">
       <div className="relative bg-kyogen-border h-[20px] rounded-[8px] rounded-tr-[0px] z-10">
@@ -92,7 +94,11 @@ const SelectedUnit = () => {
 
 const GameFooter = () => {
   return (
-    <div className="flex flex-row grow max-h-[275px]">
+    <div className="relative flex flex-row grow max-h-[275px]">
+      <div
+        className="absolute top-[-9px] w-full h-[18px] bg-repeat-x z-10"
+        style={{ backgroundImage: `url('${CreepersBorderImg.src}')` }}
+      ></div>
       <div className="grow">Mini Map</div>
       <div>
         <SelectedUnit />
