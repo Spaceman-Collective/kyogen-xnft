@@ -53,6 +53,7 @@ export const MoveHighlight = ({
         return (
           <Circle
             key={index}
+            blendMode={PIXI.BLEND_MODES.MULTIPLY}
             radius={radius}
             x={position.x}
             y={position.y}

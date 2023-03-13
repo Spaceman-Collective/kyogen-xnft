@@ -5,7 +5,11 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { TILE_LENGTH, UNIT_LENGTH } from "../../constants";
 import { useMoveUnit } from "../../hooks/useMoveUnit";
 import { gameStateAtom, selectedUnitAtom, tilesAtomFamily } from "../../recoil";
-import { selectMapDims } from "../../recoil/selectors";
+import {
+  selectCurrentPlayer,
+  selectMapDims,
+  selectPlayerColor,
+} from "../../recoil/selectors";
 import { Troop } from "../../types";
 import {
   calculateTileCoords,
@@ -15,6 +19,7 @@ import {
   normalizeGlobalPointFromViewport,
 } from "../../utils/map";
 import { MoveHighlight } from "../MoveHighlight";
+import { Circle } from "../PixiComponents";
 import { getViewport } from "../PixiViewport";
 import { ClippedUnit } from "./ClippedUnit";
 import { UnitHealth } from "./UnitHealth";
@@ -38,6 +43,9 @@ export const UnitSprite = ({
   troop: Troop;
 }) => {
   const coords = calculateUnitPositionOnTileCoords(tileX, tileY);
+  const currentPlayer = useRecoilValue(selectCurrentPlayer);
+  const ownedByCurrentPlayer = currentPlayer?.id === troop.player_id;
+  const troopPlayerColor = useRecoilValue(selectPlayerColor(troop.player_id));
   const mapDims = useRecoilValue(selectMapDims);
   const gameState = useRecoilValue(gameStateAtom);
   const setSelectedUnit = useSetRecoilState(selectedUnitAtom);
@@ -67,29 +75,40 @@ export const UnitSprite = ({
     }, []);
 
   const onDragStart: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
-    useCallback((event) => {
-      event.stopPropagation();
+    useCallback(
+      (event) => {
+        if (!ownedByCurrentPlayer) {
+          // do nothing if enemy unit
+          return;
+        }
+        event.stopPropagation();
 
-      const container = event.currentTarget as PIXI.DisplayObject;
-      const viewport = getViewport(container);
-      if (!viewport) {
-        return;
-      }
-      setStartTile(
-        calculateTileCoords(
-          normalizeGlobalPointFromViewport(viewport, event.global)
-        )
-      );
-      container.alpha = 0.5;
-      setDragging(true);
-    }, []);
+        const container = event.currentTarget as PIXI.DisplayObject;
+        const viewport = getViewport(container);
+        if (!viewport) {
+          return;
+        }
+        setStartTile(
+          calculateTileCoords(
+            normalizeGlobalPointFromViewport(viewport, event.global)
+          )
+        );
+        container.alpha = 0.5;
+        setDragging(true);
+      },
+      [ownedByCurrentPlayer]
+    );
 
   const onDragEnd: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
     useCallback(
       async (event) => {
+        setSelectedUnit(troop);
+        if (!ownedByCurrentPlayer) {
+          // skip rest if enemy unit
+          return;
+        }
         event.stopPropagation();
         // Set the selected unit
-        setSelectedUnit(troop);
 
         const container = event.currentTarget as PIXI.DisplayObject;
         const viewport = getViewport(container);
@@ -123,7 +142,15 @@ export const UnitSprite = ({
           container.position = calculateUnitPositionOnTileCoords(...startTile!);
         }
       },
-      [gameState, moveUnit, movement, troop, startTile]
+      [
+        setSelectedUnit,
+        troop,
+        ownedByCurrentPlayer,
+        startTile,
+        movement,
+        gameState,
+        moveUnit,
+      ]
     );
 
   const onDragMove: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
@@ -153,12 +180,14 @@ export const UnitSprite = ({
 
   return (
     <>
-      <MoveHighlight
-        // must be outside container in order to remain static
-        movement={movement}
-        startTile={startTile}
-        tiles={moveable}
-      />
+      {ownedByCurrentPlayer && (
+        <MoveHighlight
+          // must be outside container in order to remain static
+          movement={movement}
+          startTile={startTile}
+          tiles={moveable}
+        />
+      )}
       <Container
         onpointerdown={onDragStart}
         onpointerup={onDragEnd}
@@ -176,6 +205,16 @@ export const UnitSprite = ({
           x={unitOffset}
           y={unitOffset}
         />
+        {!ownedByCurrentPlayer && (
+          <Circle
+            fill={troopPlayerColor}
+            radius={5}
+            stroke={0x000000}
+            strokeWidth={1}
+            x={unitOffset + 12}
+            y={unitOffset + 12}
+          />
+        )}
         <UnitHealth
           health={Number(troop.health)}
           maxHealth={Number(troop.max_health)}

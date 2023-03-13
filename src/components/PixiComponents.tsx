@@ -15,6 +15,7 @@ export interface GraphicsProps {
 
 export interface CircleProps extends GraphicsProps {
   radius?: number;
+  blendMode?: PIXI.BLEND_MODES;
 }
 
 export const Circle = CustomPIXIComponent<PIXI.Graphics, CircleProps>(
@@ -23,6 +24,7 @@ export const Circle = CustomPIXIComponent<PIXI.Graphics, CircleProps>(
     customApplyProps: (obj, oldProps, newProps) => {
       if (
         keyDiff(oldProps, newProps, [
+          "blendMode",
           "x",
           "y",
           "radius",
@@ -35,7 +37,9 @@ export const Circle = CustomPIXIComponent<PIXI.Graphics, CircleProps>(
         obj.lineStyle({ width: newProps.strokeWidth, color: newProps.stroke });
         obj.beginFill(newProps.fill);
         obj.drawCircle(newProps.x || 0, newProps.y || 0, newProps.radius || 0);
-        obj.blendMode = PIXI.BLEND_MODES.MULTIPLY;
+        if (newProps.blendMode) {
+          obj.blendMode = newProps.blendMode;
+        }
         obj.endFill();
       }
 

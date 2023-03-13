@@ -1,4 +1,4 @@
-import { selector } from "recoil";
+import { selector, selectorFamily } from "recoil";
 import {
   gameStateAtom,
   gameWallet,
@@ -8,6 +8,7 @@ import {
   tilesAtomFamily,
 } from "./atoms";
 import { Player, Tile, UnitNames } from "../types";
+import { playerColorPalette } from "../constants";
 
 export const selectCurrentPlayer = selector<Player | null>({
   key: "selectCurrentPlayer",
@@ -21,6 +22,17 @@ export const selectCurrentPlayer = selector<Player | null>({
       ) ?? null
     );
   },
+});
+
+export const selectPlayerColor = selectorFamily({
+  key: "selectPlayerColor",
+  get:
+    (playerId: string) =>
+    ({ get }) => {
+      const ids = get(playerIdsAtom);
+      const index = ids.indexOf(playerId);
+      return playerColorPalette[index] ?? 0x000000;
+    },
 });
 
 export const selectCurrentPlayerHand = selector<Record<UnitNames, number>>({
