@@ -37,7 +37,6 @@ const Game = () => {
       resizeObserver.observe(gameContainerRef.current);
     }
   }, []);
-  console.log(containerDims);
 
   return (
     <>
