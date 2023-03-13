@@ -84,25 +84,24 @@ export const UnitSprite = ({
   const onDragStart: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
     useCallback(
       (event) => {
+        const container = event.currentTarget as PIXI.DisplayObject;
+        const viewport = getViewport(container);
+        if (!viewport) return;
+        const coords = calculateTileCoords(
+          normalizeGlobalPointFromViewport(viewport, event.global)
+        );
+        const startTileId = gameState!.get_tile_id(coords[0], coords[1]);
+        setSelectedTileId(startTileId);
+
         if (!ownedByCurrentPlayer) {
           // do nothing if enemy unit
           return;
         }
         event.stopPropagation();
 
-        const container = event.currentTarget as PIXI.DisplayObject;
-        const viewport = getViewport(container);
-        if (!viewport) {
-          return;
-        }
-        const coords = calculateTileCoords(
-          normalizeGlobalPointFromViewport(viewport, event.global)
-        );
-        const startTileId = gameState!.get_tile_id(coords[0], coords[1]);
         setStartTile(coords);
         container.alpha = 0.5;
         setDragging(true);
-        setSelectedTileId(startTileId);
       },
       [gameState, ownedByCurrentPlayer, setSelectedTileId]
     );

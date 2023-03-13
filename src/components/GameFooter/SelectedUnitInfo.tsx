@@ -23,36 +23,37 @@ const InfoContainer = ({
 );
 
 const SelectedUnitInfo = () => {
-  const tileTroop = useRecoilValue(selectTroopFromSelectedTile);
-  const selectedTroop = usePreviousDefined(tileTroop);
-  if (!selectedTroop) return null;
+  const selectedTroop = useRecoilValue(selectTroopFromSelectedTile);
+  const prevSelectedTroop = usePreviousDefined(selectedTroop); 
+  const troop = selectedTroop || prevSelectedTroop
+  if (!troop) return null;
 
   return (
     <div className="pt-[35px] pl-[32px]">
       <p className="font-normal text-[30px] leading-[30px]">
-        {selectedTroop.name}
+        {troop.name}
       </p>
       <div className="flex flex-row mr-[20px] mt-[23px]">
         <div className="flex flex-col mr-[12px]">
           <InfoContainer icon={{ src: DamageIcon, alt: "Damage Icon" }}>
             <p>Damage</p>
             <p>
-              {selectedTroop.min_damage} - {selectedTroop.max_damage}
+              {troop.min_damage} - {troop.max_damage}
             </p>
           </InfoContainer>
           <InfoContainer icon={{ src: MoveIcon, alt: "Move Icon" }}>
             <p>Move</p>
-            <p>{selectedTroop.movement}</p>
+            <p>{troop.movement}</p>
           </InfoContainer>
         </div>
         <div className="flex flex-col">
           <InfoContainer icon={{ src: RangeIcon, alt: "Rang Icon" }}>
             <p>Attack Range</p>
-            <p>{selectedTroop.attack_range}</p>
+            <p>{troop.attack_range}</p>
           </InfoContainer>
           <InfoContainer icon={{ src: CoolDownIcon, alt: "Cool Down Icon" }}>
             <p>Cool down</p>
-            <p>{selectedTroop.recovery}s</p>
+            <p>{troop.recovery}s</p>
           </InfoContainer>
         </div>
       </div>

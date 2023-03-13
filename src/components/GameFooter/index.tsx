@@ -97,21 +97,22 @@ const HealthBar = ({
 };
 
 const SelectedUnit = ({ className }: { className?: string }) => {
-  const tileTroop = useRecoilValue(selectTroopFromSelectedTile);
-  const selectedTroop = usePreviousDefined(tileTroop);
-  if (!selectedTroop) return null;
+  const selectedTroop = useRecoilValue(selectTroopFromSelectedTile);
+  const prevSelectedTroop = usePreviousDefined(selectedTroop); 
+  const troop = selectedTroop || prevSelectedTroop
+  if (!troop) return null;
 
   return (
     <div className={className}>
       <Image
-        src={UnitNameToImageMap(selectedTroop.name)}
-        alt={selectedTroop.name}
+        src={UnitNameToImageMap(troop.name)}
+        alt={troop.name}
         height={236}
         width={236}
       />
       <HealthBar
-        currentHealth={selectedTroop.health}
-        maxHealth={selectedTroop.max_health}
+        currentHealth={troop.health}
+        maxHealth={troop.max_health}
       />
     </div>
   );
