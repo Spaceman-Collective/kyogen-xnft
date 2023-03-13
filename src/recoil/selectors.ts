@@ -61,13 +61,8 @@ export const selectMapDims = selector({
     const tiles = tileIds.map((id) => get(tilesAtomFamily(id))) as Tile[];
     return tiles.reduce(
       (acc, tile) => {
-        if (tile.y >= acc.height) {
-          acc.height = tile.y + 1;
-        }
-        if (tile.x >= acc.width) {
-          acc.width = tile.x + 1;
-        }
-
+        acc.height = Math.max(tile.y + 1, acc.height);
+        acc.width = Math.max(tile.x + 1, acc.width);
         return acc;
       },
       { height: 0, width: 0 }

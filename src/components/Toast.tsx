@@ -50,7 +50,7 @@ export const Notifications = () => {
   return (
     <div className="fixed top-[50px] right-[10px]">
       {notifications.map((notification, index) => (
-        <Toast {...notification} onClose={() => handleClose(index)} />
+        <Toast key={index} {...notification} onClose={() => handleClose(index)} />
       ))}
     </div>
   );
