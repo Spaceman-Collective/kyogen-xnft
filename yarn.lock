@@ -6232,10 +6232,10 @@ pixi-ease@^3.0.7:
     eventemitter3 "^4.0.0"
     penner "^0.1.3"
 
-pixi-viewport@^4.38.0:
-  version "4.38.0"
-  resolved "https://registry.yarnpkg.com/pixi-viewport/-/pixi-viewport-4.38.0.tgz#7deeec65a75046315638999d0379ff54ec26bdc3"
-  integrity sha512-TGj6Ymk/BU0wZcW4c1eP4e96aETJmB7jhjBflMjQU06/ZHPy7qHw8JyDqZ+C84SEg0ewCHjDNZ2vgR3Kjk74BQ==
+pixi-viewport@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/pixi-viewport/-/pixi-viewport-5.0.1.tgz#42e3934bd1535c4e60a5b95d09d0cf00bd673917"
+  integrity sha512-fIILU9xztqGnhGF5SYfjn1Rir/7asWkJ8zSUay2hwzPrdGTWFtB4yiIlZDeFaLf7KHA04RRb2kI01Sy1kNksAw==
 
 pixi.js@^7.1.2:
   version "7.1.2"

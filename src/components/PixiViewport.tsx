@@ -33,12 +33,13 @@ const DisplayObjectViewport = CustomPIXIComponent<
         screenWidth: screenWidth,
         worldWidth: worldWidth,
         worldHeight: worldHeight,
-        interaction: application.renderer.events,
+        events: application.renderer.events,
         ticker: application.ticker,
       })
-        .drag()
+        .drag({ underflow: "bottom" })
         .pinch()
-        .wheel()
+        // TODO need to readjust movements to be relative to viewport to handle zoom
+        .wheel({ wheelZoom: false })
         .decelerate({ bounce: 0.95 })
         .bounce({
           bounceBox: new PIXI.Rectangle(
@@ -47,6 +48,7 @@ const DisplayObjectViewport = CustomPIXIComponent<
             worldWidth + WORLD_OVERFLOW,
             worldHeight + WORLD_OVERFLOW
           ),
+          underflow: "bottom",
         });
       return viewport;
     },

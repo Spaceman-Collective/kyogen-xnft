@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import GameFooter from "@/components/GameFooter";
 import useListenToGameEvents from "@/hooks/useListenToGameEvents";
 import dynamic from "next/dynamic";
@@ -19,13 +20,33 @@ const GameMap = dynamic({
 const Game = () => {
   useLoadGameState();
   useListenToGameEvents();
+  const gameContainerRef = useRef<HTMLDivElement>(null);
+  const [containerDims, setContainerDims] = useState({ height: 0, width: 0 });
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver((event) => {
+      // Depending on the layout, you may need to swap inlineSize with blockSize
+      // https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry/contentBoxSize
+      setContainerDims({
+        height: event[0].contentBoxSize[0].blockSize,
+        width: event[0].contentBoxSize[0].inlineSize,
+      });
+    });
+
+    if (gameContainerRef.current) {
+      resizeObserver.observe(gameContainerRef.current);
+    }
+  }, []);
+  console.log(containerDims);
 
   return (
     <>
       <div className="h-screen w-screen flex flex-col">
-        <p>Game instance</p>
-        <div className="bg-[#eae6d5] relative flex flex-1 justify-center items-center">
-          <GameMap />
+        <div
+          ref={gameContainerRef}
+          className="bg-[#eae6d5] relative flex flex-1 justify-center items-center"
+        >
+          <GameMap height={containerDims.height} width={containerDims.width} />
           <GameOverlay />
         </div>
         <GameFooter />
