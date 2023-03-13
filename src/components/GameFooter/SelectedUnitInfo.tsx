@@ -1,4 +1,3 @@
-import { selectedUnitAtom } from "@/recoil";
 import { useRecoilValue } from "recoil";
 
 import InfoSquare from "./InfoSquare";
@@ -8,6 +7,7 @@ import RangeIcon from "../../../public/icons/range.png";
 import CoolDownIcon from "../../../public/icons/cooldown.png";
 import { ImageProps } from "next/image";
 import { selectTroopFromSelectedTile } from "@/recoil/selectors";
+import { usePreviousDefined } from "@/hooks/usePreviousDefined";
 
 const InfoContainer = ({
   icon,
@@ -23,7 +23,8 @@ const InfoContainer = ({
 );
 
 const SelectedUnitInfo = () => {
-  const selectedTroop = useRecoilValue(selectTroopFromSelectedTile);
+  const tileTroop = useRecoilValue(selectTroopFromSelectedTile);
+  const selectedTroop = usePreviousDefined(tileTroop);
   if (!selectedTroop) return null;
 
   return (

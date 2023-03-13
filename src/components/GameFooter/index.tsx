@@ -35,6 +35,7 @@ import WildlingsFrameKnot from "../../../public/clans/wildlings/frame_knot.svg";
 import Image, { StaticImageData } from "next/image";
 import { selectCurrentPlayer, selectTroopFromSelectedTile } from "@/recoil/selectors";
 import SelectedUnitInfo from "./SelectedUnitInfo";
+import { usePreviousDefined } from "@/hooks/usePreviousDefined";
 
 const UnitNameToImageMap = (name: UnitNames): StaticImageData => {
   switch (name) {
@@ -94,7 +95,8 @@ const HealthBar = ({
 };
 
 const SelectedUnit = ({ className }: { className?: string }) => {
-  const selectedTroop = useRecoilValue(selectTroopFromSelectedTile);
+  const tileTroop = useRecoilValue(selectTroopFromSelectedTile);
+  const selectedTroop = usePreviousDefined(tileTroop);
   if (!selectedTroop) return null;
 
   return (
