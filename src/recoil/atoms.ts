@@ -82,7 +82,7 @@ export const gameFeedAtom = atom<GameFeedItem[]>({
 
 export type GameFeedItem = {
   type:string,
-  players: string[],
+  players: any[],
   msg: string,
   timestamp: number,
 }

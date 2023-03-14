@@ -34,7 +34,7 @@ export const useMoveUnit = (unitId: string, tileX: number, tileY: number) => {
           BigInt(destinationTileId)
         )
       );
-      sendTransaction([ix]);
+      await sendTransaction([ix]);
     },
     [
       currentPlayer,

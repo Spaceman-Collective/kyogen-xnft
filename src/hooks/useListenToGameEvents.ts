@@ -12,6 +12,7 @@ const useListenToGameEvents = () => {
   const updateTiles = useUpdateTiles(false);
   const updatePlayers = useUpdatePlayers();
   const setGameFeed = useSetRecoilState(gameFeedAtom);
+
   const handleEvent = useCallback(
     async (event: any) => {
       if (!gameState) {
@@ -26,11 +27,11 @@ const useListenToGameEvents = () => {
       
       switch (event.name) {
         case "NewPlayer":
-          // TODO:
+          const newPlayer = gameState.get_player_json(BigInt(event.data.playerId))
           setGameFeed((curr) => ([...curr, {
-            type: 'NewPlayer',
-            players: [event.data ? '' : ''],
-            msg: "",
+            type: event.name,
+            players: [newPlayer],
+            msg: `a new player just joined clan ${event.data.clan}`,
             timestamp,
           }]))
           break;
@@ -60,10 +61,20 @@ const useListenToGameEvents = () => {
           await gameState.update_entity(BigInt(event.data.player));
           // Update kyogen index
           await gameState.update_kyogen_index();
+          const spawner = gameState.get_player_json(BigInt(event.data.player));
           updateTiles([gameState.get_tile_json(spawnedTileId)]);
           updatePlayers({
-            players: [gameState.get_player_json(BigInt(event.data.player))],
+            players: [],
           });
+          const spawned = gameState.get_troop_json(BigInt(event.data.unit));
+          setGameFeed((curr) => ([...curr, {
+            type: event.name,
+            players: [
+              spawner
+            ],
+            msg: `%1% spawned a ${spawned.name}`,
+            timestamp,
+          }]))
           break;
         case "UnitMoved":
           console.log("UnitMoved", event);
@@ -73,22 +84,45 @@ const useListenToGameEvents = () => {
           await gameState.update_entity(fromTileId);
           await gameState.update_entity(toTileId);
           await gameState.update_entity(BigInt(event.data.unit));
+          const fromTile = gameState.get_tile_json(fromTileId);
+          const toTile = gameState.get_tile_json(toTileId);
           updateTiles([
-            gameState.get_tile_json(fromTileId),
-            gameState.get_tile_json(toTileId),
+            fromTile,
+            toTile
           ]);
+          const troop = gameState.get_troop_json(BigInt(event.data.unit))
+          
+          setGameFeed((curr) => ([...curr, {
+            type: event.name,
+            players: [gameState.get_player_json(BigInt(troop.player_id))],
+            msg: `%1% moved ${troop.name} from [${fromTile.x},${fromTile.y}] to [${toTile.x},${toTile.y}]`,
+            timestamp,
+          }]))
           break;
         case "UnitAttacked":
           console.log("UNIT ATTACKED", event);
           const defendingTileId = BigInt(event.data.tile);
-          await gameState.update_entity(BigInt(event.data.attacker));
-          await gameState.update_entity(BigInt(event.data.defender));
+          const defender = BigInt(event.data.defender);
+          const attacker = BigInt(event.data.attacker);
+          await gameState.update_entity(attacker);
+          await gameState.update_entity(defender);
           await gameState.update_entity(defendingTileId);
+          const defendingTroop = gameState.get_troop_json(defender);
+          const attackingTroop = gameState.get_troop_json(attacker);
           updateTiles([gameState.get_tile_json(defendingTileId)]);
+          setGameFeed((curr) => ([...curr, {
+            type: event.name,
+            players: [
+              gameState.get_player_json(BigInt(attackingTroop.player_id)),
+              gameState.get_player_json(BigInt(defendingTroop.player_id))
+            ],
+            msg: `%1% (${attackingTroop.name}) attacked %2% (${defendingTroop.name})`,
+            timestamp,
+          }]))
           break;
       }
     },
-    [gameState, updatePlayers, updateTiles]
+    [gameState, setGameFeed, updatePlayers, updateTiles]
   );
 
   useEffect(() => {
