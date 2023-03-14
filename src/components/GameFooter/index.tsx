@@ -69,7 +69,7 @@ const VerticalBorder = ({ side = "left" }: { side?: "left" | "right" }) => {
   return (
     <>
       <div
-        className={`absolute ${borderSideAdjustment} top-[5px] w-[28px] h-full z-50`}
+        className={`absolute ${borderSideAdjustment} top-[5px] w-[28px] h-[270px] z-50`}
         style={{ backgroundImage: `url('${borderAssets.frameBorder.src}')` }}
       ></div>
       <Image
@@ -112,7 +112,7 @@ const GameFooter = () => {
     <div className="relative flex flex-row grow max-h-[275px] font-millimetre bg-kyogen-fund-bg min-h-[275px]">
       <HorizontalBorder />
       <div className="relative min-w-[245px]">
-        <SelectedUnit className="relative pl-[9px] pt-[2px]" />
+        <SelectedUnit className="relative" />
       </div>
       <div className="relative min-w-[245px]">
         <VerticalBorder />
