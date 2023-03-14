@@ -7,12 +7,13 @@ import { useMoveUnit } from "../../hooks/useMoveUnit";
 import {
   gameStateAtom,
   selectedTileIdAtom,
-  tilesAtomFamily,
+  troopsAtomFamily,
 } from "../../recoil";
 import {
   selectCurrentPlayer,
   selectMapDims,
   selectPlayerColor,
+  selectTileFromTroopId,
 } from "../../recoil/selectors";
 import { Troop } from "../../types";
 import {
@@ -28,13 +29,14 @@ import { getViewport } from "../PixiViewport";
 import { ClippedUnit } from "./ClippedUnit";
 import { UnitHealth } from "./UnitHealth";
 
-export const TroopUnit = ({ tileId }: { tileId: string }) => {
-  const tile = useRecoilValue(tilesAtomFamily(tileId));
+export const TroopUnit = ({ troopId }: { troopId: string }) => {
+  const troop = useRecoilValue(troopsAtomFamily(troopId));
+  const tile = useRecoilValue(selectTileFromTroopId(troopId));
 
-  if (!tile || !tile.troop) {
+  if (!troop || !tile) {
     return null;
   }
-  return <UnitSprite tileX={tile.x} tileY={tile.y} troop={tile.troop} />;
+  return <UnitSprite tileX={tile.x} tileY={tile.y} troop={troop} />;
 };
 
 export const UnitSprite = ({
@@ -146,11 +148,19 @@ export const UnitSprite = ({
         }
         // unit could be moved
         try {
+          setSelectedTileId(destinationTileId);
           await moveUnit(destinationTileId);
           container.position = calculateUnitPositionOnTileCoords(...coords);
-          setSelectedTileId(destinationTileId);
           return;
         } catch (err) {
+          if (startTile) {
+            // NOTE: if the user clicks on another tile and the move TX errors, then the selected unit will revert.
+            // TODO find a better way to handle this.
+            setSelectedTileId(
+              gameState!.get_tile_id(startTile[0], startTile[1])
+            );
+          }
+          console.log(err);
           // TODO better error handling
           container.position = calculateUnitPositionOnTileCoords(...startTile!);
         }

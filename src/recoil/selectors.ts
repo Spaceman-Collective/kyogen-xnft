@@ -2,6 +2,8 @@ import { selector, selectorFamily } from "recoil";
 import {
   gameStateAtom,
   gameWallet,
+  meteorIdsAtom,
+  meteorsAtomFamily,
   playerIdsAtom,
   playersAtomFamily,
   selectedTileIdAtom,
@@ -109,10 +111,42 @@ export const selectTilesWithEnemiesInSelectedUnitAttackRange = selector({
 
 export const selectTroopFromSelectedTile = selector({
   key: "selectUnitFromSelectedTile",
-  get: ({get}) => {
+  get: ({ get }) => {
     const selectedTileId = get(selectedTileIdAtom);
     const selectedTile = get(tilesAtomFamily(selectedTileId));
     if (!selectedTile || !selectedTile.troop) return null;
     return selectedTile.troop;
-  }
-})
+  },
+});
+
+export const selectTileFromTroopId = selectorFamily({
+  key: "selectTileFromTroopId",
+  get:
+    (troopId: string) =>
+    ({ get }) => {
+      const tileIds = get(tileIdsAtom);
+      const tiles = tileIds.map((id) => get(tilesAtomFamily(id))) as Tile[];
+
+      return tiles.find((tile) => tile.troop?.id === troopId);
+    },
+});
+
+export const selectMeteorFromSelectedTileId = selector({
+  key: "selectStructureFromSelectedTileId",
+  get: ({ get }) => {
+    const gameState = get(gameStateAtom);
+    if (!gameState) {
+      return null;
+    }
+    const tileId = get(selectedTileIdAtom);
+    const meteorIds = get(meteorIdsAtom);
+    return (
+      meteorIds
+        .map((id) => get(meteorsAtomFamily(id)))
+        .find(
+          (meteor) =>
+            meteor && tileId === gameState.get_tile_id(meteor.x, meteor.y)
+        ) ?? null
+    );
+  },
+});

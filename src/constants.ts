@@ -4,6 +4,9 @@ export const TILE_LENGTH = 80;
 export const TILE_SPACING = 4;
 /** Length of feature within tile */
 export const FEATURE_LENGTH = 72;
+/** Since the feature sprite should be centered within the tile,
+ * we will need to offset it and any other relative graphics. */
+export const FEATURE_OFFSET = (TILE_LENGTH - FEATURE_LENGTH) / 2;
 /** Length of unit within tile */
 export const UNIT_LENGTH = 72;
 /** Since the unit sprite should be centered within the tile,

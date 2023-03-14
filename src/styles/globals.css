@@ -16,13 +16,29 @@
 
 @layer base {
   :root {
-    --color-kyogen-fund-bg: 27 29 33
+    --color-kyogen-fund-bg: 27 29 33;
   }
   .font-outline-3 {
-    -webkit-text-stroke: 3px #15171c;
+    text-shadow: -3px -3px 0 #15171c, -3px -2px 0 #15171c, -3px -1px 0 #15171c,
+      -3px 0px 0 #15171c, -3px 1px 0 #15171c, -3px 2px 0 #15171c,
+      -3px 3px 0 #15171c, -2px -3px 0 #15171c, -2px -2px 0 #15171c,
+      -2px -1px 0 #15171c, -2px 0px 0 #15171c, -2px 1px 0 #15171c,
+      -2px 2px 0 #15171c, -2px 3px 0 #15171c, -1px -3px 0 #15171c,
+      -1px -2px 0 #15171c, -1px -1px 0 #15171c, -1px 0px 0 #15171c,
+      -1px 1px 0 #15171c, -1px 2px 0 #15171c, -1px 3px 0 #15171c,
+      0px -3px 0 #15171c, 0px -2px 0 #15171c, 0px -1px 0 #15171c,
+      0px 0px 0 #15171c, 0px 1px 0 #15171c, 0px 2px 0 #15171c, 0px 3px 0 #15171c,
+      1px -3px 0 #15171c, 1px -2px 0 #15171c, 1px -1px 0 #15171c,
+      1px 0px 0 #15171c, 1px 1px 0 #15171c, 1px 2px 0 #15171c, 1px 3px 0 #15171c,
+      2px -3px 0 #15171c, 2px -2px 0 #15171c, 2px -1px 0 #15171c,
+      2px 0px 0 #15171c, 2px 1px 0 #15171c, 2px 2px 0 #15171c, 2px 3px 0 #15171c,
+      3px -3px 0 #15171c, 3px -2px 0 #15171c, 3px -1px 0 #15171c,
+      3px 0px 0 #15171c, 3px 1px 0 #15171c, 3px 2px 0 #15171c, 3px 3px 0 #15171c;
   }
   .font-outline-1 {
-    -webkit-text-stroke: 1px #15171c;
+    text-shadow: -1px -1px 0 #15171c, -1px 0px 0 #15171c, -1px 1px 0 #15171c,
+      0px -1px 0 #15171c, 0px 0px 0 #15171c, 0px 1px 0 #15171c,
+      1px -1px 0 #15171c, 1px 0px 0 #15171c, 1px 1px 0 #15171c;
   }
 }
 

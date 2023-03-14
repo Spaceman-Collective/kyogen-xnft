@@ -56,10 +56,20 @@ export interface Notification {
   message: string;
 }
 
+export interface GameConfig {
+  max_players: number;
+  game_token: string;
+  spawn_claim_multiplier: string;
+  max_score: string;
+}
+
 export interface Map {
   map_id: string;
-  structures: unknown[];
   tiles: Tile[];
+  meteors: Meteor[];
+  lootables: Lootable[];
+  healers: Healer[];
+  portals: Portal[];
 }
 
 export interface Tile {
@@ -121,4 +131,46 @@ export interface Troop {
   player_key: string;
   recovery: string;
   troop_class: string;
+}
+
+export interface StructureBase {
+  active: boolean;
+  cost: string;
+  id: string;
+  last_used: string;
+  name: "Meteor" | "Healer" | "Portal" | "Barracks";
+  recovery: string;
+  x: number;
+  y: number;
+}
+
+export interface Meteor extends StructureBase {
+  name: "Meteor";
+  structure: {
+    Meteor: {
+      solarite_per_use: number;
+    };
+  };
+}
+
+export interface Healer extends StructureBase {
+  name: "Healer";
+  structure: {
+    Healer: {
+      heal_amt: number;
+    };
+  };
+}
+
+export interface Lootable extends StructureBase {
+  // TODO
+}
+
+export interface Portal extends StructureBase {
+  name: "Portal";
+  structure: {
+    Portal: {
+      channel: number;
+    };
+  };
 }

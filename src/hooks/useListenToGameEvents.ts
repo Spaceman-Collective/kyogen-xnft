@@ -3,7 +3,10 @@ import { KyogenEventCoder } from "@/utils/anchorEvents";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useCallback, useEffect } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { useUpdatePlayers, useUpdateTiles } from "../recoil/transactions";
+import { useUpdatePlayers, useUpdateTiles,   useUpdateTroops, } from "../recoil/transactions";
+import { Observable } from "rxjs";
+import { Player, Tile, Troop } from "../types";
+
 
 const LOG_START_INDEX = "Program data: ".length;
 
@@ -12,6 +15,7 @@ const useListenToGameEvents = () => {
   const updateTiles = useUpdateTiles(false);
   const updatePlayers = useUpdatePlayers();
   const setGameFeed = useSetRecoilState(gameFeedAtom);
+  const updateTroops = useUpdateTroops();
 
   const handleEvent = useCallback(
     async (event: any) => {
@@ -60,13 +64,17 @@ const useListenToGameEvents = () => {
           // Update Entity Player (reduce cards)
           await gameState.update_entity(BigInt(event.data.player));
           // Update kyogen index
-          await gameState.update_kyogen_index();
-          const spawner = gameState.get_player_json(BigInt(event.data.player));
-          updateTiles([gameState.get_tile_json(spawnedTileId)]);
+          await gameState.update_index();
+          const tile = gameState.get_tile_json(spawnedTileId) as Tile;
+          if (tile.troop) {
+            updateTroops({ appendToIdList: true, troops: [tile.troop] });
+          }
+          updateTiles([tile]);
           updatePlayers({
             players: [],
           });
-          const spawned = gameState.get_troop_json(BigInt(event.data.unit));
+          const spawner = gameState.get_player_json(BigInt(event.data.player)) as Player;
+          const spawned = gameState.get_troop_json(BigInt(event.data.unit)) as Troop;
           setGameFeed((curr) => ([...curr, {
             type: event.name,
             players: [
@@ -84,20 +92,28 @@ const useListenToGameEvents = () => {
           await gameState.update_entity(fromTileId);
           await gameState.update_entity(toTileId);
           await gameState.update_entity(BigInt(event.data.unit));
+
           const fromTile = gameState.get_tile_json(fromTileId);
           const toTile = gameState.get_tile_json(toTileId);
-          updateTiles([
-            fromTile,
-            toTile
-          ]);
-          const troop = gameState.get_troop_json(BigInt(event.data.unit))
-          
+
+          const troop = gameState.get_troop_json(BigInt(event.data.unit)) as Troop;
+
           setGameFeed((curr) => ([...curr, {
             type: event.name,
             players: [gameState.get_player_json(BigInt(troop.player_id))],
             msg: `%1% moved ${troop.name} from [${fromTile.x},${fromTile.y}] to [${toTile.x},${toTile.y}]`,
             timestamp,
           }]))
+
+          const movedTiles = [
+            fromTile,
+            toTile
+          ] as Tile[];
+          const movedTroops = movedTiles
+            .map((t) => t.troop)
+            .filter((x) => !!x) as Troop[];
+          updateTroops({ troops: movedTroops });
+          updateTiles(movedTiles);
           break;
         case "UnitAttacked":
           console.log("UNIT ATTACKED", event);
@@ -109,7 +125,6 @@ const useListenToGameEvents = () => {
           await gameState.update_entity(defendingTileId);
           const defendingTroop = gameState.get_troop_json(defender);
           const attackingTroop = gameState.get_troop_json(attacker);
-          updateTiles([gameState.get_tile_json(defendingTileId)]);
           setGameFeed((curr) => ([...curr, {
             type: event.name,
             players: [
@@ -119,34 +134,52 @@ const useListenToGameEvents = () => {
             msg: `%1% (${attackingTroop.name}) attacked %2% (${defendingTroop.name})`,
             timestamp,
           }]))
+          const attackedTiles = [gameState.get_tile_json(defendingTileId)];
+          const attackedTroops = attackedTiles
+            .map((t) => t.troop)
+            .filter((x) => !!x) as Troop[];
+          updateTroops({ troops: attackedTroops });
+          updateTiles(attackedTiles);
           break;
       }
     },
-    [gameState, setGameFeed, updatePlayers, updateTiles]
+    [gameState, setGameFeed, updatePlayers, updateTiles, updateTroops]
   );
 
   useEffect(() => {
     const { connection: xNFTconnection } = window.xnft.solana;
     const connection = new Connection(xNFTconnection.rpcEndpoint);
-
-    const id = connection.onLogs(
-      new PublicKey(process.env.NEXT_PUBLIC_KYOGEN_ID as string),
-      (logs, ctx) => {
-        for (let log of logs.logs) {
-          if (log.startsWith("Program data:")) {
-            const logStr = log.slice(LOG_START_INDEX);
-            const event = KyogenEventCoder.decode(logStr);
-            if (event) {
-              handleEvent(event);
-              console.log("**** EVENT", event);
+    let connectionId: number;
+    let eventsObservable: Observable<{
+      slot: number;
+      name: string;
+      data: any;
+    }> = new Observable((subscriber) => {
+      connectionId = connection.onLogs(
+        new PublicKey(process.env.NEXT_PUBLIC_KYOGEN_ID as string),
+        (logs, ctx) => {
+          for (let log of logs.logs) {
+            if (log.startsWith("Program data:")) {
+              const logStr = log.slice(LOG_START_INDEX);
+              const event = KyogenEventCoder.decode(logStr);
+              if (event) {
+                subscriber.next({
+                  slot: ctx.slot,
+                  name: event.name,
+                  data: event.data,
+                });
+              }
             }
           }
-        }
-      },
-      "confirmed"
-    );
+        },
+        "confirmed"
+      );
+    });
+    eventsObservable.subscribe(async (event) => {
+      handleEvent(event);
+    });
     return () => {
-      connection.removeOnLogsListener(id);
+      if (!!connectionId) connection.removeOnLogsListener(connectionId);
     };
   }, [handleEvent]);
 };
