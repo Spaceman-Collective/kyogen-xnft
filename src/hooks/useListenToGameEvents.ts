@@ -3,8 +3,13 @@ import { KyogenEventCoder } from "@/utils/anchorEvents";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useCallback, useEffect } from "react";
 import { useRecoilValue } from "recoil";
-import { useUpdatePlayers, useUpdateTiles } from "../recoil/transactions";
+import {
+  useUpdatePlayers,
+  useUpdateTiles,
+  useUpdateTroops,
+} from "../recoil/transactions";
 import { Observable } from "rxjs";
+import { Tile, Troop } from "../types";
 
 const LOG_START_INDEX = "Program data: ".length;
 
@@ -12,6 +17,7 @@ const useListenToGameEvents = () => {
   const gameState = useRecoilValue(gameStateAtom);
   const updateTiles = useUpdateTiles(false);
   const updatePlayers = useUpdatePlayers();
+  const updateTroops = useUpdateTroops();
 
   const handleEvent = useCallback(
     async (event: any) => {
@@ -54,7 +60,11 @@ const useListenToGameEvents = () => {
           await gameState.update_entity(BigInt(event.data.player));
           // Update kyogen index
           await gameState.update_kyogen_index();
-          updateTiles([gameState.get_tile_json(spawnedTileId)]);
+          const tile = gameState.get_tile_json(spawnedTileId) as Tile;
+          if (tile.troop) {
+            updateTroops({ appendToIdList: true, troops: [tile.troop] });
+          }
+          updateTiles([tile]);
           updatePlayers({
             players: [gameState.get_player_json(BigInt(event.data.player))],
           });
@@ -67,10 +77,15 @@ const useListenToGameEvents = () => {
           await gameState.update_entity(fromTileId);
           await gameState.update_entity(toTileId);
           await gameState.update_entity(BigInt(event.data.unit));
-          updateTiles([
+          const movedTiles = [
             gameState.get_tile_json(fromTileId),
             gameState.get_tile_json(toTileId),
-          ]);
+          ] as Tile[];
+          const movedTroops = movedTiles
+            .map((t) => t.troop)
+            .filter((x) => !!x) as Troop[];
+          updateTroops({ troops: movedTroops });
+          updateTiles(movedTiles);
           break;
         case "UnitAttacked":
           console.log("UNIT ATTACKED", event);
@@ -78,11 +93,16 @@ const useListenToGameEvents = () => {
           await gameState.update_entity(BigInt(event.data.attacker));
           await gameState.update_entity(BigInt(event.data.defender));
           await gameState.update_entity(defendingTileId);
-          updateTiles([gameState.get_tile_json(defendingTileId)]);
+          const attackedTiles = [gameState.get_tile_json(defendingTileId)];
+          const attackedTroops = attackedTiles
+            .map((t) => t.troop)
+            .filter((x) => !!x) as Troop[];
+          updateTroops({ troops: attackedTroops });
+          updateTiles(attackedTiles);
           break;
       }
     },
-    [gameState, updatePlayers, updateTiles]
+    [gameState, updatePlayers, updateTiles, updateTroops]
   );
 
   useEffect(() => {

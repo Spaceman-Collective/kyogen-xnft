@@ -109,10 +109,22 @@ export const selectTilesWithEnemiesInSelectedUnitAttackRange = selector({
 
 export const selectTroopFromSelectedTile = selector({
   key: "selectUnitFromSelectedTile",
-  get: ({get}) => {
+  get: ({ get }) => {
     const selectedTileId = get(selectedTileIdAtom);
     const selectedTile = get(tilesAtomFamily(selectedTileId));
     if (!selectedTile || !selectedTile.troop) return null;
     return selectedTile.troop;
-  }
-})
+  },
+});
+
+export const selectTileFromTroopId = selectorFamily({
+  key: "selectTileFromTroopId",
+  get:
+    (troopId: string) =>
+    ({ get }) => {
+      const tileIds = get(tileIdsAtom);
+      const tiles = tileIds.map((id) => get(tilesAtomFamily(id))) as Tile[];
+
+      return tiles.find((tile) => tile.troop?.id === troopId);
+    },
+});

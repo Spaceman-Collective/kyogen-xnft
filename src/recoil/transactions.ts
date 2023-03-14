@@ -1,11 +1,13 @@
 import { useRecoilTransaction_UNSTABLE } from "recoil";
-import { Player, Tile } from "../types";
+import { Player, Tile, Troop } from "../types";
 import {
   gameStateAtom,
   playerIdsAtom,
   playersAtomFamily,
   tileIdsAtom,
   tilesAtomFamily,
+  troopIdsAtom,
+  troopsAtomFamily,
 } from "./atoms";
 
 export const useUpdateTiles = (updateIdList: boolean) =>
@@ -39,6 +41,26 @@ export const useUpdatePlayers = () =>
         });
         if (updateIdList) {
           set(playerIdsAtom, ids);
+        }
+      },
+    []
+  );
+
+export const useUpdateTroops = () =>
+  useRecoilTransaction_UNSTABLE<
+    [{ appendToIdList?: boolean; troops: Troop[]; updateIdList?: boolean }]
+  >(
+    ({ set }) =>
+      ({ appendToIdList, troops, updateIdList }) => {
+        const ids = troops.map((troop) => {
+          set(troopsAtomFamily(troop.id), troop);
+          return troop.id;
+        });
+        if (appendToIdList) {
+          set(troopIdsAtom, (cur) => [...cur, ...ids]);
+        }
+        if (updateIdList) {
+          set(troopIdsAtom, ids);
         }
       },
     []

@@ -49,10 +49,14 @@ export const playerIdsAtom = atom<string[]>({
   default: [],
 });
 
-// not sure if we need this yet since it's on the Tile state
 export const troopsAtomFamily = atomFamily<Troop | null, string>({
   key: "troopsAtomFamily",
   default: null,
+});
+
+export const troopIdsAtom = atom<string[]>({
+  key: "troopIdsAtom",
+  default: [],
 });
 
 ////// Notifications

@@ -1,13 +1,14 @@
 import { useRecoilValue } from "recoil";
-import { tileIdsAtom } from "../../recoil";
+import { troopIdsAtom } from "../../recoil";
 import { TroopUnit } from "./UnitSprite";
 
 export const TroopLayer = () => {
-  const tileIds = useRecoilValue(tileIdsAtom);
+  const troopIds = useRecoilValue(troopIdsAtom);
+
   return (
     <>
-      {tileIds.map((tileId) => (
-        <TroopUnit key={tileId} tileId={tileId} />
+      {troopIds.map((troopId) => (
+        <TroopUnit key={troopId} troopId={troopId} />
       ))}
     </>
   );
