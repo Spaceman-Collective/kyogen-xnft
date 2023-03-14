@@ -1,8 +1,14 @@
+import useIsOnStructure from "@/hooks/useIsOnStructure";
 import * as PIXI from "pixi.js";
+import { Matrix } from "pixi.js";
 import { useCallback, useMemo, useState } from "react";
 import { Container } from "react-pixi-fiber";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { UNIT_LENGTH, UNIT_OFFSET } from "../../constants";
+import {
+  UNIT_LENGTH,
+  UNIT_OFFSET,
+  UNIT_ON_STRUCTURE_REDUCTION,
+} from "../../constants";
 import { useMoveUnit } from "../../hooks/useMoveUnit";
 import {
   gameStateAtom,
@@ -28,6 +34,23 @@ import { Circle } from "../PixiComponents";
 import { getViewport } from "../PixiViewport";
 import { ClippedUnit } from "./ClippedUnit";
 import { UnitHealth } from "./UnitHealth";
+
+const ON_STRUCTURE_SCALE = new PIXI.ObservablePoint(
+  () => {},
+  undefined,
+  UNIT_ON_STRUCTURE_REDUCTION,
+  UNIT_ON_STRUCTURE_REDUCTION
+);
+const ON_STRUCUTRE_TRANSFORM = new PIXI.Transform();
+// ON_STRUCUTRE_TRANSFORM.scale = ON_STRUCTURE_SCALE;
+ON_STRUCUTRE_TRANSFORM.localTransform = new Matrix(
+  UNIT_ON_STRUCTURE_REDUCTION,
+  0,
+  0,
+  UNIT_ON_STRUCTURE_REDUCTION,
+  0,
+  10
+);
 
 export const TroopUnit = ({ troopId }: { troopId: string }) => {
   const troop = useRecoilValue(troopsAtomFamily(troopId));
@@ -60,6 +83,7 @@ export const UnitSprite = ({
     tileX,
     tileY,
   ]);
+  const checkIsOnStructure = useIsOnStructure();
   const [hovering, setHovering] = useState(false);
   const moveUnit = useMoveUnit(troop.id, tileX, tileY);
   const movement = Number(troop.movement);
@@ -191,6 +215,30 @@ export const UnitSprite = ({
       [dragging]
     );
 
+  const isOnStructure = useMemo(
+    () => checkIsOnStructure(tileX, tileY),
+    [checkIsOnStructure, tileX, tileY]
+  );
+
+  const unitTransform = useMemo(() => {
+    const transform = new PIXI.Transform();
+    if (isOnStructure) {
+      // If on structure, scale down the container and translate up on the tile
+      transform.localTransform = new Matrix(
+        UNIT_ON_STRUCTURE_REDUCTION,
+        0,
+        0,
+        UNIT_ON_STRUCTURE_REDUCTION,
+        coords.x +
+          (UNIT_LENGTH - UNIT_LENGTH * UNIT_ON_STRUCTURE_REDUCTION) / 2,
+        coords.y - UNIT_LENGTH * UNIT_ON_STRUCTURE_REDUCTION * 0.3
+      );
+    } else {
+      transform.localTransform = new Matrix(1, 0, 0, 1, coords.x, coords.y);
+    }
+    return transform;
+  }, [coords.x, coords.y, isOnStructure]);
+
   return (
     <>
       {ownedByCurrentPlayer && (
@@ -207,8 +255,7 @@ export const UnitSprite = ({
         onpointermove={onDragMove}
         onmouseover={onMouseOver}
         onmouseout={onMouseOut}
-        x={coords.x}
-        y={coords.y}
+        transform={unitTransform}
         interactive
       >
         <ClippedUnit

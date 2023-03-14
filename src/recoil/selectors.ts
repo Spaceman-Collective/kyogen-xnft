@@ -2,6 +2,8 @@ import { selector, selectorFamily } from "recoil";
 import {
   gameStateAtom,
   gameWallet,
+  healerIdsAtom,
+  healersAtomFamily,
   meteorIdsAtom,
   meteorsAtomFamily,
   playerIdsAtom,
@@ -150,3 +152,16 @@ export const selectMeteorFromSelectedTileId = selector({
     );
   },
 });
+
+export const selectAllStructures = selector({
+  key: "selectAllStructures",
+  get: ({get}) => {
+    const meteorIds = get(meteorIdsAtom);
+    const meteors = meteorIds.map(id => get(meteorsAtomFamily(id)));
+    const healerIds = get(healerIdsAtom)
+    const healers = healerIds.map(id => get(healersAtomFamily(id)));
+    const res = [...meteors, ...healers];
+
+    return res;
+  }
+})
