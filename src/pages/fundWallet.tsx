@@ -72,7 +72,7 @@ const FundWallet = () => {
     await fetchGameWalletBalance();
     setTimeout(() => {
       fetchGameWalletBalance();
-    }, 2_000)
+    }, 5_000)
   }, [gameWallet, fetchGameWalletBalance, setNotifications, transferAmount]);
 
   return (

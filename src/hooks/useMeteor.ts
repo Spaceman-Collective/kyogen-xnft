@@ -42,6 +42,7 @@ export const useMeteor = () => {
           BigInt(meteorId),
           BigInt(tileId),
           BigInt(unitId),
+          BigInt(currentPlayer.id),
           gameConfig.game_token
         )
       );
