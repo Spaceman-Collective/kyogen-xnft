@@ -24,6 +24,7 @@ import Image from "next/image";
 import { selectCurrentPlayer } from "@/recoil/selectors";
 import SelectedUnitInfo from "./SelectedUnitInfo";
 import SelectedUnit from "./SelectedUnit";
+import { GameFeed } from "./GameFeed";
 
 const VerticalBorder = ({ side = "left" }: { side?: "left" | "right" }) => {
   const player = useRecoilValue(selectCurrentPlayer);
@@ -110,7 +111,6 @@ const GameFooter = () => {
   return (
     <div className="relative flex flex-row grow max-h-[275px] font-millimetre bg-kyogen-fund-bg min-h-[275px]">
       <HorizontalBorder />
-      <VerticalBorder />
       <div className="relative min-w-[245px]">
         <SelectedUnit className="relative pl-[9px] pt-[2px]" />
       </div>
@@ -118,7 +118,12 @@ const GameFooter = () => {
         <VerticalBorder />
         <SelectedUnitInfo />
       </div>
-      <VerticalBorder side="right" />
+
+      <div className="grow relative">
+        <VerticalBorder />
+        <GameFeed />
+      </div>
+
     </div>
   );
 };
