@@ -119,19 +119,21 @@ const useListenToGameEvents = () => {
           console.log("UNIT ATTACKED", event);
           const defendingTileId = BigInt(event.data.tile);
           const defender = BigInt(event.data.defender);
+          const defenderPreAttack = gameState.get_troop_json(defender) as Troop;
           const attacker = BigInt(event.data.attacker);
           await gameState.update_entity(attacker);
           await gameState.update_entity(defender);
           await gameState.update_entity(defendingTileId);
-          const defendingTroop = gameState.get_troop_json(defender);
-          const attackingTroop = gameState.get_troop_json(attacker);
+          const defendingTroop = gameState.get_troop_json(defender) as Troop;
+          const attackingTroop = gameState.get_troop_json(attacker) as Troop;
+          const damage = Number(defenderPreAttack.health) - Number(defendingTroop.health);
           setGameFeed((curr) => ([...curr, {
             type: event.name,
             players: [
               gameState.get_player_json(BigInt(attackingTroop.player_id)),
               gameState.get_player_json(BigInt(defendingTroop.player_id))
             ],
-            msg: `%1% (${attackingTroop.name}) attacked %2% (${defendingTroop.name})`,
+            msg: `%1% (${attackingTroop.name}) attacked %2% ${Number(defendingTroop.health) <= 0 ? `killing (${defendingTroop.name})`: `(${defendingTroop.name}) dealing ${damage} damage`}`,
             timestamp,
           }]))
           const attackedTiles = [gameState.get_tile_json(defendingTileId)];

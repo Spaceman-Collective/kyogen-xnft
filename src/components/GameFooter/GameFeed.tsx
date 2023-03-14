@@ -1,4 +1,4 @@
-import { playerColorPalette } from "@/constants";
+import { playerColorPaletteStr } from "@/constants";
 import { gameFeedAtom, playerIdsAtom } from "@/recoil";
 import React, { useCallback } from "react";
 import { useRecoilValue } from "recoil";
@@ -9,7 +9,7 @@ export const GameFeed = () => {
 
   const getPlayerColor = useCallback((playerId: string) => {
     const index = playerIds.indexOf(playerId);
-    return playerColorPalette[index] ?? 0x000000;
+    return playerColorPaletteStr[index] ?? "#a00";
   },[playerIds]);
   
   return (
@@ -19,7 +19,7 @@ export const GameFeed = () => {
         const colors = players.map(({id}) => getPlayerColor(id))
         return (
             <p key={index}>
-            {time}: {messageFiller(msg, players, colors)}
+            {time}  -&gt; {messageFiller(msg, players, colors)}
             </p>
         );
       })}
@@ -39,7 +39,7 @@ const getFormattedTimeStamp = (time: number) => {
 
 // this replaces %{playerIndex}% tags
 // with italicised text in the corresponding color
-const messageFiller = (msg: string, players: any[], colors: number[]) => {
+const messageFiller = (msg: string, players: any[], colors: string[]) => {
   const parts = msg.split("%");
 
   return (
@@ -50,11 +50,11 @@ const messageFiller = (msg: string, players: any[], colors: number[]) => {
           return <span key={index}>{part}</span>;
         }
         const player = players[playerIndex];
-        const color = "#" + colors[playerIndex].toString(16);
+        const color = colors[playerIndex];
         return (
-          <i style={{ color }} key={index}>
+          <b style={{ color }} key={index}>
             {player.name}
-          </i>
+          </b>
         );
       })}
     </span>
