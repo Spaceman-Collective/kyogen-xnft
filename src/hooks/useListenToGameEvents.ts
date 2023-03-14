@@ -4,6 +4,7 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import { useCallback, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import { useUpdatePlayers, useUpdateTiles } from "../recoil/transactions";
+import { Observable } from "rxjs";
 
 const LOG_START_INDEX = "Program data: ".length;
 
@@ -87,25 +88,37 @@ const useListenToGameEvents = () => {
   useEffect(() => {
     const { connection: xNFTconnection } = window.xnft.solana;
     const connection = new Connection(xNFTconnection.rpcEndpoint);
-
-    const id = connection.onLogs(
-      new PublicKey(process.env.NEXT_PUBLIC_KYOGEN_ID as string),
-      (logs, ctx) => {
-        for (let log of logs.logs) {
-          if (log.startsWith("Program data:")) {
-            const logStr = log.slice(LOG_START_INDEX);
-            const event = KyogenEventCoder.decode(logStr);
-            if (event) {
-              handleEvent(event);
-              console.log("**** EVENT", event);
+    let connectionId: number;
+    let eventsObservable: Observable<{
+      slot: number;
+      name: string;
+      data: any;
+    }> = new Observable((subscriber) => {
+      connectionId = connection.onLogs(
+        new PublicKey(process.env.NEXT_PUBLIC_KYOGEN_ID as string),
+        (logs, ctx) => {
+          for (let log of logs.logs) {
+            if (log.startsWith("Program data:")) {
+              const logStr = log.slice(LOG_START_INDEX);
+              const event = KyogenEventCoder.decode(logStr);
+              if (event) {
+                subscriber.next({
+                  slot: ctx.slot,
+                  name: event.name,
+                  data: event.data,
+                });
+              }
             }
           }
-        }
-      },
-      "confirmed"
-    );
+        },
+        "confirmed"
+      );
+    });
+    eventsObservable.subscribe(async (event) => {
+      handleEvent(event);
+    });
     return () => {
-      connection.removeOnLogsListener(id);
+      if (!!connectionId) connection.removeOnLogsListener(connectionId);
     };
   }, [handleEvent]);
 };
