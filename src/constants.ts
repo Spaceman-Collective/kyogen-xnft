@@ -1,3 +1,4 @@
+export const SUPRESS_RUNTIME_OVERLAY = process.env.NODE_ENV !== 'production';
 /** Length of tile side */
 export const TILE_LENGTH = 80;
 /** Spacing between tiles */
@@ -66,3 +67,14 @@ export const playerColorPaletteStr = [
   "#E9967A", // dark salmon
   "#F0E68C", // khaki
 ];
+
+
+export const errorSupressScript = `
+  window.addEventListener('error', event => {
+    event.stopImmediatePropagation()
+  })
+
+  window.addEventListener('unhandledrejection', event => {
+    event.stopImmediatePropagation()
+  })
+`;
