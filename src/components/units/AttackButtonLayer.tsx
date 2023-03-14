@@ -7,8 +7,8 @@ import { calculateUnitPositionOnTileCoords } from "../../utils/map";
 import { Circle } from "../PixiComponents";
 import { Container, Sprite } from "react-pixi-fiber";
 import { useAttackUnit } from "../../hooks/useAttackUnit";
-import { Troop } from "../../types";
 import { DamageTexture } from "../../textures";
+import { troopsAtomFamily } from "../../recoil";
 
 export const AttackButtonLayer = () => {
   const attackableTiles = useRecoilValue(
@@ -26,7 +26,7 @@ export const AttackButtonLayer = () => {
           key={`${tile.x}_${tile.y}`}
           tileX={tile.x}
           tileY={tile.y}
-          troop={tile.troop}
+          troopId={tile.troop?.id ?? ""}
         />
       ))}
     </>
@@ -38,14 +38,15 @@ const attackIconLength = radius * 1.4;
 const AttackButton = ({
   tileX,
   tileY,
-  troop,
+  troopId,
 }: {
   tileX: number;
   tileY: number;
-  troop: Troop | undefined;
+  troopId: string;
 }) => {
   const coords = calculateUnitPositionOnTileCoords(tileX, tileY);
-  const attackUnit = useAttackUnit(troop?.id ?? "", tileX, tileY);
+  const troop = useRecoilValue(troopsAtomFamily(troopId));
+  const attackUnit = useAttackUnit(troopId, tileX, tileY);
   const onPointerDown: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
     useCallback((event) => {
       event.stopPropagation();

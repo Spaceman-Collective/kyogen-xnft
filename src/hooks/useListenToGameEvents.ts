@@ -165,12 +165,12 @@ const useListenToGameEvents = () => {
               timestamp,
             },
           ]);
-          const attackedTiles = [gameState.get_tile_json(defendingTileId)];
-          const attackedTroops = attackedTiles
+          const defendingTiles = [gameState.get_tile_json(defendingTileId)];
+          const defendingTroops = defendingTiles
             .map((t) => t.troop)
             .filter((x) => !!x) as Troop[];
-          updateTroops({ troops: attackedTroops });
-          updateTiles(attackedTiles);
+          updateTroops({ troops: [...defendingTroops, attackingTroop] });
+          updateTiles(defendingTiles);
           break;
       }
     },
