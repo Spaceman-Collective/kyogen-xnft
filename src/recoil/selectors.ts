@@ -11,6 +11,7 @@ import {
   selectedTileIdAtom,
   tileIdsAtom,
   tilesAtomFamily,
+  troopsAtomFamily,
 } from "./atoms";
 import { Player, Tile, UnitNames } from "../types";
 import { playerColorPalette } from "../constants";
@@ -117,7 +118,8 @@ export const selectTroopFromSelectedTile = selector({
     const selectedTileId = get(selectedTileIdAtom);
     const selectedTile = get(tilesAtomFamily(selectedTileId));
     if (!selectedTile || !selectedTile.troop) return null;
-    return selectedTile.troop;
+    // must read from troop atom family, so that state can be decoupled
+    return get(troopsAtomFamily(selectedTile.troop.id));
   },
 });
 
