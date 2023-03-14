@@ -17,6 +17,7 @@ import SynthSamurai from "../public/synth_samurai.webp";
 import WildingSamurai from "../public/wildling_samurai.webp";
 
 import Meteor from "../public/building_solarite.webp";
+import Shrine from "../public/building_shrine.webp";
 
 // PERF maybe we want to lazy load these
 
@@ -41,3 +42,4 @@ export const SynthSpawnTexture = PIXI.Texture.from(SynthSpawn.src);
 export const WildingSpawnTexture = PIXI.Texture.from(WildingSpawn.src);
 
 export const MeteorTexture = PIXI.Texture.from(Meteor.src);
+export const ShrineTexture = PIXI.Texture.from(Shrine.src);

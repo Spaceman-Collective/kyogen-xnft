@@ -1,7 +1,7 @@
 import { Connection, Keypair } from "@solana/web3.js";
 import * as kyogenSdk from "kyogen-sdk";
 import { atom, atomFamily } from "recoil";
-import { Meteor, Notification, Player, Tile, Troop } from "@/types";
+import { Healer, Meteor, Notification, Player, Tile, Troop } from "@/types";
 
 export const gameIdAtom = atom<bigint | undefined>({
   key: "gameIdAtom",
@@ -66,6 +66,16 @@ export const meteorsAtomFamily = atomFamily<Meteor | null, string>({
 
 export const meteorIdsAtom = atom<string[]>({
   key: "meteorIdsAtom",
+  default: [],
+});
+
+export const healersAtomFamily = atomFamily<Healer | null, string>({
+  key: "healersAtomFamily",
+  default: null,
+});
+
+export const healerIdsAtom = atom<string[]>({
+  key: "healerIdsAtom",
   default: [],
 });
 

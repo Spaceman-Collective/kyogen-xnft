@@ -6,6 +6,7 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import { Map, Troop, UnitNames } from "../types";
 import useSetGameIdFromLocalStorage from "./useSetGameIdFromLocalStorage";
 import {
+  useUpdateHealers,
   useUpdateMeteors,
   useUpdatePlayers,
   useUpdateTiles,
@@ -25,6 +26,7 @@ export const useLoadGameState = () => {
   const updatePlayers = useUpdatePlayers();
   const updateTroops = useUpdateTroops();
   const updateMeteors = useUpdateMeteors();
+  const updateHealers = useUpdateHealers();
 
   useEffect(() => {
     if (typeof gameId === "undefined") {
@@ -52,12 +54,14 @@ export const useLoadGameState = () => {
       updateTroops({ troops, updateIdList: true });
       updateTiles(map.tiles);
       updateMeteors(map.meteors);
+      updateHealers(map.healers);
       updatePlayers({ players: gamestate.get_players(), updateIdList: true });
     })();
   }, [
     connection.rpcEndpoint,
     gameId,
     setGameState,
+    updateHealers,
     updateMeteors,
     updatePlayers,
     updateTiles,

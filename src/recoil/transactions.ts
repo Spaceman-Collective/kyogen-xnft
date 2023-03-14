@@ -1,7 +1,9 @@
 import { useRecoilTransaction_UNSTABLE } from "recoil";
-import { Meteor, Player, Tile, Troop } from "../types";
+import { Healer, Meteor, Player, Tile, Troop } from "../types";
 import {
   gameStateAtom,
+  healerIdsAtom,
+  healersAtomFamily,
   meteorIdsAtom,
   meteorsAtomFamily,
   playerIdsAtom,
@@ -77,6 +79,19 @@ export const useUpdateMeteors = () =>
           return meteor.id;
         });
         set(meteorIdsAtom, ids);
+      },
+    []
+  );
+
+export const useUpdateHealers = () =>
+  useRecoilTransaction_UNSTABLE<[Healer[]]>(
+    ({ set }) =>
+      (healers) => {
+        const ids = healers.map((healer) => {
+          set(healersAtomFamily(healer.id), healer);
+          return healer.id;
+        });
+        set(healerIdsAtom, ids);
       },
     []
   );
