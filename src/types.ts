@@ -56,6 +56,13 @@ export interface Notification {
   message: string;
 }
 
+export interface GameConfig {
+  max_players: number;
+  game_token: string;
+  spawn_claim_multiplier: string;
+  max_score: string;
+}
+
 export interface Map {
   map_id: string;
   tiles: Tile[];

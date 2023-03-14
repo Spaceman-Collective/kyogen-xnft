@@ -2,6 +2,8 @@ import { selector, selectorFamily } from "recoil";
 import {
   gameStateAtom,
   gameWallet,
+  meteorIdsAtom,
+  meteorsAtomFamily,
   playerIdsAtom,
   playersAtomFamily,
   selectedTileIdAtom,
@@ -127,4 +129,24 @@ export const selectTileFromTroopId = selectorFamily({
 
       return tiles.find((tile) => tile.troop?.id === troopId);
     },
+});
+
+export const selectMeteorFromSelectedTileId = selector({
+  key: "selectStructureFromSelectedTileId",
+  get: ({ get }) => {
+    const gameState = get(gameStateAtom);
+    if (!gameState) {
+      return null;
+    }
+    const tileId = get(selectedTileIdAtom);
+    const meteorIds = get(meteorIdsAtom);
+    return (
+      meteorIds
+        .map((id) => get(meteorsAtomFamily(id)))
+        .find(
+          (meteor) =>
+            meteor && tileId === gameState.get_tile_id(meteor.x, meteor.y)
+        ) ?? null
+    );
+  },
 });
