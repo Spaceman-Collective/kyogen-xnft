@@ -9,6 +9,8 @@ export const FEATURE_LENGTH = 72;
 export const FEATURE_OFFSET = (TILE_LENGTH - FEATURE_LENGTH) / 2;
 /** Length of unit within tile */
 export const UNIT_LENGTH = 72;
+/** Reduction factor of UNIT_LENGTH when on a structure. 0.8 means a 20% reduction  */
+export const UNIT_ON_STRUCTURE_REDUCTION = 0.7;
 /** Since the unit sprite should be centered within the tile,
  * we will need to offset it and any other relative graphics. */
 export const UNIT_OFFSET = (TILE_LENGTH - UNIT_LENGTH) / 2;
