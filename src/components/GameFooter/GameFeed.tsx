@@ -1,5 +1,6 @@
 import { playerColorPaletteStr } from "@/constants";
 import { gameFeedAtom, playerIdsAtom } from "@/recoil";
+import { Player } from "@/types";
 import React, { useCallback } from "react";
 import { useRecoilValue } from "recoil";
 
@@ -39,7 +40,7 @@ const getFormattedTimeStamp = (time: number) => {
 
 // this replaces %{playerIndex}% tags
 // with italicised text in the corresponding color
-const messageFiller = (msg: string, players: any[], colors: string[]) => {
+const messageFiller = (msg: string, players: Player[], colors: string[]) => {
   const parts = msg.split("%");
 
   return (

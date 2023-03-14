@@ -3,10 +3,13 @@ import { KyogenEventCoder } from "@/utils/anchorEvents";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useCallback, useEffect } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { useUpdatePlayers, useUpdateTiles,   useUpdateTroops, } from "../recoil/transactions";
+import {
+  useUpdatePlayers,
+  useUpdateTiles,
+  useUpdateTroops,
+} from "../recoil/transactions";
 import { Observable } from "rxjs";
 import { Player, Tile, Troop } from "../types";
-
 
 const LOG_START_INDEX = "Program data: ".length;
 
@@ -28,16 +31,21 @@ const useListenToGameEvents = () => {
         return;
       }
       const timestamp = Date.now();
-      
+
       switch (event.name) {
         case "NewPlayer":
-          const newPlayer = gameState.get_player_json(BigInt(event.data.playerId))
-          setGameFeed((curr) => ([...curr, {
-            type: event.name,
-            players: [newPlayer],
-            msg: `a new player just joined clan ${event.data.clan}`,
-            timestamp,
-          }]))
+          const newPlayer = gameState.get_player_json(
+            BigInt(event.data.playerId)
+          ) as Player;
+          setGameFeed((curr) => [
+            ...curr,
+            {
+              type: event.name,
+              players: [newPlayer],
+              msg: `a new player just joined clan ${event.data.clan}`,
+              timestamp,
+            },
+          ]);
           break;
         case "GameStateChanged":
           if (event.data.newState.play) {
@@ -73,16 +81,21 @@ const useListenToGameEvents = () => {
           updatePlayers({
             players: [],
           });
-          const spawner = gameState.get_player_json(BigInt(event.data.player)) as Player;
-          const spawned = gameState.get_troop_json(BigInt(event.data.unit)) as Troop;
-          setGameFeed((curr) => ([...curr, {
-            type: event.name,
-            players: [
-              spawner
-            ],
-            msg: `%1% spawned a ${spawned.name}`,
-            timestamp,
-          }]))
+          const spawner = gameState.get_player_json(
+            BigInt(event.data.player)
+          ) as Player;
+          const spawned = gameState.get_troop_json(
+            BigInt(event.data.unit)
+          ) as Troop;
+          setGameFeed((curr) => [
+            ...curr,
+            {
+              type: event.name,
+              players: [spawner],
+              msg: `%1% spawned a ${spawned.name}`,
+              timestamp,
+            },
+          ]);
           break;
         case "UnitMoved":
           console.log("UnitMoved", event);
@@ -96,19 +109,23 @@ const useListenToGameEvents = () => {
           const fromTile = gameState.get_tile_json(fromTileId);
           const toTile = gameState.get_tile_json(toTileId);
 
-          const troop = gameState.get_troop_json(BigInt(event.data.unit)) as Troop;
+          const troop = gameState.get_troop_json(
+            BigInt(event.data.unit)
+          ) as Troop;
 
-          setGameFeed((curr) => ([...curr, {
-            type: event.name,
-            players: [gameState.get_player_json(BigInt(troop.player_id))],
-            msg: `%1% moved ${troop.name} from [${fromTile.x},${fromTile.y}] to [${toTile.x},${toTile.y}]`,
-            timestamp,
-          }]))
+          setGameFeed((curr) => [
+            ...curr,
+            {
+              type: event.name,
+              players: [
+                gameState.get_player_json(BigInt(troop.player_id)) as Player,
+              ],
+              msg: `%1% moved ${troop.name} from [${fromTile.x},${fromTile.y}] to [${toTile.x},${toTile.y}]`,
+              timestamp,
+            },
+          ]);
 
-          const movedTiles = [
-            fromTile,
-            toTile
-          ] as Tile[];
+          const movedTiles = [fromTile, toTile] as Tile[];
           const movedTroops = movedTiles
             .map((t) => t.troop)
             .filter((x) => !!x) as Troop[];
@@ -126,16 +143,28 @@ const useListenToGameEvents = () => {
           await gameState.update_entity(defendingTileId);
           const defendingTroop = gameState.get_troop_json(defender) as Troop;
           const attackingTroop = gameState.get_troop_json(attacker) as Troop;
-          const damage = Number(defenderPreAttack.health) - Number(defendingTroop.health);
-          setGameFeed((curr) => ([...curr, {
-            type: event.name,
-            players: [
-              gameState.get_player_json(BigInt(attackingTroop.player_id)),
-              gameState.get_player_json(BigInt(defendingTroop.player_id))
-            ],
-            msg: `%1% (${attackingTroop.name}) attacked %2% ${Number(defendingTroop.health) <= 0 ? `killing (${defendingTroop.name})`: `(${defendingTroop.name}) dealing ${damage} damage`}`,
-            timestamp,
-          }]))
+          const damage =
+            Number(defenderPreAttack.health) - Number(defendingTroop.health);
+          setGameFeed((curr) => [
+            ...curr,
+            {
+              type: event.name,
+              players: [
+                gameState.get_player_json(
+                  BigInt(attackingTroop.player_id)
+                ) as Player,
+                gameState.get_player_json(
+                  BigInt(defendingTroop.player_id)
+                ) as Player,
+              ],
+              msg: `%1% (${attackingTroop.name}) attacked %2% ${
+                Number(defendingTroop.health) <= 0
+                  ? `killing (${defendingTroop.name})`
+                  : `(${defendingTroop.name}) dealing ${damage} damage`
+              }`,
+              timestamp,
+            },
+          ]);
           const attackedTiles = [gameState.get_tile_json(defendingTileId)];
           const attackedTroops = attackedTiles
             .map((t) => t.troop)
