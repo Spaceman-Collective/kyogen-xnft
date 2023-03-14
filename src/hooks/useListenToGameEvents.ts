@@ -59,7 +59,7 @@ const useListenToGameEvents = () => {
           // Update Entity Player (reduce cards)
           await gameState.update_entity(BigInt(event.data.player));
           // Update kyogen index
-          await gameState.update_kyogen_index();
+          await gameState.update_index();
           const tile = gameState.get_tile_json(spawnedTileId) as Tile;
           if (tile.troop) {
             updateTroops({ appendToIdList: true, troops: [tile.troop] });

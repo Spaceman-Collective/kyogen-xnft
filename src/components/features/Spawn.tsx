@@ -4,7 +4,7 @@ import {
   CARD_HEIGHT,
   CARD_WIDTH,
   FEATURE_LENGTH,
-  TILE_LENGTH,
+  FEATURE_OFFSET,
 } from "../../constants";
 
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -64,6 +64,7 @@ export const SpawnSprite = ({
   let spawnLocked = useRef(false).current;
   const [active, setActive] = useState(false);
   const spawnUnit = useSpawnUnit(BigInt(gameState!.get_tile_id(tileX, tileY)));
+  // TODO clean up all these gnarly switch statements
   const spawnTexture = useMemo(() => {
     switch (clan) {
       case Clans.Ancients:
@@ -186,10 +187,6 @@ export const SpawnSprite = ({
       setActive(false);
     }, []);
 
-  // Since the feature sprite should be centered within the tile, we will need to
-  // offset it and any other relative graphics.
-  const featureOffset = (TILE_LENGTH - FEATURE_LENGTH) / 2;
-
   return (
     <>
       {active && (
@@ -202,8 +199,8 @@ export const SpawnSprite = ({
           height={FEATURE_LENGTH}
           width={FEATURE_LENGTH}
           // center within the tile
-          x={featureOffset}
-          y={featureOffset}
+          x={FEATURE_OFFSET}
+          y={FEATURE_OFFSET}
           texture={spawnTexture}
           onclick={onSpawnClick}
           interactive
@@ -212,8 +209,8 @@ export const SpawnSprite = ({
           <SelectorToolTip
             itemWidth={CARD_WIDTH}
             itemMaxHeight={CARD_WIDTH}
-            x={featureOffset}
-            y={featureOffset}
+            x={FEATURE_OFFSET}
+            y={FEATURE_OFFSET}
           >
             <Container>
               <Sprite

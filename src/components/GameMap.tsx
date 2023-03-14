@@ -6,6 +6,7 @@ import { useRecoilBridgeAcrossReactRoots_UNSTABLE } from "recoil";
 import { SpawnLayer } from "./features/SpawnLayer";
 import { TroopLayer } from "./units/TroopLayer";
 import { AttackButtonLayer } from "./units/AttackButtonLayer";
+import { MeteorLayer } from "./features/MeteorLayer";
 
 export const GameMap = ({
   height,
@@ -39,6 +40,7 @@ export const GameMap = ({
         >
           <TileMap />
           <SpawnLayer />
+          <MeteorLayer />
           <TroopLayer />
           <AttackButtonLayer />
         </KyogenViewport>

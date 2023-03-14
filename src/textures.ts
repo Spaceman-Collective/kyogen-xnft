@@ -16,6 +16,8 @@ import CreeperSamurai from "../public/creeper_samurai.webp";
 import SynthSamurai from "../public/synth_samurai.webp";
 import WildingSamurai from "../public/wildling_samurai.webp";
 
+import Meteor from "../public/building_solarite.webp";
+
 // PERF maybe we want to lazy load these
 
 export const AncientNinjaTexture = PIXI.Texture.from(AncientNinja.src);
@@ -34,6 +36,8 @@ export const SynthSamuraiTexture = PIXI.Texture.from(SynthSamurai.src);
 export const WildingSamuraiTexture = PIXI.Texture.from(WildingSamurai.src);
 
 export const CreeperSpawnTexture = PIXI.Texture.from(CreeperSpawn.src);
-export const AncientSpawnTexture = PIXI.Texture.from(AncientSpawn.src)
-export const SynthSpawnTexture = PIXI.Texture.from(SynthSpawn.src)
-export const WildingSpawnTexture = PIXI.Texture.from(WildingSpawn.src)
+export const AncientSpawnTexture = PIXI.Texture.from(AncientSpawn.src);
+export const SynthSpawnTexture = PIXI.Texture.from(SynthSpawn.src);
+export const WildingSpawnTexture = PIXI.Texture.from(WildingSpawn.src);
+
+export const MeteorTexture = PIXI.Texture.from(Meteor.src);

@@ -1,7 +1,9 @@
 import { useRecoilTransaction_UNSTABLE } from "recoil";
-import { Player, Tile, Troop } from "../types";
+import { Meteor, Player, Tile, Troop } from "../types";
 import {
   gameStateAtom,
+  meteorIdsAtom,
+  meteorsAtomFamily,
   playerIdsAtom,
   playersAtomFamily,
   tileIdsAtom,
@@ -62,6 +64,19 @@ export const useUpdateTroops = () =>
         if (updateIdList) {
           set(troopIdsAtom, ids);
         }
+      },
+    []
+  );
+
+export const useUpdateMeteors = () =>
+  useRecoilTransaction_UNSTABLE<[Meteor[]]>(
+    ({ set }) =>
+      (meteors) => {
+        const ids = meteors.map((meteor) => {
+          set(meteorsAtomFamily(meteor.id), meteor);
+          return meteor.id;
+        });
+        set(meteorIdsAtom, ids);
       },
     []
   );
