@@ -19,7 +19,7 @@ export const GameFeed = () => {
         const colors = players.map(({id}) => getPlayerColor(id))
         return (
             <p key={index}>
-            {time}  -&gt; {messageFiller(msg, players, colors)}
+            <b>{time}</b>  -&gt; {messageFiller(msg, players, colors)}
             </p>
         );
       })}
