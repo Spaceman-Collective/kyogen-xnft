@@ -31,11 +31,12 @@ export const Circle = CustomPIXIComponent<PIXI.Graphics, CircleProps>(
           "strokeWidth",
           "stroke",
           "fill",
+          "fillAlpha",
         ])
       ) {
         obj.clear();
         obj.lineStyle({ width: newProps.strokeWidth, color: newProps.stroke });
-        obj.beginFill(newProps.fill);
+        obj.beginFill(newProps.fill, newProps.fillAlpha);
         obj.drawCircle(newProps.x || 0, newProps.y || 0, newProps.radius || 0);
         if (newProps.blendMode) {
           obj.blendMode = newProps.blendMode;

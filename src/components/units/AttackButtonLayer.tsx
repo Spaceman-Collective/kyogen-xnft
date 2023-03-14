@@ -5,9 +5,10 @@ import { UNIT_OFFSET } from "../../constants";
 import { selectTilesWithEnemiesInSelectedUnitAttackRange } from "../../recoil/selectors";
 import { calculateUnitPositionOnTileCoords } from "../../utils/map";
 import { Circle } from "../PixiComponents";
-import { Container } from "react-pixi-fiber";
+import { Container, Sprite } from "react-pixi-fiber";
 import { useAttackUnit } from "../../hooks/useAttackUnit";
 import { Troop } from "../../types";
+import { DamageTexture } from "../../textures";
 
 export const AttackButtonLayer = () => {
   const attackableTiles = useRecoilValue(
@@ -33,6 +34,7 @@ export const AttackButtonLayer = () => {
 };
 
 const radius = 10;
+const attackIconLength = radius * 1.4;
 const AttackButton = ({
   tileX,
   tileY,
@@ -76,7 +78,14 @@ const AttackButton = ({
       onpointerdown={onPointerDown}
       onpointerup={onPointerUp}
     >
-      <Circle fill={0x9d1422} radius={radius} />
+      <Circle fill={0x9d1422} fillAlpha={0.8} radius={radius}>
+        <Sprite
+          anchor={0.5}
+          texture={DamageTexture}
+          height={attackIconLength}
+          width={attackIconLength}
+        />
+      </Circle>
     </Container>
   );
 };

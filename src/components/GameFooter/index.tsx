@@ -111,19 +111,19 @@ const GameFooter = () => {
   return (
     <div className="relative flex flex-row grow max-h-[275px] font-millimetre bg-kyogen-fund-bg min-h-[275px]">
       <HorizontalBorder />
-     
       <div className="relative min-w-[245px]">
-        <VerticalBorder />
         <SelectedUnit className="relative pl-[9px] pt-[2px]" />
       </div>
       <div className="relative min-w-[245px]">
         <VerticalBorder />
         <SelectedUnitInfo />
       </div>
+
       <div className="grow relative">
         <VerticalBorder />
         <GameFeed />
       </div>
+
     </div>
   );
 };
