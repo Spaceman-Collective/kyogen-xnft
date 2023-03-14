@@ -7,6 +7,7 @@ import { ixWasmToJs, randomU64 } from "../utils/wasm";
 import { useKyogenInstructionSdk } from "./useKyogenInstructionSdk";
 import { sendAndConfirmRawTransaction } from "@solana/web3.js";
 import { bs58 } from "@coral-xyz/anchor/dist/cjs/utils/bytes";
+import useInitPlayerAta from "./useInitPlayerAta";
 
 /**
  * Initializes a player based on the current game wallet.
@@ -15,12 +16,16 @@ export const useInitPlayer = () => {
   const gameWallet = useRecoilValue(gameWalletAtom);
   const gameId = useRecoilValue(gameIdAtom);
   const kyogenInstructions = useKyogenInstructionSdk();
+  const initPlayerAta = useInitPlayerAta();
 
   return useCallback(
     async (clan: Clans) => {
       if (!gameId || !gameWallet) {
         throw new Error("Game wallet or Game Id error");
       }
+      console.log("Initializing player ATA");
+      await initPlayerAta();
+
       const {
         solana: { connection },
         metadata: { username },
@@ -51,6 +56,6 @@ export const useInitPlayer = () => {
       console.log("Init Player TX Confirmed: ", txSig);
       return txSig;
     },
-    [gameId, gameWallet, kyogenInstructions]
+    [gameId, gameWallet, kyogenInstructions, initPlayerAta]
   );
 };
