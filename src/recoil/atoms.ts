@@ -2,7 +2,7 @@ import { Connection, Keypair } from "@solana/web3.js";
 import * as kyogenSdk from "kyogen-sdk";
 import * as PIXI from "pixi.js";
 import { atom, atomFamily } from "recoil";
-import { Healer, Meteor, Notification, Player, Tile, Troop } from "@/types";
+import { GameFeedItem, PlayPhase, Healer, Meteor, Notification, Player, Tile, Troop } from "@/types";
 import { MutableRefObject } from "react";
 
 export const gameIdAtom = atom<bigint | undefined>({
@@ -114,11 +114,10 @@ export const currentSlotAtom = atom({
 export const gameFeedAtom = atom<GameFeedItem[]>({
   key: "gameFeedAtom",
   default: [],
-});
+})
 
-export type GameFeedItem = {
-  type: string;
-  players: Player[];
-  msg: string;
-  timestamp: number;
-};
+export const playPhaseAtom = atom<PlayPhase>({
+  key: "playPhaseAtom",
+  default: "Play",
+})
+
