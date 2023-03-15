@@ -149,3 +149,18 @@ a {
     color-scheme: dark;
   }
 }
+
+.scoreBoard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  gap: 33px;
+
+  position: absolute;
+  width: 811px;
+  height: 418px;
+
+  background: #FBF2D8;
+  border-radius: 10px;
+}

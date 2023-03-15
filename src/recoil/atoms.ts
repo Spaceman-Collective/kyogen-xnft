@@ -1,7 +1,7 @@
 import { Connection, Keypair } from "@solana/web3.js";
 import * as kyogenSdk from "kyogen-sdk";
 import { atom, atomFamily } from "recoil";
-import { Healer, Meteor, Notification, Player, Tile, Troop } from "@/types";
+import { GameFeedItem, PlayPhase, Healer, Meteor, Notification, Player, Tile, Troop } from "@/types";
 
 export const gameIdAtom = atom<bigint | undefined>({
   key: "gameIdAtom",
@@ -101,12 +101,10 @@ export const currentSlotAtom = atom({
 
 export const gameFeedAtom = atom<GameFeedItem[]>({
   key: "gameFeedAtom",
-  default: []
+  default: [],
 })
 
-export type GameFeedItem = {
-  type:string,
-  players: Player[],
-  msg: string,
-  timestamp: number,
-}
+export const playPhaseAtom = atom<PlayPhase>({
+  key: "playPhaseAtom",
+  default: "Play",
+})

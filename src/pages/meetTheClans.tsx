@@ -60,6 +60,7 @@ const Clan = ({
   logoSrc,
   title,
   selected,
+  onClick,
 }: {
   className: string;
   bonusSkill: string;
@@ -67,12 +68,14 @@ const Clan = ({
   imageSrc: string | StaticImageData;
   logoSrc: string | StaticImageData;
   selected?: boolean;
+  onClick?: () => void;
 }) => {
   return (
     <div
       className={`relative flex flex-col grow items-center ${selectedWitdth(
         selected
       )} h-[505px] ${className}`}
+      onClick={onClick}
     >
       <div
         className={`absolute top-0 left-0 w-full h-full z-10 bg-kyogen-border ${selectedOpacity(
@@ -133,6 +136,7 @@ const MeetTheClans = () => {
             logoSrc={HumansLogo}
             title="Ancients"
             selected={clan ? clan === Clans.Ancients : undefined}
+            onClick={() => setClan(Clans.Ancients)}
           />
           <Clan
             className="bg-[url('../../public/clans/login_bg_wildlings_2x.webp')]"
@@ -141,6 +145,7 @@ const MeetTheClans = () => {
             logoSrc={WildlingsLogo}
             title="Wildlings"
             selected={clan ? clan === Clans.Wildings : undefined}
+            onClick={() => setClan(Clans.Wildings)}
           />
           <Clan
             className="bg-[url('../../public/clans/login_bg_creepers_2x.webp')]"
@@ -149,6 +154,7 @@ const MeetTheClans = () => {
             logoSrc={CreepersLogo}
             title="Creepers"
             selected={clan ? clan === Clans.Creepers : undefined}
+            onClick={() => setClan(Clans.Creepers)}
           />
           <Clan
             className="bg-[url('../../public/clans/login_bg_cyborgs_2x.webp')]"
@@ -157,6 +163,7 @@ const MeetTheClans = () => {
             logoSrc={CyborgsLogo}
             title="Cyborgs"
             selected={clan ? clan === Clans.Synths : undefined}
+            onClick={() => setClan(Clans.Synths)}
           />
         </div>
         {clan ? (

@@ -1,4 +1,4 @@
-import { gameFeedAtom, gameStateAtom } from "@/recoil";
+import { gameFeedAtom, playPhaseAtom, gameStateAtom } from "@/recoil";
 import { KyogenEventCoder } from "@/utils/anchorEvents";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useCallback, useEffect } from "react";
@@ -9,7 +9,7 @@ import {
   useUpdateTroops,
 } from "../recoil/transactions";
 import { Observable } from "rxjs";
-import { Player, Tile, Troop } from "../types";
+import { PlayPhase, Player, Tile, Troop } from "../types";
 
 const LOG_START_INDEX = "Program data: ".length;
 
@@ -18,6 +18,7 @@ const useListenToGameEvents = () => {
   const updateTiles = useUpdateTiles(false);
   const updatePlayers = useUpdatePlayers();
   const setGameFeed = useSetRecoilState(gameFeedAtom);
+  const setPlayPhase = useSetRecoilState(playPhaseAtom);
   const updateTroops = useUpdateTroops();
 
   const handleEvent = useCallback(
@@ -31,7 +32,7 @@ const useListenToGameEvents = () => {
         return;
       }
       const timestamp = Date.now();
-
+      setPlayPhase(gameState.get_play_phase() as PlayPhase);
       switch (event.name) {
         case "NewPlayer":
           const newPlayer = gameState.get_player_json(
@@ -174,7 +175,7 @@ const useListenToGameEvents = () => {
           break;
       }
     },
-    [gameState, setGameFeed, updatePlayers, updateTiles, updateTroops]
+    [gameState, setGameFeed, setPlayPhase, updatePlayers, updateTiles, updateTroops]
   );
 
   useEffect(() => {

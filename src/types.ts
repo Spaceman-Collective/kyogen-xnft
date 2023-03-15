@@ -174,3 +174,12 @@ export interface Portal extends StructureBase {
     };
   };
 }
+
+export type GameFeedItem = {
+  type:string,
+  players: Player[],
+  msg: string,
+  timestamp: number,
+}
+
+export type PlayPhase = 'Lobby' | 'Play' | 'Paused' | 'Finished';
