@@ -1,28 +1,46 @@
+import { currentSlotAtom } from "@/recoil";
 import { selectPlayerUnitsOnMeteors } from "@/recoil/selectors";
 import { useEffect } from "react";
 import { useRecoilValue } from "recoil";
+import useInitPlayerAta from "./useInitPlayerAta";
 import { useMeteor } from "./useMeteor";
 
 const usePlayerUnitsOnMeteors = () => {
   const playerOwnedMeteors = useRecoilValue(selectPlayerUnitsOnMeteors);
   const sendMeteorTx = useMeteor();
+  const currentSlot = useRecoilValue(currentSlotAtom);
+  const initPlayerAta = useInitPlayerAta();
 
   useEffect(() => {
-    console.log("tiles with player on meteor", playerOwnedMeteors);
+    initPlayerAta();
+  }, [initPlayerAta])
+
+  useEffect(() => {
     (async () => {
       // TODO: Send transactions for each meteor the player is standing on.
-      await Promise.all(
-        Object.keys(playerOwnedMeteors).map(async (tileId) => {
+      const txIds = await Promise.all(
+        Object.keys(playerOwnedMeteors).reduce((acc, tileId) => {
           const { meteor, tile } = playerOwnedMeteors[tileId];
           if (!tile.troop) {
-            throw new Error("Unreachable");
+            throw new Error("Should be unreachable");
           }
-          const txId = await sendMeteorTx(meteor.id, tileId, tile.troop.id);
-          console.log(`Confirmed meteor TX ${txId}`);
-        })
+          console.log(
+            "Checking meteor info",
+            Number(meteor.last_used) + Number(meteor.recovery),
+            currentSlot
+          );
+          if (
+            Number(meteor.last_used) + Number(meteor.recovery) <=
+            currentSlot
+          ) {
+            acc.push(sendMeteorTx(meteor.id, tileId, tile.troop.id));
+          }
+          return acc;
+        }, [] as Promise<string | undefined>[])
       );
+      console.log("Sent meteor TXs", txIds);
     })();
-  }, [playerOwnedMeteors, sendMeteorTx]);
+  }, [currentSlot, playerOwnedMeteors, sendMeteorTx]);
 };
 
 export default usePlayerUnitsOnMeteors;

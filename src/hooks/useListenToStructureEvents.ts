@@ -1,4 +1,5 @@
-import { connectionAtom, gameFeedAtom } from "@/recoil";
+import { connectionAtom, gameFeedAtom, gameStateAtom } from "@/recoil";
+import { useUpdateMeteors } from "@/recoil/transactions";
 import { StructuresEventCoder } from "@/utils/anchorEvents";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useCallback, useEffect } from "react";
@@ -8,22 +9,30 @@ import { Observable } from "rxjs";
 const LOG_START_INDEX = "Program data: ".length;
 
 const useListenToStructureEvents = () => {
+    const gameState = useRecoilValue(gameStateAtom);
     const connection = useRecoilValue(connectionAtom);
+    const updateMeteors = useUpdateMeteors();
 //   const setGameFeed = useSetRecoilState(gameFeedAtom);
 
   const handleEvent = useCallback(
     async (event: any) => {
       console.log("** STRUCTURES EVENT", event);
+      if (!gameState) return;
       const timestamp = Date.now();
 
       switch (event.name) {
         case "MeteorMined":
+            const meteorId = BigInt(event.data.meteor);
+            await gameState.update_entity(meteorId);
+            const meteor = gameState.get_structure_json(meteorId)
+            console.log("*** updated meteor", meteor);
+            updateMeteors([meteor]);
           break;
         case "PortalUsed":
           break;
       }
     },
-    []
+    [gameState, updateMeteors]
   );
 
   useEffect(() => {

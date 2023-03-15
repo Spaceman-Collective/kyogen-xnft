@@ -35,7 +35,6 @@ export const useMeteor = () => {
       );
 
       const gameConfig = gameState.get_game_config() as GameConfig;
-      console.log("gameConfig ", gameConfig );
       const ix = ixWasmToJs(
         structuresSdk.use_meteor(
           gameState.instance,
@@ -47,7 +46,6 @@ export const useMeteor = () => {
         )
       );
       const txSig = await sendTransaction([ix], {skipPreflight: true});
-      console.log(`TX sig ${txSig}`);
       return txSig;
     },
     [currentPlayer, gameState, gameWallet, sendTransaction]
