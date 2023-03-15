@@ -85,7 +85,7 @@ export const UnitSprite = ({
     tileX,
     tileY,
   ]);
-  const checkIsOnStructure = useIsOnStructure();
+  const isOnStructure = useIsOnStructure(tileX, tileY);
   const [hovering, setHovering] = useState(false);
   const moveUnit = useMoveUnit(troop.id, tileX, tileY);
   const movement = Number(troop.movement);
@@ -217,29 +217,11 @@ export const UnitSprite = ({
       [dragging]
     );
 
-  const isOnStructure = useMemo(
-    () => checkIsOnStructure(tileX, tileY),
-    [checkIsOnStructure, tileX, tileY]
+  const onStructureScalePoint = useMemo(
+    () =>
+      new PIXI.Point(UNIT_ON_STRUCTURE_REDUCTION, UNIT_ON_STRUCTURE_REDUCTION),
+    []
   );
-
-  const unitTransform = useMemo(() => {
-    const transform = new PIXI.Transform();
-    if (isOnStructure) {
-      // If on structure, scale down the container and translate up on the tile
-      transform.localTransform = new Matrix(
-        UNIT_ON_STRUCTURE_REDUCTION,
-        0,
-        0,
-        UNIT_ON_STRUCTURE_REDUCTION,
-        coords.x +
-          (UNIT_LENGTH - UNIT_LENGTH * UNIT_ON_STRUCTURE_REDUCTION) / 2,
-        coords.y - UNIT_LENGTH * UNIT_ON_STRUCTURE_REDUCTION * 0.3
-      );
-    } else {
-      transform.localTransform = new Matrix(1, 0, 0, 1, coords.x, coords.y);
-    }
-    return transform;
-  }, [coords.x, coords.y, isOnStructure]);
 
   useEffect(() => {
     // register container for troop
@@ -268,31 +250,46 @@ export const UnitSprite = ({
         onpointermove={onDragMove}
         onmouseover={onMouseOver}
         onmouseout={onMouseOut}
-        transform={unitTransform}
+        x={coords.x}
+        y={coords.y}
         interactive
       >
-        <ClippedUnit
-          height={UNIT_LENGTH}
-          width={UNIT_LENGTH}
-          name={troop.name}
-          x={UNIT_OFFSET}
-          y={UNIT_OFFSET}
-        />
-        {!ownedByCurrentPlayer && (
-          <Circle
-            fill={troopPlayerColor}
-            radius={5}
-            stroke={0x000000}
-            strokeWidth={1}
-            x={UNIT_OFFSET + 12}
-            y={UNIT_OFFSET + 12}
+        <Container
+          scale={isOnStructure ? onStructureScalePoint : undefined}
+          x={
+            isOnStructure
+              ? (UNIT_LENGTH - UNIT_LENGTH * UNIT_ON_STRUCTURE_REDUCTION) / 2
+              : 0
+          }
+          y={
+            isOnStructure
+              ? -(UNIT_LENGTH * UNIT_ON_STRUCTURE_REDUCTION * 0.3)
+              : 0
+          }
+        >
+          <ClippedUnit
+            height={UNIT_LENGTH}
+            width={UNIT_LENGTH}
+            name={troop.name}
+            x={UNIT_OFFSET}
+            y={UNIT_OFFSET}
           />
-        )}
-        <UnitHealth
-          health={Number(troop.health)}
-          maxHealth={Number(troop.max_health)}
-          showHealthBar={hovering}
-        />
+          {!ownedByCurrentPlayer && (
+            <Circle
+              fill={troopPlayerColor}
+              radius={5}
+              stroke={0x000000}
+              strokeWidth={1}
+              x={UNIT_OFFSET + 12}
+              y={UNIT_OFFSET + 12}
+            />
+          )}
+          <UnitHealth
+            health={Number(troop.health)}
+            maxHealth={Number(troop.max_health)}
+            showHealthBar={hovering}
+          />
+        </Container>
       </Container>
     </>
   );
