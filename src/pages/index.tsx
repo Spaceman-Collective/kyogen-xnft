@@ -56,13 +56,13 @@ export default function Home() {
                 Join game
               </Link>
             </PrimaryButton>
-            <WalletMultiButton
+            {/* <WalletMultiButton
               style={{
                 width: 120,
                 fontSize: 12,
                 padding: 21,
               }}
-            />
+            /> */}
           </div>
         </div>
       </div>

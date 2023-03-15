@@ -50,18 +50,18 @@ const DisplayObjectViewport = CustomPIXIComponent<
       })
         .drag({ underflow: "center" })
         .pinch()
-        .wheel()
+        .wheel({ wheelZoom: false })
         .decelerate({ bounce: 0.95 })
-        .bounce(bounceOptions)
-        .setZoom(0.8, true);
+        // .bounce(bounceOptions)
+        .setZoom(1, true);
       // Set up the drag event for the viewport
-      viewport.on("drag-end", () => {
-        viewport.bounce(undefined);
-      });
-      // Set up the update event for the viewport
-      viewport.on("frame-end", () => {
-        viewport.bounce(bounceOptions);
-      });
+      // viewport.on("drag-end", () => {
+      //   viewport.bounce(undefined);
+      // });
+      // // Set up the update event for the viewport
+      // viewport.on("frame-end", () => {
+      //   viewport.bounce(bounceOptions);
+      // });
       return viewport;
     },
   },
