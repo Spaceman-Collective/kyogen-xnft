@@ -32,7 +32,7 @@ const useListenToGameEvents = () => {
         return;
       }
       const timestamp = Date.now();
-      setPlayPhase(gameState.get_play_phase() as PlayPhase);
+
       switch (event.name) {
         case "NewPlayer":
           const newPlayer = gameState.get_player_json(
@@ -49,16 +49,15 @@ const useListenToGameEvents = () => {
           ]);
           break;
         case "GameStateChanged":
+          // TODO: Update game state and pull from there
           if (event.data.newState.play) {
-            // TODO:
+            setPlayPhase("Play");
           } else if (event.data.newState.paused) {
-            // TODO:
+            setPlayPhase("Paused");
           } else if (event.data.newState.lobby) {
-            // TODO:
-          } else if (event.data.newState.build) {
-            // TODO:
+            setPlayPhase("Lobby");
           } else if (event.data.newState.finished) {
-            // TODO:
+            setPlayPhase("Finished");
           }
           break;
         case "SpawnClaimed":
@@ -175,7 +174,14 @@ const useListenToGameEvents = () => {
           break;
       }
     },
-    [gameState, setGameFeed, setPlayPhase, updatePlayers, updateTiles, updateTroops]
+    [
+      gameState,
+      setGameFeed,
+      setPlayPhase,
+      updatePlayers,
+      updateTiles,
+      updateTroops,
+    ]
   );
 
   useEffect(() => {
