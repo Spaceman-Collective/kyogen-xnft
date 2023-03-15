@@ -23,8 +23,6 @@ export const useInitPlayer = () => {
       if (!gameId || !gameWallet) {
         throw new Error("Game wallet or Game Id error");
       }
-      console.log("Initializing player ATA");
-      await initPlayerAta();
 
       const {
         solana: { connection },
@@ -54,7 +52,9 @@ export const useInitPlayer = () => {
         confirmationStrategy
       );
       console.log("Init Player TX Confirmed: ", txSig);
-      return txSig;
+      const ataTxID = await initPlayerAta();
+      console.log("Init Player TX Confirmed: ", ataTxID);
+      return ataTxID;
     },
     [gameId, gameWallet, kyogenInstructions, initPlayerAta]
   );

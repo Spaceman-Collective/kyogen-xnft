@@ -2,18 +2,12 @@ import { currentSlotAtom } from "@/recoil";
 import { selectPlayerUnitsOnMeteors } from "@/recoil/selectors";
 import { useEffect } from "react";
 import { useRecoilValue } from "recoil";
-import useInitPlayerAta from "./useInitPlayerAta";
 import { useMeteor } from "./useMeteor";
 
 const usePlayerUnitsOnMeteors = () => {
   const playerOwnedMeteors = useRecoilValue(selectPlayerUnitsOnMeteors);
   const sendMeteorTx = useMeteor();
   const currentSlot = useRecoilValue(currentSlotAtom);
-  const initPlayerAta = useInitPlayerAta();
-
-  useEffect(() => {
-    initPlayerAta();
-  }, [initPlayerAta])
 
   useEffect(() => {
     (async () => {
