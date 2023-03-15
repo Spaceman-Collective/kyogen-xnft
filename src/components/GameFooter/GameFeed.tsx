@@ -1,20 +1,28 @@
 import { playerColorPaletteStr } from "@/constants";
 import { gameFeedAtom, playerIdsAtom } from "@/recoil";
 import { Player } from "@/types";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useRecoilValue } from "recoil";
 
 export const GameFeed = () => {
   const gameFeedState = useRecoilValue(gameFeedAtom);
   const playerIds = useRecoilValue(playerIdsAtom);
+  const endGameFeedRef = useRef(null);
 
   const getPlayerColor = useCallback((playerId: string) => {
     const index = playerIds.indexOf(playerId);
     return playerColorPaletteStr[index] ?? "#a00";
   },[playerIds]);
+
+  useEffect(() => {
+    console.log("Game feed effect");
+    if (!endGameFeedRef || !endGameFeedRef.current) return;
+    // @ts-ignore
+    endGameFeedRef.current.scrollIntoView({ behavior: 'smooth' });
+  }, [endGameFeedRef, gameFeedState.length])
   
   return (
-    <div className="mt-3 ml-8 max-h-[260px] overflow-y-auto">
+    <div className="mt-3 ml-8 max-h-[260px] overflow-y-auto" >
       {gameFeedState.map(({ msg, players, timestamp }, index) => {
         const time = getFormattedTimeStamp(timestamp);
         const colors = players.map(({id}) => getPlayerColor(id))
@@ -24,6 +32,7 @@ export const GameFeed = () => {
             </p>
         );
       })}
+      <div ref={endGameFeedRef}></div>
     </div>
   );
 };
