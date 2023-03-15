@@ -820,6 +820,10 @@
         "kind": "struct",
         "fields": [
           {
+            "name": "instance",
+            "type": "u64"
+          },
+          {
             "name": "authority",
             "type": "publicKey"
           },
@@ -881,6 +885,10 @@
           {
             "name": "spawnClaimMultiplier",
             "type": "f64"
+          },
+          {
+            "name": "maxScore",
+            "type": "u64"
           }
         ]
       }
@@ -1066,6 +1074,10 @@
         "fields": [
           {
             "name": "health",
+            "type": "u64"
+          },
+          {
+            "name": "maxHealth",
             "type": "u64"
           }
         ]
@@ -1406,42 +1418,87 @@
     {
       "code": 6000,
       "name": "PlayerCountExceeded",
-      "msg": "Player count exceeded"
+      "msg": ""
     },
     {
       "code": 6001,
       "name": "StringTooLong",
-      "msg": "String too long"
+      "msg": ""
     },
     {
       "code": 6002,
       "name": "WrongPack",
-      "msg": "Wrong pack passed in!"
+      "msg": ""
     },
     {
       "code": 6003,
       "name": "WrongTile",
-      "msg": "Wrong tile passed in!"
+      "msg": ""
     },
     {
       "code": 6004,
-      "name": "WrongUnit",
-      "msg": "Wrong unit!"
+      "name": "TileOccupied",
+      "msg": ""
     },
     {
       "code": 6005,
-      "name": "WrongPlayer",
-      "msg": "Wrong player!"
+      "name": "TileIsNotEmpty",
+      "msg": ""
     },
     {
       "code": 6006,
-      "name": "GamePaused",
-      "msg": "Game paused!"
+      "name": "NoOccupantOnTile",
+      "msg": ""
     },
     {
       "code": 6007,
+      "name": "PlayerDoesntOwnUnit",
+      "msg": ""
+    },
+    {
+      "code": 6008,
+      "name": "AttackingSelfOwnedUnit",
+      "msg": ""
+    },
+    {
+      "code": 6009,
+      "name": "TileIsNotSpawnable",
+      "msg": ""
+    },
+    {
+      "code": 6010,
+      "name": "TileAlreadyClaimed",
+      "msg": ""
+    },
+    {
+      "code": 6011,
+      "name": "TileOutOfRange",
+      "msg": ""
+    },
+    {
+      "code": 6012,
+      "name": "WrongUnit",
+      "msg": ""
+    },
+    {
+      "code": 6013,
+      "name": "WrongPlayer",
+      "msg": ""
+    },
+    {
+      "code": 6014,
+      "name": "GamePaused",
+      "msg": ""
+    },
+    {
+      "code": 6015,
       "name": "UnitRecovering",
-      "msg": "Unit recovering"
+      "msg": ""
+    },
+    {
+      "code": 6016,
+      "name": "UnitNotActive",
+      "msg": ""
     }
   ]
 }

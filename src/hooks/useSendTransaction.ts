@@ -1,4 +1,4 @@
-import { TransactionInstruction } from "@solana/web3.js";
+import { ConfirmOptions, TransactionInstruction } from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor";
 import { useRecoilValue } from "recoil";
 import { gameWallet as gameWalletAtom } from "../recoil";
@@ -10,7 +10,10 @@ export const useSendAndConfirmGameWalletTransaction = () => {
   const gameWallet = useRecoilValue(gameWalletAtom);
 
   return useCallback(
-    async (instructions: TransactionInstruction[]) => {
+    async (
+      instructions: TransactionInstruction[],
+      confirmationOptions?: ConfirmOptions
+    ) => {
       if (!gameWallet) {
         throw Error("Game wallet not initialized");
       }
@@ -32,7 +35,8 @@ export const useSendAndConfirmGameWalletTransaction = () => {
       await sendAndConfirmRawTransaction(
         connection,
         Buffer.from(tx.serialize()),
-        confirmationStrategy
+        confirmationStrategy,
+        confirmationOptions
       );
       console.log("TX Confirmed: ", txSig);
       return txSig;
