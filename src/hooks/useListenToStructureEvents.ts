@@ -1,5 +1,5 @@
 import { connectionAtom, gameFeedAtom, gameStateAtom } from "@/recoil";
-import { useUpdateMeteors } from "@/recoil/transactions";
+import { useUpdateMeteors, useUpdatePlayers } from "@/recoil/transactions";
 import { Meteor, Player } from "@/types";
 import { StructuresEventCoder } from "@/utils/anchorEvents";
 import { PublicKey } from "@solana/web3.js";
@@ -14,6 +14,7 @@ const useListenToStructureEvents = () => {
   const connection = useRecoilValue(connectionAtom);
   const updateMeteors = useUpdateMeteors();
   const setGameFeed = useSetRecoilState(gameFeedAtom);
+  const updatePlayers = useUpdatePlayers();
 
   const handleEvent = useCallback(
     async (event: any) => {
@@ -23,12 +24,13 @@ const useListenToStructureEvents = () => {
       switch (event.name) {
         case "MeteorMined":
           const meteorId = BigInt(event.data.meteor);
+          const minerId = BigInt(event.data.player);
           await gameState.update_entity(meteorId);
+          await gameState.update_entity(minerId);
           const meteor = gameState.get_structure_json(meteorId) as Meteor;
           updateMeteors([meteor]);
-          const miner = gameState.get_player_json(
-            BigInt(event.data.player)
-          ) as Player;
+          const miner = gameState.get_player_json(minerId) as Player;
+          updatePlayers({ players: [miner] });
           setGameFeed((curr) => [
             ...curr,
             {
@@ -43,7 +45,7 @@ const useListenToStructureEvents = () => {
           break;
       }
     },
-    [gameState, setGameFeed, updateMeteors]
+    [gameState, setGameFeed, updateMeteors, updatePlayers]
   );
 
   useEffect(() => {
