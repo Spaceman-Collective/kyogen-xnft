@@ -1,7 +1,9 @@
 import { Connection, Keypair } from "@solana/web3.js";
 import * as kyogenSdk from "kyogen-sdk";
+import * as PIXI from "pixi.js";
 import { atom, atomFamily } from "recoil";
 import { GameFeedItem, PlayPhase, Healer, Meteor, Notification, Player, Tile, Troop } from "@/types";
+import { MutableRefObject } from "react";
 
 export const gameIdAtom = atom<bigint | undefined>({
   key: "gameIdAtom",
@@ -79,6 +81,16 @@ export const healerIdsAtom = atom<string[]>({
   default: [],
 });
 
+///// UI state (I admit this is an odd pattern) ///
+export const troopContainerRefAtomFamily = atomFamily<
+  MutableRefObject<PIXI.DisplayObject | null> | null,
+  string
+>({
+  key: "troopContainerRefAtomFamily",
+  default: null,
+  dangerouslyAllowMutability: true,
+});
+
 ////// Notifications
 
 export const notificationsAtom = atom<Notification[]>({
@@ -108,3 +120,4 @@ export const playPhaseAtom = atom<PlayPhase>({
   key: "playPhaseAtom",
   default: "Play",
 })
+

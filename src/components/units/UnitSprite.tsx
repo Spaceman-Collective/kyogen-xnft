@@ -1,9 +1,9 @@
 import useIsOnStructure from "@/hooks/useIsOnStructure";
 import * as PIXI from "pixi.js";
 import { Matrix } from "pixi.js";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Container } from "react-pixi-fiber";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
 import {
   UNIT_LENGTH,
   UNIT_OFFSET,
@@ -13,6 +13,7 @@ import { useMoveUnit } from "../../hooks/useMoveUnit";
 import {
   gameStateAtom,
   selectedTileIdAtom,
+  troopContainerRefAtomFamily,
   troopsAtomFamily,
 } from "../../recoil";
 import {
@@ -35,12 +36,6 @@ import { getViewport } from "../PixiViewport";
 import { ClippedUnit } from "./ClippedUnit";
 import { UnitHealth } from "./UnitHealth";
 
-const ON_STRUCTURE_SCALE = new PIXI.ObservablePoint(
-  () => {},
-  undefined,
-  UNIT_ON_STRUCTURE_REDUCTION,
-  UNIT_ON_STRUCTURE_REDUCTION
-);
 const ON_STRUCUTRE_TRANSFORM = new PIXI.Transform();
 // ON_STRUCUTRE_TRANSFORM.scale = ON_STRUCTURE_SCALE;
 ON_STRUCUTRE_TRANSFORM.localTransform = new Matrix(
@@ -71,6 +66,13 @@ export const UnitSprite = ({
   tileY: number;
   troop: Troop;
 }) => {
+  const containerRef = useRef(null);
+  const setTroopContainerRef = useSetRecoilState(
+    troopContainerRefAtomFamily(troop.id)
+  );
+  const resetTroopContainerRef = useResetRecoilState(
+    troopContainerRefAtomFamily(troop.id)
+  );
   const coords = calculateUnitPositionOnTileCoords(tileX, tileY);
   const currentPlayer = useRecoilValue(selectCurrentPlayer);
   const ownedByCurrentPlayer = currentPlayer?.id === troop.player_id;
@@ -239,6 +241,16 @@ export const UnitSprite = ({
     return transform;
   }, [coords.x, coords.y, isOnStructure]);
 
+  useEffect(() => {
+    // register container for troop
+    setTroopContainerRef(containerRef);
+
+    return () => {
+      // reset when unmounting
+      resetTroopContainerRef();
+    };
+  }, [resetTroopContainerRef, setTroopContainerRef]);
+
   return (
     <>
       {ownedByCurrentPlayer && (
@@ -250,6 +262,7 @@ export const UnitSprite = ({
         />
       )}
       <Container
+        ref={containerRef}
         onpointerdown={onDragStart}
         onpointerup={onDragEnd}
         onpointermove={onDragMove}

@@ -13,6 +13,7 @@
     "@coral-xyz/anchor": "^0.27.0",
     "@headlessui/react": "^1.7.11",
     "@next/font": "13.1.6",
+    "@solana/spl-token": "^0.3.7",
     "@solana/wallet-adapter-react": "^0.15.29",
     "@solana/wallet-adapter-react-ui": "^0.9.28",
     "@solana/web3.js": "^1.73.2",

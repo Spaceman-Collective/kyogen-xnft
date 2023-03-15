@@ -45,19 +45,19 @@ export const GameOverlay = () => {
                   {currentPlayer.name}
                 </StatusTextContainer>
               </div>
-              <div className="relative flex flex-row items-center mt-8">
-                <div className="bg-[#15172E] absolute top-[-10px] bottom-0 w-[60px] rounded-tl-lg rounded-bl-lg rounded-tr-3xl" />
-                <Image
-                  className="absolute ml-1"
-                  height={50}
-                  width={50}
-                  src={Skull}
-                  alt="score"
-                />
-                <StatusTextContainer className="rounded-bl-lg ml-4">
-                  {currentPlayer.score}
-                </StatusTextContainer>
-              </div>
+             {/* <div className="relative flex flex-row items-center mt-8">
+            <div className="bg-[#15172E] absolute top-[-10px] bottom-0 w-[60px] rounded-tl-lg rounded-bl-lg rounded-tr-3xl" />
+            <Image
+              className="absolute ml-1"
+              height={50}
+              width={50}
+              src={Skull}
+              alt="score"
+            />
+            <StatusTextContainer className="rounded-bl-lg ml-4">
+              {currentPlayer.score}
+            </StatusTextContainer>
+           </div> */}
               <div className="relative flex flex-row items-center mt-8">
                 <div className="bg-[#15172E] absolute top-[-10px] bottom-0 w-[60px] rounded-tl-lg rounded-bl-lg rounded-tr-3xl" />
                 <Image
@@ -68,7 +68,7 @@ export const GameOverlay = () => {
                   alt="solarite"
                 />
                 <StatusTextContainer className="rounded-bl-lg ml-4">
-                  {currentPlayer.solarite}
+                  {currentPlayer.score}
                 </StatusTextContainer>
               </div>
             </div>

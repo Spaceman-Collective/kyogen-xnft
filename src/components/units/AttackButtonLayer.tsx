@@ -1,14 +1,24 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { useRecoilValue } from "recoil";
 import * as PIXI from "pixi.js";
-import { UNIT_OFFSET } from "../../constants";
-import { selectTilesWithEnemiesInSelectedUnitAttackRange } from "../../recoil/selectors";
-import { calculateUnitPositionOnTileCoords } from "../../utils/map";
+import { TILE_LENGTH, UNIT_OFFSET } from "../../constants";
+import {
+  selectTilesWithEnemiesInSelectedUnitAttackRange,
+  selectTroopFromSelectedTile,
+} from "../../recoil/selectors";
+import {
+  calculateCenteredPositionFromCenter,
+  calculateDistance,
+  calculateRotationFromTileCoords,
+  calculateTileCoords,
+  calculateUnitPositionOnTileCoords,
+} from "../../utils/map";
 import { Circle } from "../PixiComponents";
 import { Container, Sprite } from "react-pixi-fiber";
 import { useAttackUnit } from "../../hooks/useAttackUnit";
 import { DamageTexture } from "../../textures";
-import { troopsAtomFamily } from "../../recoil";
+import { troopContainerRefAtomFamily, troopsAtomFamily } from "../../recoil";
+import { ease } from "pixi-ease";
 
 export const AttackButtonLayer = () => {
   const attackableTiles = useRecoilValue(
@@ -44,13 +54,17 @@ const AttackButton = ({
   tileY: number;
   troopId: string;
 }) => {
+  const containerRef = useRef<Container>(null);
+  const selectedUnit = useRecoilValue(selectTroopFromSelectedTile);
+  const attackingContainerRef = useRecoilValue(
+    troopContainerRefAtomFamily(selectedUnit?.id ?? "")
+  );
   const coords = calculateUnitPositionOnTileCoords(tileX, tileY);
   const troop = useRecoilValue(troopsAtomFamily(troopId));
   const attackUnit = useAttackUnit(troopId, tileX, tileY);
   const onPointerDown: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
     useCallback((event) => {
       event.stopPropagation();
-      console.log(event);
       const button = event.currentTarget as PIXI.DisplayObject;
       button.alpha = 0.5;
     }, []);
@@ -59,12 +73,119 @@ const AttackButton = ({
     useCallback(
       async (event) => {
         event.stopPropagation();
-        console.log(event);
         const button = event.currentTarget as PIXI.DisplayObject;
         button.alpha = 1;
+        if (attackingContainerRef?.current && containerRef?.current) {
+          // NOTE: sometimes after moving the tile, `getGlobalPosition` returns 0. This should
+          // be ok since it should be updated by the time the cool down finishes.
+          const attackerPosition =
+            attackingContainerRef.current.getGlobalPosition();
+          const defenderPosition = (
+            containerRef.current as unknown as PIXI.DisplayObject
+          )?.getGlobalPosition();
+          // get the tiles based on container, so we can use that as our refernce for coordinates.
+          const attackingTile = calculateTileCoords(attackerPosition);
+          const centerOfAttackingTile = calculateCenteredPositionFromCenter(
+            ...attackingTile
+          );
+          const defendingTile = calculateTileCoords(defenderPosition);
+          const centerOfDefenderTile = calculateCenteredPositionFromCenter(
+            ...defendingTile
+          );
+          // Calcualte a point that is 20 points away from the attacking tile
+          // along the vector between attacking and defending tiles.
+          const totalDistance = calculateDistance(
+            [centerOfAttackingTile.x, centerOfAttackingTile.y],
+            [centerOfDefenderTile.x, centerOfDefenderTile.y]
+          );
+          const distanceRatio = 20 / totalDistance;
+          const rotation = calculateRotationFromTileCoords(
+            attackingTile,
+            defendingTile
+          );
+          const deg90 = Math.PI / 2;
+          // make it so that containers on top require 0 rotation, left is 90 deg, etc.
+          const offsetRotation = rotation - deg90;
+          const containerBounds = attackingContainerRef.current.getBounds();
+          const pivotXOffset = containerBounds.width / 2;
+          const pivotYOffset = containerBounds.height / 2;
+          const animStartX = attackingContainerRef.current.x + pivotXOffset;
+          const animStartY = attackingContainerRef.current.y + pivotYOffset;
+          const diffX = centerOfDefenderTile.x - centerOfAttackingTile.x;
+          const diffY = centerOfDefenderTile.y - centerOfAttackingTile.y;
+          const translatePointX = diffX
+            ? centerOfAttackingTile.x + distanceRatio * diffX
+            : animStartX;
+          const translatePointY = diffY
+            ? centerOfAttackingTile.y + distanceRatio * diffY
+            : animStartY;
+          // Set the pivot of the attacking Container so we can rotate around the center.
+          attackingContainerRef.current.x = animStartX;
+          attackingContainerRef.current.y = animStartY;
+          attackingContainerRef.current.pivot.x = pivotXOffset;
+          attackingContainerRef.current.pivot.y = pivotYOffset;
+          // Chain animations to rotate and move the attacker towards the defender, then reverse to it's
+          // original position.
+          ease
+            .add(
+              attackingContainerRef.current,
+              // x is ending position of animation
+              { rotation: -offsetRotation },
+              { duration: 300, ease: "easeInQuint" }
+            )
+            .once("complete", () => {
+              if (!attackingContainerRef.current) {
+                throw Error("Attacker could not be found during animation");
+              }
+              ease
+                .add(
+                  attackingContainerRef.current,
+                  { x: translatePointX, y: translatePointY },
+                  { duration: 300, ease: "easeInQuint" }
+                )
+                .once("complete", () => {
+                  if (!attackingContainerRef.current) {
+                    throw Error("Attacker could not be found during animation");
+                  }
+                  ease
+                    .add(
+                      attackingContainerRef.current,
+                      { x: animStartX, y: animStartY },
+                      { duration: 300, ease: "easeOutQuint" }
+                    )
+                    .once("complete", () => {
+                      if (!attackingContainerRef.current) {
+                        throw Error(
+                          "Attacker could not be found during animation"
+                        );
+                      }
+                      ease
+                        .add(
+                          attackingContainerRef.current,
+                          { rotation: 0 },
+                          { duration: 300, ease: "easeOutQuint" }
+                        )
+                        .once("complete", () => {
+                          if (!attackingContainerRef.current) {
+                            throw Error(
+                              "Attacker could not be found during animation"
+                            );
+                          }
+                          // reset pivot at the end of the animation chain
+                          attackingContainerRef.current.x =
+                            attackingContainerRef.current.x - pivotXOffset;
+                          attackingContainerRef.current.y =
+                            attackingContainerRef.current.y - pivotYOffset;
+                          attackingContainerRef.current.pivot.x = 0;
+                          attackingContainerRef.current.pivot.y = 0;
+                        });
+                    });
+                });
+            });
+        }
         await attackUnit();
       },
-      [attackUnit]
+      [attackUnit, attackingContainerRef]
     );
 
   if (!troop) {
@@ -73,6 +194,7 @@ const AttackButton = ({
 
   return (
     <Container
+      ref={containerRef}
       x={coords.x + UNIT_OFFSET}
       y={coords.y + UNIT_OFFSET}
       interactive

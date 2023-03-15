@@ -25,7 +25,7 @@ export const HealthBar = ({ percent, x, y, ...props }: HealthBarProps) => {
       return;
     }
     if (healthRef.current) {
-      const anim = ease.add(
+      ease.add(
         healthRef.current,
         { width: HealthBarWidth * percent },
         { duration: 300, ease: "linear" }
