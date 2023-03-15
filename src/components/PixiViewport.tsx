@@ -28,6 +28,17 @@ const DisplayObjectViewport = CustomPIXIComponent<
       worldHeight,
       worldWidth,
     }) => {
+      const bounceBox = new PIXI.Rectangle(
+        -WORLD_OVERFLOW,
+        -WORLD_OVERFLOW,
+        worldWidth + WORLD_OVERFLOW,
+        worldHeight + WORLD_OVERFLOW
+      ) as PIXI.Rectangle;
+      const bounceOptions = {
+        bounceBox,
+        sides: "all",
+        underflow: "center",
+      };
       const viewport = new PixiViewport({
         screenHeight: screenHeight,
         screenWidth: screenWidth,
@@ -35,20 +46,22 @@ const DisplayObjectViewport = CustomPIXIComponent<
         worldHeight: worldHeight,
         events: application.renderer.events,
         ticker: application.ticker,
+        allowPreserveDragOutside: true,
       })
         .drag({ underflow: "center" })
         .pinch()
         .wheel()
         .decelerate({ bounce: 0.95 })
-        .bounce({
-          bounceBox: new PIXI.Rectangle(
-            -WORLD_OVERFLOW,
-            -WORLD_OVERFLOW,
-            worldWidth + WORLD_OVERFLOW,
-            worldHeight + WORLD_OVERFLOW
-          ),
-          underflow: "center",
-        });
+        .bounce(bounceOptions)
+        .setZoom(0.8, true);
+      // Set up the drag event for the viewport
+      viewport.on("drag-end", () => {
+        viewport.bounce(undefined);
+      });
+      // Set up the update event for the viewport
+      viewport.on("frame-end", () => {
+        viewport.bounce(bounceOptions);
+      });
       return viewport;
     },
   },
