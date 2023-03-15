@@ -1,7 +1,7 @@
 import { useCallback, useRef } from "react";
 import { useRecoilValue } from "recoil";
 import * as PIXI from "pixi.js";
-import { TILE_LENGTH, UNIT_OFFSET } from "../../constants";
+import { UNIT_OFFSET } from "../../constants";
 import {
   selectTilesWithEnemiesInSelectedUnitAttackRange,
   selectTroopFromSelectedTile,
@@ -12,6 +12,7 @@ import {
   calculateRotationFromTileCoords,
   calculateTileCoords,
   calculateUnitPositionOnTileCoords,
+  normalizeGlobalPointFromViewport,
 } from "../../utils/map";
 import { Circle } from "../PixiComponents";
 import { Container, Sprite } from "react-pixi-fiber";
@@ -19,6 +20,7 @@ import { useAttackUnit } from "../../hooks/useAttackUnit";
 import { DamageTexture } from "../../textures";
 import { troopContainerRefAtomFamily, troopsAtomFamily } from "../../recoil";
 import { ease } from "pixi-ease";
+import { getViewport } from "../PixiViewport";
 
 export const AttackButtonLayer = () => {
   const attackableTiles = useRecoilValue(
@@ -75,14 +77,28 @@ const AttackButton = ({
         event.stopPropagation();
         const button = event.currentTarget as PIXI.DisplayObject;
         button.alpha = 1;
-        if (attackingContainerRef?.current && containerRef?.current) {
+        const viewport = getViewport(button);
+        if (
+          viewport &&
+          attackingContainerRef?.current &&
+          containerRef?.current
+        ) {
+
           // NOTE: sometimes after moving the tile, `getGlobalPosition` returns 0. This should
           // be ok since it should be updated by the time the cool down finishes.
-          const attackerPosition =
+          const globalAttackerPosition =
             attackingContainerRef.current.getGlobalPosition();
-          const defenderPosition = (
+          const attackerPosition = normalizeGlobalPointFromViewport(
+            viewport,
+            globalAttackerPosition
+          );
+          const globalDefenderPosition = (
             containerRef.current as unknown as PIXI.DisplayObject
           )?.getGlobalPosition();
+          const defenderPosition = normalizeGlobalPointFromViewport(
+            viewport,
+            globalDefenderPosition
+          );
           // get the tiles based on container, so we can use that as our refernce for coordinates.
           const attackingTile = calculateTileCoords(attackerPosition);
           const centerOfAttackingTile = calculateCenteredPositionFromCenter(
