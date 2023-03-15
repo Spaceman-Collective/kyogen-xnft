@@ -34,13 +34,12 @@ export const GameEndScreen = () => {
         <p className="mx-auto mt-20 text-[#FF3D46] font-millimetre uppercase text-6xl">
             score
         </p>
-        <div className="mx-[30%] scoreBoard mt-56 text-[#000]">
+        <div className="mx-[25%] scoreBoard mt-56 text-[#000] bg-[#FBF2D8] absolute w-1/2 p-5 rounded-lg flex flex-col">
             <table className="table-fixed  min-w-full">
                 <tbody>
                 {leaderboard.map((p,index) => {
                     return (
                     <tr key={p.id}>
-
                         <td>{index+1}</td>
                         <td>{p.name}</td>
                         <td>{p.clan}</td>
