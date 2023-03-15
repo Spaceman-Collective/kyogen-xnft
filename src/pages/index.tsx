@@ -3,8 +3,7 @@ import Image from "next/image";
 import KyogenLogo from "../../public/kyogen-logo.svg";
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import Link from "next/link";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { errorSupressScript, SUPRESS_RUNTIME_OVERLAY } from "@/constants";
+// import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 export default function Home() {
   return (
@@ -17,7 +16,6 @@ export default function Home() {
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
-        {SUPRESS_RUNTIME_OVERLAY && <script dangerouslySetInnerHTML={{ __html: errorSupressScript }} />}
       </Head>
       {/* <Navbar /> */}
       <div className="absolute top-0 bottom-0 left-0 right-0 bg-white bg-contain bg-center bg-no-repeat bg-[url('/bg_loading_screen_2x.webp')] z-10 flex">
