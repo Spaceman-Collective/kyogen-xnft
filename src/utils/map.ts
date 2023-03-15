@@ -32,6 +32,22 @@ export const calculateTileCoords = (
 };
 
 /**
+ * Calculate the counter clockwise rotation between 2 points, where source is treated as the origin.
+ * Value is in Radians.
+ * @param source
+ * @param dest
+ * @returns
+ */
+export const calculateRotationFromTileCoords = (
+  source: [number, number],
+  dest: [number, number]
+) => {
+  const diffX = dest[0] - source[0];
+  const diffY = source[1] - dest[1];
+  return Math.atan2(diffY, diffX);
+};
+
+/**
  * @param i
  * @param j
  */

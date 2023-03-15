@@ -78,12 +78,12 @@ const useListenToGameEvents = () => {
             updateTroops({ appendToIdList: true, troops: [tile.troop] });
           }
           updateTiles([tile]);
-          updatePlayers({
-            players: [],
-          });
           const spawner = gameState.get_player_json(
             BigInt(event.data.player)
           ) as Player;
+          updatePlayers({
+            players: [spawner],
+          });
           const spawned = gameState.get_troop_json(
             BigInt(event.data.unit)
           ) as Troop;
