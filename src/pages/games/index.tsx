@@ -6,6 +6,7 @@ import { GameOverlay } from "../../components/GameOverlay";
 import { useLoadGameState } from "../../hooks/useLoadGameState";
 import { useTrackSlotChange } from "../../hooks/useTrackSlotChange";
 import usePlayerUnitsOnMeteors from "@/hooks/usePlayerUnitsOnMeteors";
+import useListenToStructureEvents from "@/hooks/useListenToStructureEvents";
 
 // // must use dynamic imports as `pixi-viewport` expects window object.
 const GameMap = dynamic({
@@ -22,6 +23,7 @@ const GameMap = dynamic({
 const Game = () => {
   useLoadGameState();
   useListenToGameEvents();
+  useListenToStructureEvents();
   useTrackSlotChange();
   usePlayerUnitsOnMeteors();
   const gameContainerRef = useRef<HTMLDivElement>(null);
