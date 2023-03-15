@@ -112,6 +112,7 @@ export const UnitSprite = ({
   const onDragStart: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
     useCallback(
       (event) => {
+        event.stopPropagation();
         const container = event.currentTarget as PIXI.DisplayObject;
         const viewport = getViewport(container);
         if (!viewport) {
@@ -133,7 +134,6 @@ export const UnitSprite = ({
           // do nothing if enemy unit
           return;
         }
-        event.stopPropagation();
 
         setStartTile(_startTile);
         container.alpha = 0.5;
@@ -145,6 +145,8 @@ export const UnitSprite = ({
   const onDragEnd: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =
     useCallback(
       async (event) => {
+        // prevent viewport from moving
+        event.stopPropagation();
         const container = event.currentTarget as PIXI.DisplayObject;
         const viewport = getViewport(container);
         if (!viewport) {
@@ -156,8 +158,6 @@ export const UnitSprite = ({
           viewport.lastViewport?.scaleY
         );
         const destinationTileId = gameState!.get_tile_id(coords[0], coords[1]);
-        // prevent viewport from moving
-        event.stopPropagation();
         // Set the selected unit
 
         container.alpha = 1;

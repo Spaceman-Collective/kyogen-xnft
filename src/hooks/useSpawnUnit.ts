@@ -7,7 +7,7 @@ import { ixWasmToJs, randomU64 } from "../utils/wasm";
 import { useKyogenInstructionSdk } from "./useKyogenInstructionSdk";
 import { useSendAndConfirmGameWalletTransaction } from "./useSendTransaction";
 
-export const useSpawnUnit = (tileId: bigint) => {
+export const useSpawnUnit = (tileX: number, tileY: number) => {
   const player = useRecoilValue(selectCurrentPlayer);
   const kyogenInstructions = useKyogenInstructionSdk();
   const gameState = useRecoilValue(gameStateAtom);
@@ -24,13 +24,13 @@ export const useSpawnUnit = (tileId: bigint) => {
         kyogenInstructions.spawn_unit(
           gameState.instance,
           randomU64(),
-          tileId,
+          BigInt(gameState!.get_tile_id(tileX, tileY)),
           BigInt(player.id),
           unitKey
         )
       );
       await sendTransaction([ix]);
     },
-    [gameState, kyogenInstructions, player, sendTransaction, tileId]
+    [gameState, kyogenInstructions, player, sendTransaction, tileX, tileY]
   );
 };

@@ -37,7 +37,7 @@ import {
 } from "../../recoil/selectors";
 import { useSpawnUnit } from "../../hooks/useSpawnUnit";
 import { calculateUnitPositionOnTileCoords } from "../../utils/map";
-import { gameStateAtom, tilesAtomFamily } from "../../recoil";
+import { tilesAtomFamily } from "../../recoil";
 
 export const Spawn = ({ tileId }: { tileId: string }) => {
   const tile = useRecoilValue(tilesAtomFamily(tileId));
@@ -60,10 +60,9 @@ export const SpawnSprite = ({
   const coords = calculateUnitPositionOnTileCoords(tileX, tileY);
   const player = useRecoilValue(selectCurrentPlayer);
   const playerHand = useRecoilValue(selectCurrentPlayerHand);
-  const gameState = useRecoilValue(gameStateAtom);
   let spawnLocked = useRef(false).current;
   const [active, setActive] = useState(false);
-  const spawnUnit = useSpawnUnit(BigInt(gameState!.get_tile_id(tileX, tileY)));
+  const spawnUnit = useSpawnUnit(tileX, tileY);
   // TODO clean up all these gnarly switch statements
   const spawnTexture = useMemo(() => {
     switch (clan) {
