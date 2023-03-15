@@ -14,7 +14,7 @@ export const GameFeed = () => {
   },[playerIds]);
   
   return (
-    <div className="mt-3 ml-8 max-h-full overflow-y-auto">
+    <div className="mt-3 ml-8 max-h-[260px] overflow-y-auto">
       {gameFeedState.map(({ msg, players, timestamp }, index) => {
         const time = getFormattedTimeStamp(timestamp);
         const colors = players.map(({id}) => getPlayerColor(id))

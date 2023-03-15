@@ -63,7 +63,7 @@ const HealthBar = ({
   if (healthPercentage < 60) barColor = "bg-[#FFC32D]";
   if (healthPercentage <= 33.4) barColor = "bg-[#FF3D46]";
   return (
-    <div className="relative bg-[#384269] w-full h-full p-[8px]">
+    <div className="relative bg-[#384269] w-full h-full p-[6px]">
       <div className="relative bg-kyogen-border h-[20px] rounded-[8px] rounded-tr-[0px] z-10">
         <div
           className={`absolute top-0 h-full rounded-[8px] ${barColor} border-kyogen-border border-[1px] z-20`}
@@ -94,8 +94,8 @@ const UnitImage = ({ troop }: { troop: Troop }) => {
       <Image
         src={UnitNameToImageMap(troop.name)}
         alt={troop.name}
-        height={236}
-        width={236}
+        height={241}
+        width={241}
       />
     </div>
   );
