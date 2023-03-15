@@ -70,8 +70,12 @@ const Clan = ({
   selected?: boolean;
   onClick?: () => void;
 }) => {
+  const [hovered, setHovered] = useState(false);
+
   return (
     <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       className={`relative flex flex-col grow items-center ${selectedWitdth(
         selected
       )} h-[505px] ${className}`}
@@ -95,9 +99,9 @@ const Clan = ({
         <ContainerTitle>{title}</ContainerTitle>
       </div>
       <div
-        className={`${selectedBonus(
-          selected
-        )} absolute bottom-[20px] bg-white rounded-[30px] h-[40px] p-[10px] text-black text-center text-[20px] leading-[20px] font-bold z-50`}
+        className={`${
+          hovered && selected === undefined ? "block" : `${selectedBonus(selected)}`
+        } absolute bottom-[20px] bg-white rounded-[30px] h-[40px] p-[10px] text-black text-center text-[20px] leading-[20px] font-bold z-50`}
       >
         Bonus: {bonusSkill}
       </div>
@@ -122,7 +126,7 @@ const MeetTheClans = () => {
     if (!clan) return;
     const txId = await initPlayerAction(clan);
     // Drop the user into the game
-    router.push("/games")
+    router.push("/games");
   }, [clan, initPlayerAction, router]);
 
   return (
