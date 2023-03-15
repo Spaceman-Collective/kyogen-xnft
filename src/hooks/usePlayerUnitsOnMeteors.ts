@@ -2,12 +2,18 @@ import { currentSlotAtom } from "@/recoil";
 import { selectPlayerUnitsOnMeteors } from "@/recoil/selectors";
 import { useEffect } from "react";
 import { useRecoilValue } from "recoil";
+import useInitPlayerAta from "./useInitPlayerAta";
 import { useMeteor } from "./useMeteor";
 
 const usePlayerUnitsOnMeteors = () => {
   const playerOwnedMeteors = useRecoilValue(selectPlayerUnitsOnMeteors);
   const sendMeteorTx = useMeteor();
   const currentSlot = useRecoilValue(currentSlotAtom);
+  const initPlayerAta = useInitPlayerAta();
+
+  useEffect(() => {
+    initPlayerAta();
+  }, [initPlayerAta]);
 
   useEffect(() => {
     (async () => {
@@ -18,11 +24,6 @@ const usePlayerUnitsOnMeteors = () => {
           if (!tile.troop) {
             throw new Error("Should be unreachable");
           }
-          console.log(
-            "Checking meteor info",
-            Number(meteor.last_used) + Number(meteor.recovery),
-            currentSlot
-          );
           if (
             Number(meteor.last_used) + Number(meteor.recovery) <=
             currentSlot
@@ -32,7 +33,7 @@ const usePlayerUnitsOnMeteors = () => {
           return acc;
         }, [] as Promise<string | undefined>[])
       );
-      console.log("Sent meteor TXs", txIds);
+      if (txIds.length) console.log("Sent meteor TXs", txIds);
     })();
   }, [currentSlot, playerOwnedMeteors, sendMeteorTx]);
 };

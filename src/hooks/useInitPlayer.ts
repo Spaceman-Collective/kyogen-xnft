@@ -53,7 +53,7 @@ export const useInitPlayer = () => {
       );
       console.log("Init Player TX Confirmed: ", txSig);
       const ataTxID = await initPlayerAta();
-      console.log("Init Player TX Confirmed: ", ataTxID);
+      console.log("Create player ATA confirmed: ", ataTxID);
       return ataTxID;
     },
     [gameId, gameWallet, kyogenInstructions, initPlayerAta]
