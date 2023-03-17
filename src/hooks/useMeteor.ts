@@ -38,6 +38,7 @@ export const useMeteor = () => {
       const ix = ixWasmToJs(
         structuresSdk.use_meteor(
           gameState.instance,
+          BigInt(gameState.get_map_id()),
           BigInt(meteorId),
           BigInt(tileId),
           BigInt(unitId),

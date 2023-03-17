@@ -23,6 +23,7 @@ export const useSpawnUnit = (tileX: number, tileY: number) => {
       const ix = ixWasmToJs(
         kyogenInstructions.spawn_unit(
           gameState.instance,
+          BigInt(gameState.get_map_id()),
           randomU64(),
           BigInt(gameState!.get_tile_id(tileX, tileY)),
           BigInt(player.id),

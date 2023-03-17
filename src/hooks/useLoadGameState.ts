@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import * as kyogenSdk from "kyogen-sdk";
 import { gameIdAtom, gameStateAtom } from "../recoil";
@@ -19,6 +19,14 @@ import {
  */
 export const useLoadGameState = () => {
   useSetGameIdFromLocalStorage();
+  const loadGameState = useLoadGameStateFunc();
+
+  useEffect(() => {
+    loadGameState();
+  }, [loadGameState]);
+};
+
+export const useLoadGameStateFunc = () => {
   const { connection } = useConnection();
   const setGameState = useSetRecoilState(gameStateAtom);
   const gameId = useRecoilValue(gameIdAtom);
@@ -28,7 +36,7 @@ export const useLoadGameState = () => {
   const updateMeteors = useUpdateMeteors();
   const updateHealers = useUpdateHealers();
 
-  useEffect(() => {
+  return useCallback(async () => {
     if (typeof gameId === "undefined") {
       return;
     }
@@ -40,23 +48,21 @@ export const useLoadGameState = () => {
       process.env.NEXT_PUBLIC_STRUCTURES_ID as string,
       gameId
     );
-    (async () => {
-      gamestate.add_blueprints(Object.values(UnitNames));
-      await gamestate.load_state();
-      // TODO error handling
-      setGameState(gamestate);
-      const map = gamestate.get_map() as Map;
-      console.log("gamestate ", map);
+    gamestate.add_blueprints(Object.values(UnitNames));
+    await gamestate.load_state();
+    // TODO error handling
+    setGameState(gamestate);
+    const map = gamestate.get_map() as Map;
+    console.log("gamestate ", map);
 
-      const troops = map.tiles
-        .map((tile) => tile.troop)
-        .filter((x) => !!x) as Troop[];
-      updateTroops({ troops, updateIdList: true });
-      updateTiles(map.tiles);
-      updateMeteors(map.meteors);
-      updateHealers(map.healers);
-      updatePlayers({ players: gamestate.get_players(), updateIdList: true });
-    })();
+    const troops = map.tiles
+      .map((tile) => tile.troop)
+      .filter((x) => !!x) as Troop[];
+    updateTroops({ troops, updateIdList: true });
+    updateTiles(map.tiles);
+    updateMeteors(map.meteors);
+    updateHealers(map.healers);
+    updatePlayers({ players: gamestate.get_players(), updateIdList: true });
   }, [
     connection.rpcEndpoint,
     gameId,

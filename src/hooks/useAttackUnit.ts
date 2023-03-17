@@ -38,6 +38,7 @@ export const useAttackUnit = (
     const ix = ixWasmToJs(
       instructionSdk.attack_unit(
         gameState.instance,
+        BigInt(gameState.get_map_id()),
         BigInt(selectedUnit.id),
         BigInt(defendingUnitId),
         BigInt(gameState.get_tile_id(tileX, tileY))

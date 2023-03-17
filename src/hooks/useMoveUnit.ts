@@ -28,6 +28,7 @@ export const useMoveUnit = (unitId: string, tileX: number, tileY: number) => {
       const ix = ixWasmToJs(
         instructionSdk.move_unit(
           gameState.instance,
+          BigInt(gameState.get_map_id()),
           BigInt(unitId),
           BigInt(currentPlayer.id),
           BigInt(gameState.get_tile_id(tileX, tileY)),
