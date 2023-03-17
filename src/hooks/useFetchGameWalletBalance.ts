@@ -8,12 +8,14 @@ export const useFetchGameWalletBalance = () => {
   const setGameWalletBalance = useSetRecoilState(gameWalletBalance);
 
   return useCallback(async () => {
-    const connection = window.xnft.solana.connection;
-    const accountInfo = await connection.getAccountInfo(gameWallet!.publicKey);
-    if (!accountInfo) {
-      console.error(`Account ${gameWallet!.publicKey.toString()} not found`);
-      return;
+    if (gameWallet) {
+      const connection = window.xnft.solana.connection;
+      const accountInfo = await connection.getAccountInfo(gameWallet.publicKey);
+      if (!accountInfo) {
+        console.error(`Account ${gameWallet!.publicKey.toString()} not found`);
+        return;
+      }
+      setGameWalletBalance(accountInfo.lamports / LAMPORTS_PER_SOL);
     }
-    setGameWalletBalance(accountInfo.lamports / LAMPORTS_PER_SOL);
-  }, [setGameWalletBalance]);
+  }, [gameWallet, setGameWalletBalance]);
 };
