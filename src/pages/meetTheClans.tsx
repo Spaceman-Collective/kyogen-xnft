@@ -100,7 +100,9 @@ const Clan = ({
       </div>
       <div
         className={`${
-          hovered && selected === undefined ? "block" : `${selectedBonus(selected)}`
+          hovered && selected === undefined
+            ? "block"
+            : `${selectedBonus(selected)}`
         } absolute bottom-[20px] bg-white rounded-[30px] h-[40px] p-[10px] text-black text-center text-[20px] leading-[20px] font-bold z-50`}
       >
         Bonus: {bonusSkill}
@@ -116,6 +118,7 @@ const MeetTheClans = () => {
   const router = useRouter();
   const initPlayerAction = useInitPlayer();
   const [clan, setClan] = useState<Clans | undefined>();
+  const [loading, setLoading] = useState(false);
 
   const handleRandomizeClan = useCallback(() => {
     const clanInt = Math.floor(Math.random() * 4);
@@ -124,7 +127,9 @@ const MeetTheClans = () => {
 
   const handleInitPlayer = useCallback(async () => {
     if (!clan) return;
+    setLoading(true);
     const txId = await initPlayerAction(clan);
+    setLoading(false);
     // Drop the user into the game
     router.push("/games");
   }, [clan, initPlayerAction, router]);
@@ -171,7 +176,11 @@ const MeetTheClans = () => {
           />
         </div>
         {clan ? (
-          <PrimaryButton className="mt-24" onClick={handleInitPlayer}>
+          <PrimaryButton
+            className="mt-24"
+            loading={loading}
+            onClick={handleInitPlayer}
+          >
             Initialize Player
           </PrimaryButton>
         ) : (
