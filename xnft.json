@@ -1,13 +1,18 @@
 {
-  "name": "Kyogen Clash",
+  "name": "Kyogen Clash - Localhost",
   "version": "0.0.1",
   "description": "Solana RTS game",
   "kind": "app",
+  "tag": "game",
+  "website": "https://dominari.xyz",
+  "contact": {
+    "repository": "https://github.com/Spaceman-Collective"
+  },
   "icon": {
-    "md": "./public/next.svg"
+    "md": "./out/kyogen-logo.png"
   },
   "screenshots": [
-    "./public/next.svg"
+    "./out/kyogen-logo.png"
   ],
   "entrypoints": {
     "default": {
