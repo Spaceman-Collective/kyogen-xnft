@@ -15,6 +15,7 @@ import { useCallback, useState } from "react";
 import { Clans } from "@/types";
 import { useInitPlayer } from "@/hooks/useInitPlayer";
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 
 const clanMap: Record<number, Clans> = {
   0: Clans.Ancients,
@@ -114,7 +115,7 @@ const Clan = ({
   );
 };
 
-const MeetTheClans = () => {
+const MeetTheClansComponent = () => {
   const router = useRouter();
   const initPlayerAction = useInitPlayer();
   const [clan, setClan] = useState<Clans | undefined>();
@@ -192,5 +193,9 @@ const MeetTheClans = () => {
     </Page>
   );
 };
+
+const MeetTheClans = dynamic(() => Promise.resolve(MeetTheClansComponent), {
+  ssr: false,
+}) 
 
 export default MeetTheClans;

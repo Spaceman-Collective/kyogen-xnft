@@ -28,7 +28,7 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 ## Localnet game SDK setup
 
 - Follow SETUP.md in `dominari-kyogen` to build the SDK and run the game
-- run `yarn link` from `dominary-kyogen/kyogen-sdk/kyogen-sdk-bundler`
+- run `yarn link` from `dominari-kyogen/kyogen-sdk/kyogen-sdk-web`
 - run `yarn link "kyogen-sdk"` from root directory of `kyogen-xnft`
 - add the following to a `.env.local` file (note the values should match the `.env` or `.env.local` values from `dominari-kyogen`)
 
