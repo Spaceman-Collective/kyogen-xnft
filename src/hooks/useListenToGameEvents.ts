@@ -1,4 +1,4 @@
-import { gameFeedAtom, playPhaseAtom, gameStateAtom } from "@/recoil";
+import { gameFeedAtom, playPhaseAtom, gameStateAtom, connectionAtom } from "@/recoil";
 import { KyogenEventCoder } from "@/utils/anchorEvents";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useCallback, useEffect } from "react";
@@ -20,6 +20,7 @@ const useListenToGameEvents = () => {
   const setGameFeed = useSetRecoilState(gameFeedAtom);
   const setPlayPhase = useSetRecoilState(playPhaseAtom);
   const updateTroops = useUpdateTroops();
+  const connection = useRecoilValue(connectionAtom);
 
   const handleEvent = useCallback(
     async (event: any) => {
@@ -185,8 +186,6 @@ const useListenToGameEvents = () => {
   );
 
   useEffect(() => {
-    const { connection: xNFTconnection } = window.xnft.solana;
-    const connection = new Connection(xNFTconnection.rpcEndpoint);
     let connectionId: number;
     let eventsObservable: Observable<{
       slot: number;
@@ -219,7 +218,7 @@ const useListenToGameEvents = () => {
     return () => {
       if (!!connectionId) connection.removeOnLogsListener(connectionId);
     };
-  }, [handleEvent]);
+  }, [connection, handleEvent]);
 };
 
 export default useListenToGameEvents;

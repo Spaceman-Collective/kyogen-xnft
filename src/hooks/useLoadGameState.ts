@@ -1,8 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import * as kyogenSdk from "kyogen-sdk";
-import { gameIdAtom, gameStateAtom } from "../recoil";
-import { useConnection } from "@solana/wallet-adapter-react";
+import { connectionAtom, gameIdAtom, gameStateAtom } from "../recoil";
 import { Map, Troop, UnitNames } from "../types";
 import useSetGameIdFromLocalStorage from "./useSetGameIdFromLocalStorage";
 import {
@@ -27,7 +26,7 @@ export const useLoadGameState = () => {
 };
 
 export const useLoadGameStateFunc = () => {
-  const { connection } = useConnection();
+  const connection = useRecoilValue(connectionAtom);
   const setGameState = useSetRecoilState(gameStateAtom);
   const gameId = useRecoilValue(gameIdAtom);
   const updateTiles = useUpdateTiles(true);

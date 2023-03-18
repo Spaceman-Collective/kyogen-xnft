@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useRecoilValue } from "recoil";
 import * as anchor from "@coral-xyz/anchor";
-import { gameIdAtom, gameWallet as gameWalletAtom } from "../recoil";
+import { connectionAtom, gameIdAtom, gameWallet as gameWalletAtom } from "../recoil";
 import { Clans } from "../types";
 import { ixWasmToJs, randomU64 } from "../utils/wasm";
 import { useKyogenInstructionSdk } from "./useKyogenInstructionSdk";
@@ -17,6 +17,7 @@ export const useInitPlayer = () => {
   const gameId = useRecoilValue(gameIdAtom);
   const kyogenInstructions = useKyogenInstructionSdk();
   const initPlayerAta = useInitPlayerAta();
+  const connection = useRecoilValue(connectionAtom);
 
   return useCallback(
     async (clan: Clans) => {
@@ -25,7 +26,6 @@ export const useInitPlayer = () => {
       }
 
       const {
-        solana: { connection },
         metadata: { username },
       } = window.xnft;
 
@@ -56,6 +56,6 @@ export const useInitPlayer = () => {
       console.log("Create player ATA confirmed: ", ataTxID);
       return ataTxID;
     },
-    [gameId, gameWallet, kyogenInstructions, initPlayerAta]
+    [connection, gameId, gameWallet, kyogenInstructions, initPlayerAta]
   );
 };
