@@ -1,0 +1,11 @@
+@font-face {
+    font-family: "Millimetre";
+    src: url("./Millimetre-Regular.otf");
+    font-weight: normal;
+  }
+  
+  @font-face {
+    font-family: "Millimetre";
+    src: url("./Millimetre-Bold.otf");
+    font-weight: 800;
+  }

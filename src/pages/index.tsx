@@ -19,7 +19,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="absolute top-0 bottom-0 left-0 right-0 bg-white bg-contain bg-center bg-no-repeat bg-[url('/bg_loading_screen_2x.webp')] z-10 flex">
+      <div className="absolute top-0 bottom-0 left-0 right-0 bg-white bg-contain bg-center bg-no-repeat bg-[url('../../public/bg_loading_screen_2x.webp')] z-10 flex">
         <div className="flex-grow grid overflow-y-auto scrollbar-hide">
           <Image
             src={KyogenLogo}
