@@ -5,6 +5,7 @@ import { SolanaProviders } from "../components/SolanaProviders";
 import {
   RecoilRoot,
 } from "recoil";
+import "public/fonts/fontstyles.css";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
