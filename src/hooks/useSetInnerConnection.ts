@@ -1,5 +1,5 @@
 import { Connection } from "@solana/web3.js";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useSetRecoilState } from "recoil";
 import { connectionAtom } from "../recoil";
 
@@ -10,7 +10,7 @@ export const useSetInnerConnection = () => {
   const setConnection = useSetRecoilState(connectionAtom);
 
   useEffect(() => {
-    if (window?.xnft?.solana) {
+    if (window?.xnft?.solana?.connection?.rpcEndpoint) {
       setConnection(
         new Connection(window?.xnft?.solana?.connection?.rpcEndpoint)
       );
