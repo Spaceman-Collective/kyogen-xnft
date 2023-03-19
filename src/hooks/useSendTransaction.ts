@@ -21,7 +21,7 @@ export const useSendAndConfirmGameWalletTransaction = () => {
       const latestBlockInfo = await connection.getLatestBlockhash();
       const msg = new anchor.web3.TransactionMessage({
         payerKey: gameWallet.publicKey,
-        recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
+        recentBlockhash: latestBlockInfo.blockhash,
         instructions: instructions,
       }).compileToLegacyMessage();
       const tx = new anchor.web3.VersionedTransaction(msg);
