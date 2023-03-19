@@ -9,8 +9,14 @@ import SolanaLogoLight from "../../public/solana_logo_light.svg";
 import SolanaLogo from "../../public/solana_logo.svg";
 import { TextInput } from "@/components/inputs/TextInput";
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
-import { LAMPORTS_PER_SOL, SystemProgram, Transaction } from "@solana/web3.js";
 import {
+  LAMPORTS_PER_SOL,
+  sendAndConfirmRawTransaction,
+  SystemProgram,
+  Transaction,
+} from "@solana/web3.js";
+import {
+  connectionAtom,
   gameWallet as gameWalletAtom,
   gameWalletBalance as gameWalletBalanceAtom,
   notificationsAtom,
@@ -18,6 +24,8 @@ import {
 import { useFetchGameWalletBalance } from "@/hooks/useFetchGameWalletBalance";
 import Page from "@/components/Page";
 import { useRouter } from "next/router";
+import { bs58 } from "@coral-xyz/anchor/dist/cjs/utils/bytes";
+import { web3 } from "@coral-xyz/anchor";
 
 const inputContainerClass = "w-[409px] items-center";
 
@@ -31,6 +39,7 @@ const FundWallet = () => {
   const fetchGameWalletBalance = useFetchGameWalletBalance();
   const [transferAmount, setTransferAmount] = useState(0);
   const [canProceed, setCanProceed] = useState(false);
+  const connection = useRecoilValue(connectionAtom);
 
   useEffect(() => {
     fetchGameWalletBalance();
@@ -53,27 +62,55 @@ const FundWallet = () => {
     }
 
     // Create the transfer transaction
-    const transaction = new Transaction();
     const transferInstruction = SystemProgram.transfer({
       fromPubkey: window.xnft.solana.publicKey,
       toPubkey: gameWallet.publicKey,
       lamports: LAMPORTS_PER_SOL * transferAmount,
     });
-    transaction.add(transferInstruction);
+    const latestBlockInfo = await connection.getLatestBlockhash();
+    const msg = new web3.TransactionMessage({
+      payerKey: window.xnft.solana.publicKey,
+      recentBlockhash: latestBlockInfo.blockhash,
+      instructions: [transferInstruction],
+    }).compileToLegacyMessage();
+    const tx = new web3.VersionedTransaction(msg);
+  
+    const signedTx = await window.xnft.solana.signTransaction(tx);
 
-    // TODO: Wrap transaction sending and confirming in DRY error handling
-    const txId = await window.xnft.solana.sendAndConfirm(transaction, [], {
-      commitment: "confirmed",
-    });
+    if (!signedTx.signatures[0])
+      throw new Error("No signature on TX");
+    const txSig = bs58.encode(signedTx.signatures[0]);
+    console.log(`txId: ${txSig}`);
+
+    const confirmationStrategy = {
+      signature: txSig,
+      blockhash: latestBlockInfo.blockhash,
+      lastValidBlockHeight: latestBlockInfo.lastValidBlockHeight + 50,
+    };
+    await sendAndConfirmRawTransaction(
+      connection,
+      Buffer.from(tx.serialize()),
+      confirmationStrategy,
+      { commitment: "confirmed", skipPreflight: true }
+    );
     setNotifications((notifications) => [
       ...notifications,
-      { role: "success", message: `Transaction ${txId.substring(0,8)}.. confirmed` },
+      {
+        role: "success",
+        message: `Transaction ${txSig.substring(0, 8)}.. confirmed`,
+      },
     ]);
     await fetchGameWalletBalance();
     setTimeout(() => {
       fetchGameWalletBalance();
-    }, 5_000)
-  }, [gameWallet, fetchGameWalletBalance, setNotifications, transferAmount]);
+    }, 5_000);
+  }, [
+    connection,
+    gameWallet,
+    fetchGameWalletBalance,
+    setNotifications,
+    transferAmount,
+  ]);
 
   return (
     <Page title="FUND YOUR GAME WALLET">
