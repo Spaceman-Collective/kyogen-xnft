@@ -1,13 +1,14 @@
 import { ConfirmOptions, TransactionInstruction } from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor";
 import { useRecoilValue } from "recoil";
-import { gameWallet as gameWalletAtom } from "../recoil";
+import { connectionAtom, gameWallet as gameWalletAtom } from "../recoil";
 import { useCallback } from "react";
 import { sendAndConfirmRawTransaction } from "@solana/web3.js";
 import { bs58 } from "@coral-xyz/anchor/dist/cjs/utils/bytes";
 
 export const useSendAndConfirmGameWalletTransaction = () => {
   const gameWallet = useRecoilValue(gameWalletAtom);
+  const connection = useRecoilValue(connectionAtom);
 
   return useCallback(
     async (
@@ -17,11 +18,10 @@ export const useSendAndConfirmGameWalletTransaction = () => {
       if (!gameWallet) {
         throw Error("Game wallet not initialized");
       }
-      const { connection } = window.xnft.solana;
       const latestBlockInfo = await connection.getLatestBlockhash();
       const msg = new anchor.web3.TransactionMessage({
         payerKey: gameWallet.publicKey,
-        recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
+        recentBlockhash: latestBlockInfo.blockhash,
         instructions: instructions,
       }).compileToLegacyMessage();
       const tx = new anchor.web3.VersionedTransaction(msg);
@@ -41,6 +41,6 @@ export const useSendAndConfirmGameWalletTransaction = () => {
       console.log("TX Confirmed: ", txSig);
       return txSig;
     },
-    [gameWallet]
+    [connection, gameWallet]
   );
 };

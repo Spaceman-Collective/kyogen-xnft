@@ -1,3 +1,4 @@
+import { web3 } from "@coral-xyz/anchor";
 import {
   Commitment,
   ConfirmOptions,
@@ -34,7 +35,7 @@ export type xnft = {
       opts?: ConfirmOptions
     ) => Promise<TransactionSignature>;
     //   signMessage:
-    //   signTransaction:
+    signTransaction: (tx: web3.VersionedTransaction) => Promise<web3.VersionedTransaction>;
     simulate: (
       tx: Transaction,
       signers?: Signer[],
