@@ -9,7 +9,8 @@ export const useCanAirdrop = () => {
   return useMemo(() => {
     return (
       connection.rpcEndpoint.includes("devnet") ||
-      connection.rpcEndpoint.includes("localhost")
+      connection.rpcEndpoint.includes("localhost") ||
+      connection.rpcEndpoint.includes("127.0.0.1")
     );
   }, [connection.rpcEndpoint]);
 };
