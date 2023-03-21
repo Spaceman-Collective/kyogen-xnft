@@ -31,12 +31,12 @@ const Home = () => {
           />
 
           <div className="self-center justify-self-center w-fit">
-            <PrimaryButton
+            {/* <PrimaryButton
               className="flex justify-center mb-3"
               onClick={() => router.push("/games/new")}
             >
               New Game
-            </PrimaryButton>
+            </PrimaryButton> */}
 
             <PrimaryButton
               className="flex justify-center mb-3"
