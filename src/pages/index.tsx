@@ -3,11 +3,12 @@ import Image from "next/image";
 import KyogenLogo from "../../public/kyogen-logo.svg";
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { useRouter } from "next/router";
+import { SdkLoader } from "../components/KyogenSdkLoader";
 // import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
-export default function Home() {
+const Home = () => {
   const router = useRouter();
-  
+
   return (
     <>
       <Head>
@@ -61,4 +62,12 @@ export default function Home() {
       </div>
     </>
   );
-}
+};
+
+const HomeWithSdkLoader: React.FC = () => (
+  <SdkLoader>
+    <Home />
+  </SdkLoader>
+);
+
+export default HomeWithSdkLoader;

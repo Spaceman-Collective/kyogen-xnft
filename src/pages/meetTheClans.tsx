@@ -11,12 +11,11 @@ import Cyborgs from "../../public/clans/login_cyborgs_2x.webp";
 import CyborgsLogo from "../../public/clans/synths_logo_2x.webp";
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { ContainerTitle } from "@/components/typography/ContainerTitle";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Clans } from "@/types";
-import InitKyogenSdk from "kyogen-sdk";
 import { useInitPlayer } from "@/hooks/useInitPlayer";
 import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
+import { SdkLoader } from "../components/KyogenSdkLoader";
 
 const clanMap: Record<number, Clans> = {
   0: Clans.Ancients,
@@ -195,21 +194,15 @@ const MeetTheClansComponent = () => {
   );
 };
 
-const SdkLoader = () => {
-  const [load, setLoad] = useState(true);
-
-  useEffect(() => {
-    (async () => {
-      await InitKyogenSdk();
-      setLoad(false);
-    })();
-  }, []);
-
-  if (load) {
-    return null;
-  }
-
-  return <MeetTheClansComponent />;
+// NOTE: Without the SdkLoader here, we run into the following error at build time.
+//
+// `TypeError: Cannot read properties of undefined (reading '__wbindgen_malloc')`
+const MeetTheClans = () => {
+  return (
+    <SdkLoader>
+      <MeetTheClansComponent />
+    </SdkLoader>
+  );
 };
 
-export default SdkLoader;
+export default MeetTheClans;
