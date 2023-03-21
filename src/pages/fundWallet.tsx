@@ -4,7 +4,6 @@ import Image from "next/image";
 
 import { InputContainer } from "@/components/inputs/InputContainer";
 import { ContainerTitle } from "@/components/typography/ContainerTitle";
-import KyogenLogo from "../../public/kyogen-logo.svg";
 import SolanaLogoLight from "../../public/solana_logo_light.svg";
 import SolanaLogo from "../../public/solana_logo.svg";
 import { TextInput } from "@/components/inputs/TextInput";
@@ -13,7 +12,6 @@ import {
   LAMPORTS_PER_SOL,
   sendAndConfirmRawTransaction,
   SystemProgram,
-  Transaction,
 } from "@solana/web3.js";
 import {
   connectionAtom,
@@ -26,6 +24,7 @@ import Page from "@/components/Page";
 import { useRouter } from "next/router";
 import { bs58 } from "@coral-xyz/anchor/dist/cjs/utils/bytes";
 import { web3 } from "@coral-xyz/anchor";
+import { useAirdrop, useCanAirdrop } from "../hooks/useCanAirdrop";
 
 const inputContainerClass = "w-[409px] items-center";
 
@@ -39,7 +38,10 @@ const FundWallet = () => {
   const fetchGameWalletBalance = useFetchGameWalletBalance();
   const [transferAmount, setTransferAmount] = useState(0);
   const [canProceed, setCanProceed] = useState(false);
+  const [airdropping, setAirdropping] = useState(false);
   const connection = useRecoilValue(connectionAtom);
+  const canAirdrop = useCanAirdrop();
+  const airdrop = useAirdrop();
 
   useEffect(() => {
     fetchGameWalletBalance();
@@ -74,11 +76,10 @@ const FundWallet = () => {
       instructions: [transferInstruction],
     }).compileToLegacyMessage();
     const tx = new web3.VersionedTransaction(msg);
-  
+
     const signedTx = await window.xnft.solana.signTransaction(tx);
 
-    if (!signedTx.signatures[0])
-      throw new Error("No signature on TX");
+    if (!signedTx.signatures[0]) throw new Error("No signature on TX");
     const txSig = bs58.encode(signedTx.signatures[0]);
     console.log(`txId: ${txSig}`);
 
@@ -143,6 +144,24 @@ const FundWallet = () => {
           />
           <p className="mt-10 text-2xl text-black font-extrabold">SOL</p>
           <p className="text-black text-xl">{gameWalletBalance}</p>
+
+          {canAirdrop && (
+            <PrimaryButton
+              className="text-xl px-7"
+              loading={airdropping}
+              onClick={async () => {
+                if (!gameWallet) {
+                  return;
+                }
+                setAirdropping(true);
+                await airdrop(gameWallet.publicKey);
+                setAirdropping(false);
+                fetchGameWalletBalance();
+              }}
+            >
+              Airdrop
+            </PrimaryButton>
+          )}
           <PrimaryButton
             className="text-xl px-7 mt-10 mb-2"
             disabled={!canProceed}
