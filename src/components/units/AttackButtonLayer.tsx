@@ -1,7 +1,7 @@
 import { useCallback, useRef } from "react";
 import { useRecoilValue } from "recoil";
 import * as PIXI from "pixi.js";
-import { UNIT_OFFSET } from "../../constants";
+import { UNIT_LENGTH, UNIT_OFFSET } from "../../constants";
 import {
   selectTilesWithEnemiesInSelectedUnitAttackRange,
   selectTroopFromSelectedTile,
@@ -83,7 +83,8 @@ const AttackButton = ({
           attackingContainerRef?.current &&
           containerRef?.current
         ) {
-
+          const scaleX = viewport.lastViewport?.scaleX ?? 1;
+          const scaleY = viewport.lastViewport?.scaleY ?? 1;
           // NOTE: sometimes after moving the tile, `getGlobalPosition` returns 0. This should
           // be ok since it should be updated by the time the cool down finishes.
           const globalAttackerPosition =
@@ -99,14 +100,28 @@ const AttackButton = ({
             viewport,
             globalDefenderPosition
           );
+          // tiles are incorrect, when zoomed
+
           // get the tiles based on container, so we can use that as our refernce for coordinates.
-          const attackingTile = calculateTileCoords(attackerPosition);
-          const centerOfAttackingTile = calculateCenteredPositionFromCenter(
-            ...attackingTile
+          const attackingTile = calculateTileCoords(
+            attackerPosition,
+            scaleX,
+            scaleY
           );
-          const defendingTile = calculateTileCoords(defenderPosition);
+          const centerOfAttackingTile = calculateCenteredPositionFromCenter(
+            ...attackingTile,
+            scaleX,
+            scaleY
+          );
+          const defendingTile = calculateTileCoords(
+            defenderPosition,
+            scaleX,
+            scaleY
+          );
           const centerOfDefenderTile = calculateCenteredPositionFromCenter(
-            ...defendingTile
+            ...defendingTile,
+            scaleX,
+            scaleY
           );
           // Calcualte a point that is 20 points away from the attacking tile
           // along the vector between attacking and defending tiles.
@@ -114,6 +129,7 @@ const AttackButton = ({
             [centerOfAttackingTile.x, centerOfAttackingTile.y],
             [centerOfDefenderTile.x, centerOfDefenderTile.y]
           );
+
           const distanceRatio = 20 / totalDistance;
           const rotation = calculateRotationFromTileCoords(
             attackingTile,
@@ -122,19 +138,16 @@ const AttackButton = ({
           const deg90 = Math.PI / 2;
           // make it so that containers on top require 0 rotation, left is 90 deg, etc.
           const offsetRotation = rotation - deg90;
-          const containerBounds = attackingContainerRef.current.getBounds();
-          const pivotXOffset = containerBounds.width / 2;
-          const pivotYOffset = containerBounds.height / 2;
+          // container position is respective Stage and dimensions include everything in the UnitSprite (i.e. unit image, health bar, etc).
+          // Pivot and Translation of container should be based on Stage coordinate plane.
+          const pivotXOffset = UNIT_LENGTH / 2 + UNIT_OFFSET;
+          const pivotYOffset = UNIT_LENGTH / 2 + UNIT_OFFSET;
           const animStartX = attackingContainerRef.current.x + pivotXOffset;
           const animStartY = attackingContainerRef.current.y + pivotYOffset;
           const diffX = centerOfDefenderTile.x - centerOfAttackingTile.x;
           const diffY = centerOfDefenderTile.y - centerOfAttackingTile.y;
-          const translatePointX = diffX
-            ? centerOfAttackingTile.x + distanceRatio * diffX
-            : animStartX;
-          const translatePointY = diffY
-            ? centerOfAttackingTile.y + distanceRatio * diffY
-            : animStartY;
+          const translatePointX = animStartX + distanceRatio * diffX;
+          const translatePointY = animStartY + distanceRatio * diffY;
           // Set the pivot of the attacking Container so we can rotate around the center.
           attackingContainerRef.current.x = animStartX;
           attackingContainerRef.current.y = animStartY;
