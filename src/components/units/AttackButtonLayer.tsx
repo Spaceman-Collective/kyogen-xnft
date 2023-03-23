@@ -83,7 +83,8 @@ const AttackButton = ({
           attackingContainerRef?.current &&
           containerRef?.current
         ) {
-
+          const scaleX = viewport.lastViewport?.scaleX ?? 1;
+          const scaleY = viewport.lastViewport?.scaleY ?? 1;
           // NOTE: sometimes after moving the tile, `getGlobalPosition` returns 0. This should
           // be ok since it should be updated by the time the cool down finishes.
           const globalAttackerPosition =
@@ -99,15 +100,19 @@ const AttackButton = ({
             viewport,
             globalDefenderPosition
           );
+          // tiles are incorrect, when zoomed
+          console.log("pos ", attackerPosition, defenderPosition);
+
           // get the tiles based on container, so we can use that as our refernce for coordinates.
-          const attackingTile = calculateTileCoords(attackerPosition);
+          const attackingTile = calculateTileCoords(attackerPosition, scaleX, scaleY);
           const centerOfAttackingTile = calculateCenteredPositionFromCenter(
             ...attackingTile
           );
-          const defendingTile = calculateTileCoords(defenderPosition);
+          const defendingTile = calculateTileCoords(defenderPosition, scaleX, scaleY);
           const centerOfDefenderTile = calculateCenteredPositionFromCenter(
             ...defendingTile
           );
+          console.log("test ", attackingTile, defendingTile);
           // Calcualte a point that is 20 points away from the attacking tile
           // along the vector between attacking and defending tiles.
           const totalDistance = calculateDistance(
@@ -199,14 +204,14 @@ const AttackButton = ({
                 });
             });
         }
-        await attackUnit();
+        // await attackUnit();
       },
-      [attackUnit, attackingContainerRef]
+      [attackingContainerRef]
     );
 
-  if (!troop) {
-    return null;
-  }
+  // if (!troop) {
+  //   return null;
+  // }
 
   return (
     <Container

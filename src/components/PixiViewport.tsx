@@ -50,10 +50,9 @@ const DisplayObjectViewport = CustomPIXIComponent<
       })
         .drag({ underflow: "center" })
         .pinch()
-        .wheel({ wheelZoom: false })
+        .wheel()
         .decelerate({ bounce: 0.95 })
         // .bounce(bounceOptions)
-        .setZoom(1, true);
       // Set up the drag event for the viewport
       // viewport.on("drag-end", () => {
       //   viewport.bounce(undefined);
