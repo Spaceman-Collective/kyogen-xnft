@@ -48,15 +48,20 @@ export const calculateRotationFromTileCoords = (
 };
 
 /**
+ * Returns the top left Point of a Tile based on the Viewport.
  * @param i
  * @param j
  */
 export const calculateUnitPositionOnTileCoords = (
   i: number,
-  j: number
+  j: number,
+  scaleX = 1,
+  scaleY = 1,
 ): PIXI.Point => {
-  const x = i * TILE_LENGTH + i * TILE_SPACING;
-  const y = j * TILE_LENGTH + j * TILE_SPACING;
+  const normalizedTileWidth = (TILE_LENGTH + TILE_SPACING) * scaleX;
+  const normslizedTileHeight = (TILE_LENGTH + TILE_SPACING) * scaleY;
+  const x = i * normalizedTileWidth;
+  const y = j * normslizedTileHeight;
   return new PIXI.Point(x, y);
 };
 
@@ -72,7 +77,7 @@ export const calculateCenteredPositionFromTopLeft = (
   height: number,
   width: number,
   i: number,
-  j: number
+  j: number,
 ) => {
   const start = calculateUnitPositionOnTileCoords(i, j);
   const _height = Math.min(height, TILE_LENGTH);
@@ -92,10 +97,10 @@ export const calculateCenteredPositionFromTopLeft = (
  * @param i
  * @param j
  */
-export const calculateCenteredPositionFromCenter = (i: number, j: number) => {
-  const start = calculateUnitPositionOnTileCoords(i, j);
-  const offsetX = TILE_LENGTH / 2;
-  const offsetY = TILE_LENGTH / 2;
+export const calculateCenteredPositionFromCenter = (i: number, j: number, scaleX = 1, scaleY = 1) => {
+  const start = calculateUnitPositionOnTileCoords(i, j, scaleX, scaleY);
+  const offsetX = TILE_LENGTH / 2 * scaleX;
+  const offsetY = TILE_LENGTH / 2 * scaleY;
 
   return new PIXI.Point(start.x + offsetX, start.y + offsetY);
 };
