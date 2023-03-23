@@ -2,6 +2,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { connectionAtom, gameWallet as gameWalletAtom, gameWalletBalance } from "@/recoil";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useCallback } from "react";
+import toast from "react-hot-toast";
 
 export const useFetchGameWalletBalance = () => {
   const gameWallet = useRecoilValue(gameWalletAtom);
@@ -10,12 +11,13 @@ export const useFetchGameWalletBalance = () => {
 
   return useCallback(async () => {
     if (gameWallet) {
-      const accountInfo = await connection.getAccountInfo(gameWallet.publicKey);
-      if (!accountInfo) {
-        console.error(`Account ${gameWallet!.publicKey.toString()} not found`);
-        return;
+      try{
+        const balance = await connection.getBalance(gameWallet.publicKey);
+        setGameWalletBalance(balance / LAMPORTS_PER_SOL);
+      } catch (e) {
+        toast.error("Couldn't fetch balance!");
+        setGameWalletBalance(0);
       }
-      setGameWalletBalance(accountInfo.lamports / LAMPORTS_PER_SOL);
     }
   }, [connection, gameWallet, setGameWalletBalance]);
 };

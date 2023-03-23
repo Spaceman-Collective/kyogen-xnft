@@ -101,7 +101,7 @@ export const notificationsAtom = atom<Notification[]>({
 /* Local solana state */
 export const connectionAtom = atom({
   key: "connectionAtom",
-  default: new Connection("http://localhost:8899"),
+  default: new Connection("https://api.devnet.solana.com"),
   // connection mutates itself, so must have this
   dangerouslyAllowMutability: true,
 });

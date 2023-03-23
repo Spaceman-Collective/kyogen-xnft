@@ -5,6 +5,7 @@ import { connectionAtom, gameWallet as gameWalletAtom } from "../recoil";
 import { useCallback } from "react";
 import { sendAndConfirmRawTransaction } from "@solana/web3.js";
 import { bs58 } from "@coral-xyz/anchor/dist/cjs/utils/bytes";
+import toast from "react-hot-toast";
 
 export const useSendAndConfirmGameWalletTransaction = () => {
   const gameWallet = useRecoilValue(gameWalletAtom);
@@ -32,12 +33,20 @@ export const useSendAndConfirmGameWalletTransaction = () => {
         blockhash: latestBlockInfo.blockhash,
         lastValidBlockHeight: latestBlockInfo.lastValidBlockHeight + 50,
       };
-      await sendAndConfirmRawTransaction(
-        connection,
-        Buffer.from(tx.serialize()),
-        confirmationStrategy,
-        confirmationOptions
-      );
+
+      let opts:ConfirmOptions = confirmationOptions ? confirmationOptions : {skipPreflight: false};
+
+      try{
+        await sendAndConfirmRawTransaction(
+          connection,
+          Buffer.from(tx.serialize()),
+          confirmationStrategy,
+          opts
+        );  
+      } catch (e) {
+        toast.error(`TX Failed: ${e}`);
+      }
+      
       console.log("TX Confirmed: ", txSig);
       return txSig;
     },

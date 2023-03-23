@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import Image from "next/image";
-
 import { InputContainer } from "@/components/inputs/InputContainer";
 import { ContainerTitle } from "@/components/typography/ContainerTitle";
 import SolanaLogoLight from "../../public/solana_logo_light.svg";
@@ -114,7 +113,7 @@ const FundWallet = () => {
   ]);
 
   return (
-    <Page title="FUND YOUR GAME WALLET">
+    <Page title="FUND YOUR GAME WALLET TEST">
       <div className="flex flex-row mt-36 justify-around">
         {/* TODO: change to flex column and adjust width for smaller screens */}
         <InputContainer className={inputContainerClass}>

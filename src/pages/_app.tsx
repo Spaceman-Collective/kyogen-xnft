@@ -6,10 +6,12 @@ import {
   RecoilRoot,
 } from "recoil";
 import "public/fonts/fontstyles.css";
+import { Toaster } from "react-hot-toast";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <RecoilRoot>
+      <Toaster position="top-right" reverseOrder={true}/>
       <SolanaProviders>
         <Component {...pageProps} />
       </SolanaProviders>
