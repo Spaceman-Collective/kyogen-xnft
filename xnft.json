@@ -1,5 +1,5 @@
 {
-    "name": "Kyogen Clash - iFrame - IPFS - LH",
+    "name": "Kyogen Clash - iFrame - LH",
     "version": "0.0.8",
     "description": "Solana RTS game",
     "kind": "app",
@@ -9,14 +9,14 @@
       "repository": "https://github.com/Spaceman-Collective"
     },
     "icon": {
-      "md": "./out/kyogen-logo.png"
+      "md": "./iframe/kyogen-logo.png"
     },
     "screenshots": [
-      "./out/kyogen-logo.png"
+      "./iframe/kyogen-logo.png"
     ],
     "entrypoints": {
       "default": {
-        "web": "./out/index.html"
+        "web": "https://kyogen-xnft-spacemandev-git-kyogen.vercel.app"
       }
     }
   }
