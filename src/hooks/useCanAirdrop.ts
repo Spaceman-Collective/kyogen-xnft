@@ -10,7 +10,8 @@ export const useCanAirdrop = () => {
     return (
       connection.rpcEndpoint.includes("devnet") ||
       connection.rpcEndpoint.includes("localhost") ||
-      connection.rpcEndpoint.includes("127.0.0.1")
+      connection.rpcEndpoint.includes("127.0.0.1") ||
+      true // Done for private chains 
     );
   }, [connection.rpcEndpoint]);
 };
