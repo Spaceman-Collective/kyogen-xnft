@@ -3,7 +3,6 @@ const nextConfig = {
   images: {
     unoptimized: true
   },
-  assetPrefix: ".",
   reactStrictMode: true,
   webpack: (config) => {
     config.experiments = {
