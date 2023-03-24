@@ -1,0 +1,22 @@
+{
+  "name": "Kyogen Clash - IPFS - LH",
+  "version": "0.0.8",
+  "description": "Solana RTS game",
+  "kind": "app",
+  "tag": "game",
+  "website": "https://dominari.xyz",
+  "contact": {
+    "repository": "https://github.com/Spaceman-Collective"
+  },
+  "icon": {
+    "md": "./out/kyogen-logo.png"
+  },
+  "screenshots": [
+    "./out/kyogen-logo.png"
+  ],
+  "entrypoints": {
+    "default": {
+      "web": "./out/index.html"
+    }
+  }
+}

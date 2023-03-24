@@ -5380,7 +5380,7 @@ keyv@3.0.0:
   dependencies:
     json-buffer "3.0.0"
 
-"kyogen-sdk@link:../dominari-kyogen/kyogen-sdk/kyogen-sdk-web":
+"kyogen-sdk@link:./kyogen-sdk-web":
   version "0.0.0"
   uid ""
 
