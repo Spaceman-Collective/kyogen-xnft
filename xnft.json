@@ -16,7 +16,7 @@
     ],
     "entrypoints": {
       "default": {
-        "web": "https://kyogen-xnft-spacemandev-git-kyogen.vercel.app"
+        "web": "kyogen-xnft-git-iframe-kyogen.vercel.app"
       }
     }
   }
