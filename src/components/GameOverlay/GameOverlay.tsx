@@ -5,7 +5,7 @@ import CreeperSamurai from "../../../public/creeper_samurai.webp";
 import SynthSamurai from "../../../public/synth_samurai.webp";
 import WildingSamurai from "../../../public/wildling_samurai.webp";
 import Solarite from "../../../public/ui/solarite.webp";
-import Skull from "../../../public/ui/skull.webp";
+// import Skull from "../../../public/ui/skull.webp";
 import RefreshIcon from "../../../public/refresh.svg";
 import { selectCurrentPlayer } from "../../recoil/selectors";
 import { Clans } from "../../types";
@@ -15,6 +15,7 @@ import { GamePausedScreen } from "./GamePausedScreen";
 import { PrimaryButton } from "../buttons/PrimaryButton";
 import { useCallback, useState } from "react";
 import { useLoadGameStateFunc } from "../../hooks/useLoadGameState";
+import { useClaimVictory } from "../../hooks/useClaimVictory";
 
 const clanToAvatarMap = {
   [Clans.Ancients]: AncientSamurai,
@@ -28,6 +29,13 @@ export const GameOverlay = () => {
   const playPhase = useRecoilValue(playPhaseAtom);
   const loadGameState = useLoadGameStateFunc();
   const [loading, setLoading] = useState(false);
+  const [claiming, setClaiming] = useState(false);
+  const _claimVictory = useClaimVictory();
+  const claimVictory = useCallback(async () => {
+    setClaiming(true);
+    await _claimVictory();
+    setClaiming(false);
+  }, [_claimVictory]);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -38,6 +46,7 @@ export const GameOverlay = () => {
   switch (playPhase) {
     case "Finished":
       return <GameEndScreen />;
+    case "Lobby":
     case "Paused":
       return <GamePausedScreen />;
     default:
@@ -89,7 +98,14 @@ export const GameOverlay = () => {
           </div>
           <div className="mt-10 p-4">
             <PrimaryButton
-              className="pointer-events-auto bg-[#384269] h-[30px]"
+              className="pointer-events-auto mb-4"
+              onClick={claimVictory}
+              loading={claiming}
+            >
+              Claim Victory
+            </PrimaryButton>
+            <PrimaryButton
+              className="pointer-events-auto bg-[#384269] h-[30px] ml-auto"
               onClick={refresh}
             >
               <Image
