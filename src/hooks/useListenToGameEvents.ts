@@ -1,15 +1,21 @@
-import { gameFeedAtom, playPhaseAtom, gameStateAtom, connectionAtom } from "@/recoil";
-import { KyogenEventCoder } from "@/utils/anchorEvents";
+import {
+  gameFeedAtom,
+  playPhaseAtom,
+  gameStateAtom,
+  connectionAtom,
+} from "@/recoil";
+import { KyogenEventCoder, StructuresEventCoder } from "@/utils/anchorEvents";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useCallback, useEffect } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
+  useUpdateMeteors,
   useUpdatePlayers,
   useUpdateTiles,
   useUpdateTroops,
 } from "../recoil/transactions";
 import { Observable } from "rxjs";
-import { PlayPhase, Player, Tile, Troop } from "../types";
+import { PlayPhase, Player, Tile, Troop, Meteor } from "../types";
 
 const LOG_START_INDEX = "Program data: ".length;
 
@@ -21,6 +27,7 @@ const useListenToGameEvents = () => {
   const setPlayPhase = useSetRecoilState(playPhaseAtom);
   const updateTroops = useUpdateTroops();
   const connection = useRecoilValue(connectionAtom);
+  const updateMeteors = useUpdateMeteors();
 
   const handleEvent = useCallback(
     async (event: any) => {
@@ -173,12 +180,36 @@ const useListenToGameEvents = () => {
           updateTroops({ troops: [...defendingTroops, attackingTroop] });
           updateTiles(defendingTiles);
           break;
+
+        case "MeteorMined":
+          const meteorId = BigInt(event.data.meteor);
+          const minerId = BigInt(event.data.player);
+          await gameState.update_entity(meteorId);
+          await gameState.update_entity(minerId);
+          const meteor = gameState.get_structure_json(meteorId) as Meteor;
+          console.log("Updating meteor with with information", meteor);
+          updateMeteors([meteor]);
+          const miner = gameState.get_player_json(minerId) as Player;
+          updatePlayers({ players: [miner] });
+          setGameFeed((curr) => [
+            ...curr,
+            {
+              type: event.name,
+              players: [miner],
+              msg: `%1% mined ${meteor.structure.Meteor.solarite_per_use} solarite`,
+              timestamp,
+            },
+          ]);
+          break;
+        case "PortalUsed":
+          break;
       }
     },
     [
       gameState,
       setGameFeed,
       setPlayPhase,
+      updateMeteors,
       updatePlayers,
       updateTiles,
       updateTroops,
@@ -186,7 +217,7 @@ const useListenToGameEvents = () => {
   );
 
   useEffect(() => {
-    let connectionId: number;
+    let connectionId: number, structureEventListenerId: number;
     let eventsObservable: Observable<{
       slot: number;
       name: string;
@@ -199,6 +230,26 @@ const useListenToGameEvents = () => {
             if (log.startsWith("Program data:")) {
               const logStr = log.slice(LOG_START_INDEX);
               const event = KyogenEventCoder.decode(logStr);
+              if (event) {
+                subscriber.next({
+                  slot: ctx.slot,
+                  name: event.name,
+                  data: event.data,
+                });
+              }
+            }
+          }
+        },
+        "confirmed"
+      );
+
+      structureEventListenerId = connection.onLogs(
+        new PublicKey(process.env.NEXT_PUBLIC_STRUCTURES_ID as string),
+        (logs, ctx) => {
+          for (let log of logs.logs) {
+            if (log.startsWith("Program data:")) {
+              const logStr = log.slice(LOG_START_INDEX);
+              const event = StructuresEventCoder.decode(logStr);
               if (event) {
                 subscriber.next({
                   slot: ctx.slot,
