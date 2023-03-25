@@ -34,19 +34,22 @@ export const useSendAndConfirmGameWalletTransaction = () => {
         lastValidBlockHeight: latestBlockInfo.lastValidBlockHeight + 50,
       };
 
-      let opts:ConfirmOptions = confirmationOptions ? confirmationOptions : {skipPreflight: false};
+      let opts: ConfirmOptions = confirmationOptions
+        ? confirmationOptions
+        : { skipPreflight: false };
 
-      try{
+      try {
         await sendAndConfirmRawTransaction(
           connection,
           Buffer.from(tx.serialize()),
           confirmationStrategy,
           opts
-        );  
+        );
       } catch (e) {
         toast.error(`TX Failed: ${e}`);
+        throw e;
       }
-      
+
       console.log("TX Confirmed: ", txSig);
       return txSig;
     },
