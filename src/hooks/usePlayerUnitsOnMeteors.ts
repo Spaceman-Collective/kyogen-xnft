@@ -25,6 +25,14 @@ const usePlayerUnitsOnMeteors = () => {
           if (!tile.troop) {
             throw new Error("Should be unreachable");
           }
+          console.log(
+            `Meteor information: \nLast used ${meteor.last_used} Recovery: ${
+              meteor.recovery
+            } Sum: ${
+              Number(meteor.last_used) +
+              (Number(meteor.recovery) + FE_RECOVERY_BUFFER)
+            }\ncurrentSlot: ${currentSlot}`
+          );
           if (
             Number(meteor.last_used) +
               (Number(meteor.recovery) + FE_RECOVERY_BUFFER) <=
