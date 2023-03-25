@@ -22,7 +22,7 @@ export const CARD_HEIGHT = 100;
 /** Viewport enforced boundaries */
 export const WORLD_OVERFLOW = 200;
 /** Recovery is not perfect, so add buffer */
-export const FE_RECOVERY_BUFFER = 2;
+export const FE_RECOVERY_BUFFER = 10;
 
 /** The local storage  key for game id */
 export const LOCAL_GAME_KEY = "kyogen-gameId";
