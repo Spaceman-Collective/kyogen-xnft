@@ -1,14 +1,8 @@
-import useIsOnStructure from "@/hooks/useIsOnStructure";
 import * as PIXI from "pixi.js";
-import { Matrix } from "pixi.js";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Container } from "react-pixi-fiber";
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
-import {
-  UNIT_LENGTH,
-  UNIT_OFFSET,
-  UNIT_ON_STRUCTURE_REDUCTION,
-} from "../../constants";
+import { UNIT_LENGTH, UNIT_OFFSET } from "../../constants";
 import { useMoveUnit } from "../../hooks/useMoveUnit";
 import {
   gameStateAtom,
@@ -35,17 +29,6 @@ import { Circle } from "../PixiComponents";
 import { getViewport } from "../PixiViewport";
 import { ClippedUnit } from "./ClippedUnit";
 import { UnitHealth } from "./UnitHealth";
-
-const ON_STRUCUTRE_TRANSFORM = new PIXI.Transform();
-// ON_STRUCUTRE_TRANSFORM.scale = ON_STRUCTURE_SCALE;
-ON_STRUCUTRE_TRANSFORM.localTransform = new Matrix(
-  UNIT_ON_STRUCTURE_REDUCTION,
-  0,
-  0,
-  UNIT_ON_STRUCTURE_REDUCTION,
-  0,
-  10
-);
 
 export const TroopUnit = ({ troopId }: { troopId: string }) => {
   const troop = useRecoilValue(troopsAtomFamily(troopId));
@@ -85,7 +68,6 @@ export const UnitSprite = ({
     tileX,
     tileY,
   ]);
-  const isOnStructure = useIsOnStructure(tileX, tileY);
   const [hovering, setHovering] = useState(false);
   const moveUnit = useMoveUnit(troop.id, tileX, tileY);
   const movement = Number(troop.movement);
@@ -217,12 +199,6 @@ export const UnitSprite = ({
       [dragging]
     );
 
-  const onStructureScalePoint = useMemo(
-    () =>
-      new PIXI.Point(UNIT_ON_STRUCTURE_REDUCTION, UNIT_ON_STRUCTURE_REDUCTION),
-    []
-  );
-
   useEffect(() => {
     // register container for troop
     setTroopContainerRef(containerRef);
@@ -254,42 +230,28 @@ export const UnitSprite = ({
         y={coords.y}
         interactive
       >
-        <Container
-          scale={isOnStructure ? onStructureScalePoint : undefined}
-          x={
-            isOnStructure
-              ? (UNIT_LENGTH - UNIT_LENGTH * UNIT_ON_STRUCTURE_REDUCTION) / 2
-              : 0
-          }
-          y={
-            isOnStructure
-              ? -(UNIT_LENGTH * UNIT_ON_STRUCTURE_REDUCTION * 0.3)
-              : 0
-          }
-        >
-          <ClippedUnit
-            height={UNIT_LENGTH}
-            width={UNIT_LENGTH}
-            name={troop.name}
-            x={UNIT_OFFSET}
-            y={UNIT_OFFSET}
+        <ClippedUnit
+          height={UNIT_LENGTH}
+          width={UNIT_LENGTH}
+          name={troop.name}
+          x={UNIT_OFFSET}
+          y={UNIT_OFFSET}
+        />
+        {!ownedByCurrentPlayer && (
+          <Circle
+            fill={troopPlayerColor}
+            radius={5}
+            stroke={0x000000}
+            strokeWidth={1}
+            x={UNIT_OFFSET + 12}
+            y={UNIT_OFFSET + 12}
           />
-          {!ownedByCurrentPlayer && (
-            <Circle
-              fill={troopPlayerColor}
-              radius={5}
-              stroke={0x000000}
-              strokeWidth={1}
-              x={UNIT_OFFSET + 12}
-              y={UNIT_OFFSET + 12}
-            />
-          )}
-          <UnitHealth
-            health={Number(troop.health)}
-            maxHealth={Number(troop.max_health)}
-            showHealthBar={hovering}
-          />
-        </Container>
+        )}
+        <UnitHealth
+          health={Number(troop.health)}
+          maxHealth={Number(troop.max_health)}
+          showHealthBar={hovering}
+        />
       </Container>
     </>
   );
