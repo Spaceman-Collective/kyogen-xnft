@@ -196,25 +196,22 @@ const useListenToGameEvents = () => {
           const meteorId = BigInt(event.data.meteor);
           const minerId = BigInt(event.data.player);
           // Get the exsting meteor by ID from recoil state. Then update with the slot from the event.
-          // const meteor = gameState.get_structure_json(meteorId) as Meteor;
           console.log("getting meteor by ID", meteorId.toString());
-          const meteor = getMeteorById(meteorId.toString()) as Meteor;
-          const newMeteor = { ...meteor, last_used: event.slot };
-          console.log("Updating meteor with with information", newMeteor);
-          updateMeteors([newMeteor]);
-          // await gameState.update_entity(meteorId);
-          // await gameState.update_entity(minerId);
-          // const miner = gameState.get_player_json(minerId) as Player;
-          // updatePlayers({ players: [miner] });
-          // setGameFeed((curr) => [
-          //   ...curr,
-          //   {
-          //     type: event.name,
-          //     players: [miner],
-          //     msg: `%1% mined ${newMeteor.structure.Meteor.solarite_per_use} solarite`,
-          //     timestamp,
-          //   },
-          // ]);
+          await gameState.update_entity(meteorId);
+          const meteor = gameState.get_structure_json(meteorId) as Meteor;
+          updateMeteors([meteor]);
+          await gameState.update_entity(minerId);
+          const miner = gameState.get_player_json(minerId) as Player;
+          updatePlayers({ players: [miner] });
+          setGameFeed((curr) => [
+            ...curr,
+            {
+              type: event.name,
+              players: [miner],
+              msg: `%1% mined ${meteor.structure.Meteor.solarite_per_use} solarite`,
+              timestamp,
+            },
+          ]);
           break;
         case "PortalUsed":
           break;
@@ -222,7 +219,6 @@ const useListenToGameEvents = () => {
     },
     [
       gameState,
-      getMeteorById,
       setGameFeed,
       setPlayPhase,
       updateMeteors,
