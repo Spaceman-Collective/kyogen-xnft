@@ -3,11 +3,12 @@ import {
   playPhaseAtom,
   gameStateAtom,
   connectionAtom,
+  meteorsAtomFamily,
 } from "@/recoil";
 import { KyogenEventCoder, StructuresEventCoder } from "@/utils/anchorEvents";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useCallback, useEffect } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   useUpdateMeteors,
   useUpdatePlayers,
@@ -28,6 +29,13 @@ const useListenToGameEvents = () => {
   const updateTroops = useUpdateTroops();
   const connection = useRecoilValue(connectionAtom);
   const updateMeteors = useUpdateMeteors();
+  const getMeteorById = useRecoilCallback(
+    ({ snapshot }) =>
+      (meteorId: string) => {
+        return snapshot.getLoadable(meteorsAtomFamily(meteorId)).contents;
+      },
+    []
+  );
 
   const handleEvent = useCallback(
     async (event: any) => {
@@ -36,7 +44,10 @@ const useListenToGameEvents = () => {
       }
       console.log("EVENT: ", event);
       if (!gameState) return;
-      if (event.name !== "MeteorMined" && event.data.instance.toString() != gameState.instance.toString()) {
+      if (
+        event.name !== "MeteorMined" &&
+        event.data.instance.toString() != gameState.instance.toString()
+      ) {
         return;
       }
       const timestamp = Date.now();
