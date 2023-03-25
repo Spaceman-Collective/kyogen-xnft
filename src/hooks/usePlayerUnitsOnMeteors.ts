@@ -31,7 +31,7 @@ const usePlayerUnitsOnMeteors = () => {
             } Sum: ${
               Number(meteor.last_used) +
               (Number(meteor.recovery) + FE_RECOVERY_BUFFER)
-            }\ncurrentSlot: ${currentSlot}`
+            }\ncurrentSlot: ${currentSlot}`, meteor
           );
           if (
             Number(meteor.last_used) +

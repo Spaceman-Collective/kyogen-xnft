@@ -197,6 +197,7 @@ const useListenToGameEvents = () => {
           const minerId = BigInt(event.data.player);
           // Get the exsting meteor by ID from recoil state. Then update with the slot from the event.
           // const meteor = gameState.get_structure_json(meteorId) as Meteor;
+          console.log("getting meteor by ID", meteorId.toString());
           const meteor = getMeteorById(meteorId.toString()) as Meteor;
           const newMeteor = { ...meteor, last_used: event.slot };
           console.log("Updating meteor with with information", newMeteor);
