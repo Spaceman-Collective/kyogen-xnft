@@ -2,6 +2,7 @@ import { currentSlotAtom } from "@/recoil";
 import { selectPlayerUnitsOnMeteors } from "@/recoil/selectors";
 import { useEffect } from "react";
 import { useRecoilValue } from "recoil";
+import { FE_RECOVERY_BUFFER } from "../constants";
 import useInitPlayerAta from "./useInitPlayerAta";
 import { useMeteor } from "./useMeteor";
 
@@ -25,7 +26,8 @@ const usePlayerUnitsOnMeteors = () => {
             throw new Error("Should be unreachable");
           }
           if (
-            Number(meteor.last_used) + Number(meteor.recovery) <=
+            Number(meteor.last_used) +
+              (Number(meteor.recovery) + FE_RECOVERY_BUFFER) <=
             currentSlot
           ) {
             acc.push(sendMeteorTx(meteor.id, tileId, tile.troop.id));
