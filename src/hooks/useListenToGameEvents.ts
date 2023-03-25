@@ -203,18 +203,18 @@ const useListenToGameEvents = () => {
           console.log("Updating meteor with with information", newMeteor);
           updateMeteors([newMeteor]);
           // await gameState.update_entity(meteorId);
-          await gameState.update_entity(minerId);
-          const miner = gameState.get_player_json(minerId) as Player;
-          updatePlayers({ players: [miner] });
-          setGameFeed((curr) => [
-            ...curr,
-            {
-              type: event.name,
-              players: [miner],
-              msg: `%1% mined ${newMeteor.structure.Meteor.solarite_per_use} solarite`,
-              timestamp,
-            },
-          ]);
+          // await gameState.update_entity(minerId);
+          // const miner = gameState.get_player_json(minerId) as Player;
+          // updatePlayers({ players: [miner] });
+          // setGameFeed((curr) => [
+          //   ...curr,
+          //   {
+          //     type: event.name,
+          //     players: [miner],
+          //     msg: `%1% mined ${newMeteor.structure.Meteor.solarite_per_use} solarite`,
+          //     timestamp,
+          //   },
+          // ]);
           break;
         case "PortalUsed":
           break;
