@@ -46,6 +46,7 @@ export const useSendAndConfirmGameWalletTransaction = () => {
           opts
         );
       } catch (e) {
+        console.log("error", e);
         toast.error(`TX Failed: ${e}`);
         throw e;
       }
