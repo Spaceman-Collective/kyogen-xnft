@@ -101,7 +101,7 @@ export const notificationsAtom = atom<Notification[]>({
 /* Local solana state */
 export const connectionAtom = atom({
   key: "connectionAtom",
-  default: new Connection("http://137.184.36.69:8899"),
+  default: new Connection("https://rpc-devnet.helius.xyz/?api-key=1b21b073-a222-47bb-8628-564145e58f4e"),
   // connection mutates itself, so must have this
   dangerouslyAllowMutability: true,
 });
