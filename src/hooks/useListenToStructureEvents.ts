@@ -21,6 +21,8 @@ const useListenToStructureEvents = () => {
       if (!gameState) return;
       const timestamp = Date.now();
 
+      console.log("STRUCTURE EVENT: ", event);
+
       switch (event.name) {
         case "MeteorMined":
           const meteorId = BigInt(event.data.meteor);
