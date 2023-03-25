@@ -193,25 +193,25 @@ const useListenToGameEvents = () => {
           break;
 
         case "MeteorMined":
-          const meteorId = BigInt(event.data.meteor);
-          const minerId = BigInt(event.data.player);
-          // Get the exsting meteor by ID from recoil state. Then update with the slot from the event.
-          console.log("getting meteor by ID", meteorId.toString());
-          await gameState.update_entity(meteorId);
-          const meteor = gameState.get_structure_json(meteorId) as Meteor;
-          updateMeteors([meteor]);
-          await gameState.update_entity(minerId);
-          const miner = gameState.get_player_json(minerId) as Player;
-          updatePlayers({ players: [miner] });
-          setGameFeed((curr) => [
-            ...curr,
-            {
-              type: event.name,
-              players: [miner],
-              msg: `%1% mined ${meteor.structure.Meteor.solarite_per_use} solarite`,
-              timestamp,
-            },
-          ]);
+          // const meteorId = BigInt(event.data.meteor);
+          // const minerId = BigInt(event.data.player);
+          // // Get the exsting meteor by ID from recoil state. Then update with the slot from the event.
+          // console.log("getting meteor by ID", meteorId.toString());
+          // await gameState.update_entity(meteorId);
+          // const meteor = gameState.get_structure_json(meteorId) as Meteor;
+          // updateMeteors([meteor]);
+          // await gameState.update_entity(minerId);
+          // const miner = gameState.get_player_json(minerId) as Player;
+          // updatePlayers({ players: [miner] });
+          // setGameFeed((curr) => [
+          //   ...curr,
+          //   {
+          //     type: event.name,
+          //     players: [miner],
+          //     msg: `%1% mined ${meteor.structure.Meteor.solarite_per_use} solarite`,
+          //     timestamp,
+          //   },
+          // ]);
           break;
         case "PortalUsed":
           break;
@@ -221,7 +221,6 @@ const useListenToGameEvents = () => {
       gameState,
       setGameFeed,
       setPlayPhase,
-      updateMeteors,
       updatePlayers,
       updateTiles,
       updateTroops,
