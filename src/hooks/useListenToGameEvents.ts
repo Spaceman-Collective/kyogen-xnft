@@ -36,7 +36,7 @@ const useListenToGameEvents = () => {
       }
       console.log("EVENT: ", event);
       if (!gameState) return;
-      if (event.data.instance.toString() != gameState.instance.toString()) {
+      if (event.name !== "MeteorMined" && event.data.instance.toString() != gameState.instance.toString()) {
         return;
       }
       const timestamp = Date.now();
