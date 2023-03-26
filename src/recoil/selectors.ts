@@ -13,7 +13,7 @@ import {
   tilesAtomFamily,
   troopsAtomFamily,
 } from "./atoms";
-import { Meteor, Player, Tile, UnitNames } from "../types";
+import { Meteor, Player, Tile, Troop, UnitNames } from "../types";
 import { playerColorPalette } from "../constants";
 import { calculateDistance } from "../utils/map";
 
@@ -157,47 +157,67 @@ export const selectMeteorFromSelectedTileId = selector({
 
 export const selectMeteorXYMapping = selector({
   key: "selectMeteorMapping",
-  get: ({get}) => {
+  get: ({ get }) => {
     const meteorIds = get(meteorIdsAtom);
-    const meteors = meteorIds.map(id => get(meteorsAtomFamily(id)));
-    const mapping: Record<string,Meteor> = {};
-    meteors.forEach(meteor => {
-      if (meteor)
-        mapping[`${meteor.x},${meteor.y}`] = meteor;
-    })
+    const meteors = meteorIds.map((id) => get(meteorsAtomFamily(id)));
+    const mapping: Record<string, Meteor> = {};
+    meteors.forEach((meteor) => {
+      if (meteor) mapping[`${meteor.x},${meteor.y}`] = meteor;
+    });
     return mapping;
-  }
-})
+  },
+});
 
 export const selectPlayerUnitsOnMeteors = selector({
   key: "selectPlayerUnitsOnMeteors",
-  get: ({get}) => {
+  get: ({ get }) => {
     const meteorXyMapping = get(selectMeteorXYMapping);
     const currentPlayer = get(selectCurrentPlayer);
     const tileIds = get(tileIdsAtom);
-    const res: Record<string, {meteor: Meteor, tile: Tile}> = {};
+    const res: Record<string, { meteor: Meteor; tile: Tile }> = {};
     tileIds.forEach((tileId) => {
       const tile = get(tilesAtomFamily(tileId));
       if (!tile) return;
-      const playerHasTroopOnTile = tile.troop && tile.troop.player_id === currentPlayer?.id;
+      const playerHasTroopOnTile =
+        tile.troop && tile.troop.player_id === currentPlayer?.id;
       const meteorOnTile = meteorXyMapping[`${tile.x},${tile.y}`];
-        if (playerHasTroopOnTile && meteorOnTile) {
-          res[tileId] = {meteor: meteorOnTile, tile}
-        }
+      if (playerHasTroopOnTile && meteorOnTile) {
+        res[tileId] = { meteor: meteorOnTile, tile };
+      }
     });
     return res;
-  }
-})
+  },
+});
+
+// TODO clean this up
+export const selectSelectedMeteorAndPlayerUnit = selector<
+  [Meteor, Troop, string] | null
+>({
+  key: "selectSelectedMeteorAndPlayerUnit",
+  get: ({ get }) => {
+    const meteor = get(selectMeteorFromSelectedTileId);
+    if (!meteor) {
+      return null;
+    }
+    const currentPlayer = get(selectCurrentPlayer);
+    const troop = get(selectTroopFromSelectedTile);
+    if (troop?.player_id !== currentPlayer?.id) {
+      return null;
+    }
+    const tileId = get(selectedTileIdAtom);
+    return [meteor, troop, tileId] as [Meteor, Troop, string];
+  },
+});
 
 export const selectAllStructures = selector({
   key: "selectAllStructures",
-  get: ({get}) => {
+  get: ({ get }) => {
     const meteorIds = get(meteorIdsAtom);
-    const meteors = meteorIds.map(id => get(meteorsAtomFamily(id)));
-    const healerIds = get(healerIdsAtom)
-    const healers = healerIds.map(id => get(healersAtomFamily(id)));
+    const meteors = meteorIds.map((id) => get(meteorsAtomFamily(id)));
+    const healerIds = get(healerIdsAtom);
+    const healers = healerIds.map((id) => get(healersAtomFamily(id)));
     const res = [...meteors, ...healers];
 
     return res;
-  }
-})
+  },
+});

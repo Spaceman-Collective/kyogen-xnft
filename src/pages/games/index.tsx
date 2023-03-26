@@ -23,7 +23,7 @@ const Game = () => {
   useLoadGameState();
   useListenToGameEvents();
   useTrackSlotChange();
-  usePlayerUnitsOnMeteors();
+  // usePlayerUnitsOnMeteors();
   const gameContainerRef = useRef<HTMLDivElement>(null);
   const [containerDims, setContainerDims] = useState({ height: 0, width: 0 });
 

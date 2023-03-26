@@ -7,7 +7,10 @@ import WildingSamurai from "../../../public/wildling_samurai.webp";
 import Solarite from "../../../public/ui/solarite.webp";
 // import Skull from "../../../public/ui/skull.webp";
 import RefreshIcon from "../../../public/refresh.svg";
-import { selectCurrentPlayer } from "../../recoil/selectors";
+import {
+  selectCurrentPlayer,
+  selectSelectedMeteorAndPlayerUnit,
+} from "../../recoil/selectors";
 import { Clans } from "../../types";
 import { playPhaseAtom } from "@/recoil";
 import { GameEndScreen } from "./GameEndScreen";
@@ -16,6 +19,7 @@ import { PrimaryButton } from "../buttons/PrimaryButton";
 import { useCallback, useState } from "react";
 import { useLoadGameStateFunc } from "../../hooks/useLoadGameState";
 import { useClaimVictory } from "../../hooks/useClaimVictory";
+import { useMeteor } from "../../hooks/useMeteor";
 
 const clanToAvatarMap = {
   [Clans.Ancients]: AncientSamurai,
@@ -31,11 +35,13 @@ export const GameOverlay = () => {
   const [loading, setLoading] = useState(false);
   const [claiming, setClaiming] = useState(false);
   const _claimVictory = useClaimVictory();
+  const mineMeteor = useMeteor();
   const claimVictory = useCallback(async () => {
     setClaiming(true);
     await _claimVictory();
     setClaiming(false);
   }, [_claimVictory]);
+  const maybeMeteorTroop = useRecoilValue(selectSelectedMeteorAndPlayerUnit);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -97,6 +103,21 @@ export const GameOverlay = () => {
             )}
           </div>
           <div className="mt-10 p-4">
+            {!!maybeMeteorTroop && (
+              <PrimaryButton
+                className="pointer-events-auto mb-4"
+                onClick={async () => {
+                  const [meteor, troop, tileId] = maybeMeteorTroop;
+                  try {
+                    await mineMeteor(meteor.id, tileId, troop.id);
+                  } catch (e) {
+                    // swallow error
+                  }
+                }}
+              >
+                Mine Meteor
+              </PrimaryButton>
+            )}
             <PrimaryButton
               className="pointer-events-auto mb-4"
               onClick={claimVictory}
