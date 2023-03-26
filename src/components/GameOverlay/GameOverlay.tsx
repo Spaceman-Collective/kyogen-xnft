@@ -11,8 +11,8 @@ import {
   selectCurrentPlayer,
   selectSelectedMeteorAndPlayerUnit,
 } from "../../recoil/selectors";
-import { Clans } from "../../types";
-import { playPhaseAtom } from "@/recoil";
+import { Clans, Player } from "../../types";
+import { gameStateAtom, playPhaseAtom } from "@/recoil";
 import { GameEndScreen } from "./GameEndScreen";
 import { GamePausedScreen } from "./GamePausedScreen";
 import { PrimaryButton } from "../buttons/PrimaryButton";
@@ -20,6 +20,7 @@ import { useCallback, useState } from "react";
 import { useLoadGameStateFunc } from "../../hooks/useLoadGameState";
 import { useClaimVictory } from "../../hooks/useClaimVictory";
 import { useMeteor } from "../../hooks/useMeteor";
+import { useUpdatePlayers } from "../../recoil/transactions";
 
 const clanToAvatarMap = {
   [Clans.Ancients]: AncientSamurai,
@@ -31,6 +32,8 @@ const clanToAvatarMap = {
 export const GameOverlay = () => {
   const currentPlayer = useRecoilValue(selectCurrentPlayer);
   const playPhase = useRecoilValue(playPhaseAtom);
+  const gameState = useRecoilValue(gameStateAtom);
+  const updatePlayers = useUpdatePlayers();
   const loadGameState = useLoadGameStateFunc();
   const [loading, setLoading] = useState(false);
   const [claiming, setClaiming] = useState(false);
@@ -107,9 +110,16 @@ export const GameOverlay = () => {
               <PrimaryButton
                 className="pointer-events-auto mb-4"
                 onClick={async () => {
+                  if (!gameState) {
+                    return;
+                  }
                   const [meteor, troop, tileId] = maybeMeteorTroop;
                   try {
                     await mineMeteor(meteor.id, tileId, troop.id);
+                    const playerId = BigInt(troop.player_id);
+                    await gameState.update_entity(playerId);
+                    const miner = gameState.get_player_json(playerId) as Player;
+                    updatePlayers({ players: [miner] });
                   } catch (e) {
                     // swallow error
                   }
