@@ -42,6 +42,7 @@ const JoinGamePage = () => {
   return (
     <Page title="JOIN GAME">
       <div className="flex flex-col justify-center items-center">
+        {/*
         <div className="flex flex-row ml-24 mt-10 space-x-4">
           <label>RPC Endpoint: </label>
           <input
@@ -61,7 +62,8 @@ const JoinGamePage = () => {
               }
             }
           }>Save RPC</button>
-        </div>        
+        </div> 
+        */}
         <div className="flex flex-row justify-center items-center mt-20">
           <p className="mr-3 text-2xl">Enter Game ID:</p>
           <TextInput
