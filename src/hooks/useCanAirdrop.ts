@@ -11,7 +11,7 @@ export const useCanAirdrop = () => {
       connection.rpcEndpoint.includes("devnet") ||
       connection.rpcEndpoint.includes("localhost") ||
       connection.rpcEndpoint.includes("127.0.0.1") ||
-      true // Done for private chains 
+      connection.rpcEndpoint.includes("helius") // Done for private chains 
     );
   }, [connection.rpcEndpoint]);
 };
@@ -26,7 +26,7 @@ export const useAirdrop = () => {
       const confirmationStrategy = {
         signature: txSig,
         blockhash: latestBlockInfo.blockhash,
-        lastValidBlockHeight: latestBlockInfo.lastValidBlockHeight + 50,
+        lastValidBlockHeight: latestBlockInfo.lastValidBlockHeight + 5, // was 50
       };
       return connection.confirmTransaction(confirmationStrategy);
     },

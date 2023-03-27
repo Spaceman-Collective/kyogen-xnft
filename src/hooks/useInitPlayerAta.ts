@@ -9,6 +9,7 @@ import {
   createAssociatedTokenAccount,
   createAssociatedTokenAccountInstruction,
   getAssociatedTokenAddress,
+  getOrCreateAssociatedTokenAccount,
 } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import { useCallback } from "react";
@@ -25,6 +26,16 @@ const useInitPlayerAta = () => {
     if (!gameState || !gameWallet) return;
     const gameConfig = gameState.get_game_config();
     const gameMint = new PublicKey(gameConfig.game_token);
+
+    const playerAta = await getOrCreateAssociatedTokenAccount(
+      connection,
+      gameWallet,
+      gameMint,
+      gameWallet.publicKey,
+    );
+    console.log("Player ATA: ", playerAta.address.toString());
+
+    /*
     // Check if the player ATA exists.
     const playerAta = await getAssociatedTokenAddress(
       gameMint,
@@ -43,6 +54,7 @@ const useInitPlayerAta = () => {
       const txId = await sendAndConfirmTransaction([ix]);
       console.log(`Player ATA created: ${txId}`);
     }
+    */
   }, [connection, gameState, gameWallet, sendAndConfirmTransaction]);
 };
 

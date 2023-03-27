@@ -39,7 +39,7 @@ export const useSendAndConfirmGameWalletTransaction = () => {
 
       let opts: ConfirmOptions = confirmationOptions
         ? confirmationOptions
-        : { skipPreflight: true };
+        : { skipPreflight: false };
 
       try {
         const txid = await sendAndConfirmRawTransaction(
