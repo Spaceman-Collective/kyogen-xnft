@@ -1,4 +1,4 @@
-import { ConfirmOptions, TransactionInstruction } from "@solana/web3.js";
+import { ComputeBudgetProgram, ConfirmOptions, TransactionInstruction } from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor";
 import { useRecoilValue } from "recoil";
 import { connectionAtom, gameWallet as gameWalletAtom } from "../recoil";
@@ -23,7 +23,10 @@ export const useSendAndConfirmGameWalletTransaction = () => {
       const msg = new anchor.web3.TransactionMessage({
         payerKey: gameWallet.publicKey,
         recentBlockhash: latestBlockInfo.blockhash,
-        instructions: instructions,
+        instructions: [
+          ComputeBudgetProgram.setComputeUnitLimit({units: 1400000}),
+          ...instructions
+        ],
       }).compileToLegacyMessage();
       const tx = new anchor.web3.VersionedTransaction(msg);
       tx.sign([gameWallet]);
