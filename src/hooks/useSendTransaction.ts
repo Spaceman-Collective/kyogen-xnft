@@ -36,16 +36,18 @@ export const useSendAndConfirmGameWalletTransaction = () => {
 
       let opts: ConfirmOptions = confirmationOptions
         ? confirmationOptions
-        : { skipPreflight: false };
+        : { skipPreflight: true };
 
       try {
-        await sendAndConfirmRawTransaction(
+        const txid = await sendAndConfirmRawTransaction(
           connection,
           Buffer.from(tx.serialize()),
           confirmationStrategy,
           opts
         );
+        console.log("TXID: ", txid);
       } catch (e) {
+
         console.log("error", e);
         toast.error(`TX Failed: ${e}`);
         throw e;
