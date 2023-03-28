@@ -117,11 +117,6 @@ export const GameOverlay = () => {
                   const [meteor, troop, tileId] = maybeMeteorTroop;
                   try {
                     await mineMeteor(meteor.id, tileId, troop.id);
-                    
-                    new Promise(resolve => {
-                      setTimeout(resolve, 30000);
-                      toast.success("You can mine again!");
-                    }); // 5 sec
 
                     const playerId = BigInt(troop.player_id);
                     await gameState.update_entity(playerId);
