@@ -3,12 +3,7 @@ import {
   gameStateAtom,
   gameWallet as gameWalletAtom,
 } from "@/recoil";
-import { associatedAddress } from "@coral-xyz/anchor/dist/cjs/utils/token";
 import {
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  createAssociatedTokenAccount,
-  createAssociatedTokenAccountInstruction,
-  getAssociatedTokenAddress,
   getOrCreateAssociatedTokenAccount,
 } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
@@ -23,7 +18,10 @@ const useInitPlayerAta = () => {
   const sendAndConfirmTransaction = useSendAndConfirmGameWalletTransaction();
 
   return useCallback(async () => {
-    if (!gameState || !gameWallet) return;
+    if (!gameState || !gameWallet) {
+      console.log("Exiting ATA creation early beacuse gameState or gameWallet were not defined!");
+      return;
+    };
     const gameConfig = gameState.get_game_config();
     const gameMint = new PublicKey(gameConfig.game_token);
 
