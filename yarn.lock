@@ -1618,11 +1618,6 @@
     "@pixi/constants" "7.1.2"
     "@types/css-font-loading-module" "^0.0.7"
 
-"@pixi/sound@^5.1.1":
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/@pixi/sound/-/sound-5.1.1.tgz#280720a455389eaf84e4772e1f7798c84691057f"
-  integrity sha512-OkOtlzNCDkPePLNo56R2gNKiXPDUpz2fTXVbn1DmScgWfBCHMski4a/6zf+dsDxI7q/tIEtlFKKcC9+r9otWOA==
-
 "@pixi/sprite-animated@7.1.2":
   version "7.1.2"
   resolved "https://registry.yarnpkg.com/@pixi/sprite-animated/-/sprite-animated-7.1.2.tgz#0c95c476be6a72b47dabb663146121fcf3958b13"
@@ -1905,6 +1900,11 @@
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@types/earcut/-/earcut-2.1.1.tgz#573a0af609f17005c751f6f4ffec49cfe358ea51"
   integrity sha512-w8oigUCDjElRHRRrMvn/spybSMyX8MTkKA5Dv+tS1IE/TgmNZPqUYtvYBXGY8cieSE66gm+szeK+bnbxC2xHTQ==
+
+"@types/howler@^2.2.7":
+  version "2.2.7"
+  resolved "https://registry.yarnpkg.com/@types/howler/-/howler-2.2.7.tgz#5acfbed57f9e1d99b8dabe1b824729e1c1ea1fae"
+  integrity sha512-PEZldwZqJJw1PWRTpupyC7ajVTZA8aHd8nB/Y0n6zRZi5u8ktYDntsHj13ltEiBRqWwF06pASxBEvCTxniG8eA==
 
 "@types/json5@^0.0.29":
   version "0.0.29"
@@ -4804,6 +4804,11 @@ hmac-drbg@^1.0.1:
     hash.js "^1.0.3"
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.1"
+
+howler@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/howler/-/howler-2.2.3.tgz#a2eff9b08b586798e7a2ee17a602a90df28715da"
+  integrity sha512-QM0FFkw0LRX1PR8pNzJVAY25JhIWvbKMBFM4gqk+QdV+kPXOhleWGCB6AiAF/goGjIHK2e/nIElplvjQwhr0jg==
 
 htmlnano@^2.0.0:
   version "2.0.3"

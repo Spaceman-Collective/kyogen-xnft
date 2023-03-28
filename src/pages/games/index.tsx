@@ -10,7 +10,8 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { connectionAtom } from "@/recoil";
 import { Connection } from "@solana/web3.js";
 import toast from "react-hot-toast";
-import {sound} from '@pixi/sound';
+import { Howl } from 'howler'; 
+import music from "../../../public/sounds/melody_63.mp3";
 
 // // must use dynamic imports as `pixi-viewport` expects window object.
 const GameMap = dynamic({
@@ -50,11 +51,18 @@ const Game = () => {
   const rpcRef = useRef<HTMLInputElement>(null);
   const setConnection = useSetRecoilState(connectionAtom);
   const connection = useRecoilValue(connectionAtom);
+  
+  useEffect(() => {
+    const sound = new Howl({
+      src: [music],
+      autoplay: true,
+      loop: true
+    });
 
-  sound.add('bg-music', 'public/melody_63.mp3');
-  sound.play('bg-music', {
-    loop: true,
-  });
+    return () => {
+      sound.unload();
+    }
+  }, [])
   
   return (
     <>
