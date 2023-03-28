@@ -52,30 +52,31 @@ const Game = () => {
 
   return (
     <>
+      <div className="flex flex-row ml-24 mt-10 space-x-4">
+        <label>RPC Endpoint: </label>
+        <input
+          className="text-black"
+          type="string"
+          defaultValue={connection.rpcEndpoint}
+          ref={rpcRef}
+        ></input>
+        <button onClick={
+          async () => { 
+            try{ 
+              setConnection(new Connection(rpcRef.current!.value))
+              toast.success(`RPC Endpoint Updated!`);  
+            } catch (e) {
+              toast.error("RPC Invalid!");
+            }
+          }
+        }>Save RPC</button>
+      </div> 
+
       <div className="h-screen w-screen flex flex-col">
         <div
           ref={gameContainerRef}
           className="bg-[#eae6d5] relative flex flex-1 justify-center items-center"
         >
-          <div className="flex flex-row ml-24 mt-10 space-x-4">
-            <label>RPC Endpoint: </label>
-            <input
-              className="text-black"
-              type="string"
-              defaultValue={connection.rpcEndpoint}
-              ref={rpcRef}
-            ></input>
-            <button onClick={
-              async () => { 
-                try{ 
-                  setConnection(new Connection(rpcRef.current!.value))
-                  toast.success(`RPC Endpoint Updated!`);  
-                } catch (e) {
-                  toast.error("RPC Invalid!");
-                }
-              }
-            }>Save RPC</button>
-          </div> 
           <GameMap height={containerDims.height} width={containerDims.width} />
           <GameOverlay />
         </div>
