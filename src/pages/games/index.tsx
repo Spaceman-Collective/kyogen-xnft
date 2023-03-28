@@ -57,7 +57,6 @@ const Game = () => {
         <input
           className="text-black"
           type="string"
-          defaultValue="RPC Endpoint"
           ref={rpcRef}
         ></input>
         <button onClick={
