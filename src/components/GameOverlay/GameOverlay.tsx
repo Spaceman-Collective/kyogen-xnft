@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import AncientSamurai from "../../../public/ancient_samurai.webp";
 import CreeperSamurai from "../../../public/creeper_samurai.webp";
 import SynthSamurai from "../../../public/synth_samurai.webp";
@@ -11,7 +11,7 @@ import {
   selectCurrentPlayer,
   selectSelectedMeteorAndPlayerUnit,
 } from "../../recoil/selectors";
-import { Clans, Player } from "../../types";
+import { Clans, PlayPhase, Player } from "../../types";
 import { gameStateAtom, playPhaseAtom } from "@/recoil";
 import { GameEndScreen } from "./GameEndScreen";
 import { GamePausedScreen } from "./GamePausedScreen";
@@ -33,6 +33,7 @@ const clanToAvatarMap = {
 export const GameOverlay = () => {
   const currentPlayer = useRecoilValue(selectCurrentPlayer);
   const playPhase = useRecoilValue(playPhaseAtom);
+  const setPlayPhase = useSetRecoilState(playPhaseAtom);
   const gameState = useRecoilValue(gameStateAtom);
   const updatePlayers = useUpdatePlayers();
   const loadGameState = useLoadGameStateFunc();
@@ -44,6 +45,7 @@ export const GameOverlay = () => {
     setClaiming(true);
     await _claimVictory();
     toast.success("Success! You won!");
+    setPlayPhase(gameState?.get_play_phase() as PlayPhase);
     setClaiming(false);
   }, [_claimVictory]);
   const maybeMeteorTroop = useRecoilValue(selectSelectedMeteorAndPlayerUnit);
@@ -54,7 +56,9 @@ export const GameOverlay = () => {
     setLoading(false);
   }, [loadGameState]);
 
+  setPlayPhase(gameState?.get_play_phase() as PlayPhase);
   console.log("Play phase: ", playPhase);
+
   switch (playPhase) {
     case "Finished":
       return <GameEndScreen />;
