@@ -21,7 +21,8 @@ const useInitPlayerAta = () => {
 
   return useCallback(async () => {
     if (!gameState || !gameWallet) {
-      throw new Error("GameState or GameWallet not defined!");
+      console.error("Something undefined");
+      return;
     };
 
     const gameConfig = gameState.get_game_config();
