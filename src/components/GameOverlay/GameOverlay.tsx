@@ -43,6 +43,7 @@ export const GameOverlay = () => {
   const claimVictory = useCallback(async () => {
     setClaiming(true);
     await _claimVictory();
+    toast.success("Success! You won!");
     setClaiming(false);
   }, [_claimVictory]);
   const maybeMeteorTroop = useRecoilValue(selectSelectedMeteorAndPlayerUnit);
@@ -53,6 +54,7 @@ export const GameOverlay = () => {
     setLoading(false);
   }, [loadGameState]);
 
+  console.log("Play phase: ", playPhase);
   switch (playPhase) {
     case "Finished":
       return <GameEndScreen />;
