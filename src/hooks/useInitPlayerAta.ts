@@ -8,11 +8,13 @@ import {
 } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import { useCallback } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useSendAndConfirmGameWalletTransaction } from "./useSendTransaction";
+import { useLoadGameState } from "./useLoadGameState";
 
 const useInitPlayerAta = () => {
   const gameState = useRecoilValue(gameStateAtom);
+  useLoadGameState();
   console.log("Game State; ", gameState);
   const gameWallet = useRecoilValue(gameWalletAtom);
   console.log("Game Wallet: ", gameWallet?.publicKey.toString())
