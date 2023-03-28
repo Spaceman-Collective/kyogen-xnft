@@ -23,6 +23,7 @@ export const useAirdrop = () => {
     async (address: PublicKey) => {
       const latestBlockInfo = await connection.getLatestBlockhash();
       const txSig = await connection.requestAirdrop(address, LAMPORTS_PER_SOL);
+      console.log("Airdrop Sig: ", txSig);
       const confirmationStrategy = {
         signature: txSig,
         blockhash: latestBlockInfo.blockhash,
