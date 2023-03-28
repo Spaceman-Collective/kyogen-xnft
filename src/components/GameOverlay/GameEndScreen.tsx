@@ -35,7 +35,7 @@ export const GameEndScreen = () => {
         className="mt-4 mx-20 fixed"
       />
       <p className="mx-auto mt-20 text-[#FF3D46] font-millimetre uppercase text-6xl">
-        score
+        game finished!
       </p>
       <div className="mx-[25%] scoreBoard mt-56 text-[#000] bg-[#FBF2D8] absolute w-1/2 p-5 rounded-lg flex flex-col">
         <table className="table-fixed  min-w-full">

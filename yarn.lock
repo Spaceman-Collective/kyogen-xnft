@@ -1618,6 +1618,11 @@
     "@pixi/constants" "7.1.2"
     "@types/css-font-loading-module" "^0.0.7"
 
+"@pixi/sound@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/sound/-/sound-5.1.1.tgz#280720a455389eaf84e4772e1f7798c84691057f"
+  integrity sha512-OkOtlzNCDkPePLNo56R2gNKiXPDUpz2fTXVbn1DmScgWfBCHMski4a/6zf+dsDxI7q/tIEtlFKKcC9+r9otWOA==
+
 "@pixi/sprite-animated@7.1.2":
   version "7.1.2"
   resolved "https://registry.yarnpkg.com/@pixi/sprite-animated/-/sprite-animated-7.1.2.tgz#0c95c476be6a72b47dabb663146121fcf3958b13"
