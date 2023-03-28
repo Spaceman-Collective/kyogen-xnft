@@ -34,6 +34,7 @@ const useInitPlayerAta = () => {
       gameWallet.publicKey,
     );
     console.log("Player ATA: ", playerAta.address.toString());
+    return playerAta.address.toString();
 
     /*
     // Check if the player ATA exists.

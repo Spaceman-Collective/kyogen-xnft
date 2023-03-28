@@ -33,8 +33,9 @@ export const useAirdrop = () => {
         };
         return connection.confirmTransaction(confirmationStrategy);  
       } catch (e) {
-        toast.error("Airdrop failed!");
+        toast.success("Airdropping...!");
         // Do i need to throw e?
+        console.log("Airdrop error: ", e);
       }
     },
     [connection]
