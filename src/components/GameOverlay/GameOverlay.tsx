@@ -122,6 +122,7 @@ export const GameOverlay = () => {
                   }
                   const [meteor, troop, tileId] = maybeMeteorTroop;
                   try {
+                    toast.success("Minig Meteor", {icon: "⛏️"})
                     await mineMeteor(meteor.id, tileId, troop.id);
 
                     const playerId = BigInt(troop.player_id);
