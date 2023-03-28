@@ -48,7 +48,7 @@ const JoinGamePage = () => {
           <input
             className="text-black"
             type="string"
-            defaultValue={connection.rpcEndpoint}
+            defaultValue="RPC Endpoint"
             ref={rpcRef}
           ></input>
           <button onClick={

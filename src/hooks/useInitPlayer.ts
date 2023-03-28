@@ -22,7 +22,8 @@ export const useInitPlayer = () => {
   return useCallback(
     async (clan: Clans) => {
       if (!gameId || !gameWallet) {
-        throw new Error("Game wallet or Game Id error");
+        console.log("Something undfeined!");
+        return;
       }
 
       const {
