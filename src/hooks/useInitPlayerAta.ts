@@ -13,15 +13,17 @@ import { useSendAndConfirmGameWalletTransaction } from "./useSendTransaction";
 
 const useInitPlayerAta = () => {
   const gameState = useRecoilValue(gameStateAtom);
+  console.log("Game State; ", gameState);
   const gameWallet = useRecoilValue(gameWalletAtom);
+  console.log("Game Wallet: ", gameWallet?.publicKey.toString())
   const connection = useRecoilValue(connectionAtom);
   const sendAndConfirmTransaction = useSendAndConfirmGameWalletTransaction();
 
   return useCallback(async () => {
     if (!gameState || !gameWallet) {
-      console.log("Exiting ATA creation early beacuse gameState or gameWallet were not defined!");
-      return;
+      throw new Error("GameState or GameWallet not defined!");
     };
+
     const gameConfig = gameState.get_game_config();
     const gameMint = new PublicKey(gameConfig.game_token);
 
