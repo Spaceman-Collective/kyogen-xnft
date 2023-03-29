@@ -52,8 +52,9 @@ const Game = () => {
   const setConnection = useSetRecoilState(connectionAtom);
   const connection = useRecoilValue(connectionAtom);
   
+  let sound:Howl;
   useEffect(() => {
-    const sound = new Howl({
+    sound = new Howl({
       src: [music],
       autoplay: true,
       loop: true
@@ -85,6 +86,11 @@ const Game = () => {
         }>Save RPC</button>
       </div> 
 
+      <div className="flex flex-row ml-30 mt-10 space-x-4">
+        <button onClick={() => {sound.mute()}}>Mute</button>
+        <button onClick={() => {sound.play()}}>Unmute</button>
+      </div>
+        
       <div className="h-screen w-screen flex flex-col">
         <div
           ref={gameContainerRef}
