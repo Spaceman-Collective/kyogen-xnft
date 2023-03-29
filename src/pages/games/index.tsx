@@ -52,20 +52,14 @@ const Game = () => {
   const setConnection = useSetRecoilState(connectionAtom);
   const connection = useRecoilValue(connectionAtom);
   
+  let sound = new Howl({
+    src: [music],
+    autoplay: false,
+    loop: true
+  });
+
   useEffect(() => {
-    let sound = new Howl({
-      src: [music],
-      autoplay: true,
-      loop: true
-    });
-
-    sound.on("play-bg-music", () => {
-      sound.play();
-    });
-
-    sound.on("mute-bg-music", () => {
-      sound.mute();
-    });
+    sound.play();
 
     return () => {
       sound.unload();
@@ -96,10 +90,10 @@ const Game = () => {
 
         <div className="flex flex-row ml-30 mt-10 space-x-4">
           <button onClick={() => {
-            document.dispatchEvent(new Event("mute-bg-music"))
+            sound.mute()
           }}>Mute</button>
           <button onClick={() => {
-            document.dispatchEvent(new Event("play-bg-music"))
+            sound.play();
           }}>Unmute</button>
         </div>
       </div>
