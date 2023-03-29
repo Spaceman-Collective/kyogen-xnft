@@ -59,7 +59,7 @@ const Game = () => {
   });
 
   useEffect(() => {
-    sound.play();
+    //sound.play();
 
     return () => {
       sound.unload();
@@ -94,7 +94,7 @@ const Game = () => {
           }}>Mute</button>
           <button onClick={() => {
             sound.play();
-          }}>Unmute</button>
+          }}>Play Music</button>
         </div>
       </div>
         
