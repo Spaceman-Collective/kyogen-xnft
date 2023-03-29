@@ -90,7 +90,7 @@ const Game = () => {
 
         <div className="flex flex-row ml-30 mt-10 space-x-4">
           <button onClick={() => {
-            sound.mute()
+            sound.pause()
           }}>Mute</button>
           <button onClick={() => {
             sound.play();
