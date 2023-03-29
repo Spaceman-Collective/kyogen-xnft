@@ -52,43 +52,38 @@ const Game = () => {
   const setConnection = useSetRecoilState(connectionAtom);
   const connection = useRecoilValue(connectionAtom);
   
-  let sound:Howl;
-  useEffect(() => {
-    sound = new Howl({
-      src: [music],
-      autoplay: true,
-      loop: true
-    });
-
-    return () => {
-      sound.unload();
-    }
-  }, [])
+  let sound:Howl = new Howl({
+    src: [music],
+    autoplay: true,
+    loop: true
+  });
   
   return (
     <>
-      <div className="flex flex-row ml-24 mt-10 space-x-4">
-        <label>RPC Endpoint: </label>
-        <input
-          className="text-black"
-          type="string"
-          ref={rpcRef}
-        ></input>
-        <button onClick={
-          async () => { 
-            try{ 
-              setConnection(new Connection(rpcRef.current!.value))
-              toast.success(`RPC Endpoint Updated!`);  
-            } catch (e) {
-              toast.error("RPC Invalid!");
+      <div className="flex flex-row space-x-8">
+        <div className="flex flex-row ml-24 mt-10 space-x-4">
+          <label>RPC Endpoint: </label>
+          <input
+            className="text-black"
+            type="string"
+            ref={rpcRef}
+          ></input>
+          <button onClick={
+            async () => { 
+              try{ 
+                setConnection(new Connection(rpcRef.current!.value))
+                toast.success(`RPC Endpoint Updated!`);  
+              } catch (e) {
+                toast.error("RPC Invalid!");
+              }
             }
-          }
-        }>Save RPC</button>
-      </div> 
+          }>Save RPC</button>
+        </div> 
 
-      <div className="flex flex-row ml-30 mt-10 space-x-4">
-        <button onClick={() => {sound.mute()}}>Mute</button>
-        <button onClick={() => {sound.play()}}>Unmute</button>
+        <div className="flex flex-row ml-30 mt-10 space-x-4">
+          <button onClick={() => {sound.mute()}}>Mute</button>
+          <button onClick={() => {sound.play()}}>Unmute</button>
+        </div>
       </div>
         
       <div className="h-screen w-screen flex flex-col">
