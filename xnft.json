@@ -1,6 +1,6 @@
 {
     "name": "Kyogen Clash - iFrame - LH",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "description": "Solana RTS game",
     "kind": "app",
     "tag": "game",
@@ -12,7 +12,11 @@
       "md": "./iframe/kyogen-logo.png"
     },
     "screenshots": [
-      "./iframe/kyogen-logo.png"
+      "./iframe/1-intro.png",
+      "./iframe/2-join-game.png",
+      "./iframe/3-fund-wallet.png",
+      "./iframe/4-choose-clan.png",
+      "./iframe/5-game-UI.png"
     ],
     "entrypoints": {
       "default": {
