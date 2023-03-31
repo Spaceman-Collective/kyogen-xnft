@@ -251,7 +251,7 @@ const useListenToGameEvents = () => {
             }
           }
         },
-        "confirmed"
+        "max"
       );
 
       structureEventListenerId = connection.onLogs(

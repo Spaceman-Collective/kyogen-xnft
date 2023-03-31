@@ -158,7 +158,7 @@ export const UnitSprite = ({
         }
         // unit could be moved
         try {
-          const slot = await connection.getSlot("confirmed");
+          const slot = await connection.getSlot("max");
           const recovering =
             slot - parseInt(troop.last_used) <=
             parseInt(troop.recovery) + FE_RECOVERY_BUFFER;
