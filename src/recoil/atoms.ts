@@ -2,8 +2,18 @@ import { Connection, Keypair } from "@solana/web3.js";
 import * as kyogenSdk from "kyogen-sdk";
 import * as PIXI from "pixi.js";
 import { atom, atomFamily } from "recoil";
-import { GameFeedItem, PlayPhase, Healer, Meteor, Notification, Player, Tile, Troop } from "@/types";
+import {
+  GameFeedItem,
+  PlayPhase,
+  Healer,
+  Meteor,
+  Notification,
+  Player,
+  Tile,
+  Troop,
+} from "@/types";
 import { MutableRefObject } from "react";
+import { localStorageEffect } from "./effects";
 
 export const gameIdAtom = atom<bigint | undefined>({
   key: "gameIdAtom",
@@ -99,9 +109,17 @@ export const notificationsAtom = atom<Notification[]>({
 });
 
 /* Local solana state */
+export const customRpcAtom = atom({
+  key: "customRpcAtom",
+  default: "",
+  effects: [localStorageEffect("customRpcAtom")],
+});
+
 export const connectionAtom = atom({
   key: "connectionAtom",
-  default: new Connection(process.env.NEXT_PUBLIC_DEFAULT_CONNECTION_URL as string),
+  default: new Connection(
+    process.env.NEXT_PUBLIC_DEFAULT_CONNECTION_URL as string
+  ),
   // connection mutates itself, so must have this
   dangerouslyAllowMutability: true,
 });
@@ -114,10 +132,9 @@ export const currentSlotAtom = atom({
 export const gameFeedAtom = atom<GameFeedItem[]>({
   key: "gameFeedAtom",
   default: [],
-})
+});
 
 export const playPhaseAtom = atom<PlayPhase>({
   key: "playPhaseAtom",
   default: "Play",
-})
-
+});
