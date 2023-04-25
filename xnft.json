@@ -1,13 +1,11 @@
 {
     "name": "Kyogen Clash - iFrame - LH",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "description": "Solana RTS game",
     "kind": "app",
     "tag": "game",
     "website": "https://dominari.xyz",
-    "contact": {
-      "repository": "https://github.com/Spaceman-Collective"
-    },
+    "contact": "https://github.com/Spaceman-Collective",
     "icon": {
       "md": "./iframe/kyogen-logo.png"
     },
@@ -22,5 +20,6 @@
       "default": {
         "web": "https://kyogen-xnft-git-iframe-kyogen.vercel.app"
       }
-    }
+    },
+    "storage": "aws"
   }
