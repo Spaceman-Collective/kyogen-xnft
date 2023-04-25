@@ -2,10 +2,10 @@ import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { TextInput } from "@/components/inputs/TextInput";
 import Page from "@/components/Page";
 import { LOCAL_GAME_KEY } from "@/constants";
-import { connectionAtom, gameIdAtom, notificationsAtom } from "@/recoil";
+import { connectionAtom, customRpcAtom, gameIdAtom, notificationsAtom } from "@/recoil";
 import { useRouter } from "next/router";
 import { useCallback, useRef, useState } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useLocalStorage } from "usehooks-ts";
 import toast from "react-hot-toast";
 import { useFetchGameWalletBalance } from "@/hooks/useFetchGameWalletBalance";
@@ -17,11 +17,10 @@ const JoinGamePage = () => {
   const [_, setLocalGameId] = useLocalStorage(LOCAL_GAME_KEY, "");
   const setNotifications = useSetRecoilState(notificationsAtom);
   const [idString, setIdString] = useState("");
-  const rpcRef = useRef<HTMLInputElement>(null);
+  const [customRpc, setCustomRpc] = useRecoilState(customRpcAtom)
+  const [localCustomRpc, setLocalCustomRpc] = useState(customRpc);
   const setConnection = useSetRecoilState(connectionAtom);
-  const connection = useRecoilValue(connectionAtom);
   const fetchGameWalletBalance = useFetchGameWalletBalance();
-
 
   const handleEnterGame = useCallback(() => {
     try {
@@ -42,27 +41,30 @@ const JoinGamePage = () => {
   return (
     <Page title="JOIN GAME">
       <div className="flex flex-col justify-center items-center">
-
         <div className="flex flex-row ml-24 mt-10 space-x-4">
           <label>RPC Endpoint: </label>
           <input
             className="text-black"
+            onChange={(e) => setLocalCustomRpc(e.target.value)}
+            value={localCustomRpc}
             type="string"
-            ref={rpcRef}
-          ></input>
-          <button onClick={
-            async () => { 
-              try{ 
-                setConnection(new Connection(rpcRef.current!.value))
+          />
+          <button
+            onClick={async () => {
+              try {
+                setCustomRpc(localCustomRpc);
+                setConnection(new Connection(localCustomRpc));
                 await fetchGameWalletBalance();
-                toast.success(`RPC Endpoint Updated!`);  
+                toast.success(`RPC Endpoint Updated!`);
               } catch (e) {
                 toast.error("RPC Invalid!");
               }
-            }
-          }>Save RPC</button>
-        </div> 
-        
+            }}
+          >
+            Save RPC
+          </button>
+        </div>
+
         <div className="flex flex-row justify-center items-center mt-20">
           <p className="mr-3 text-2xl">Enter Game ID:</p>
           <TextInput
