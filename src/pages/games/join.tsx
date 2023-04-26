@@ -12,6 +12,7 @@ import { useFetchGameWalletBalance } from "@/hooks/useFetchGameWalletBalance";
 import { Connection } from "@solana/web3.js";
 import { useMemo } from "react";
 import * as anchor from '@coral-xyz/anchor'
+import { debounce } from "@/utils/debounce";
 
 interface onChainGameStatus {
   verified: boolean
@@ -31,15 +32,6 @@ const JoinGamePage = () => {
   const setConnection = useSetRecoilState(connectionAtom);
   const connection = useRecoilValue(connectionAtom);
   const fetchGameWalletBalance = useFetchGameWalletBalance();
-
-  const debounce = (fn: Function, ms: number) => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-
-    return function (this: any, ...args: any[]) {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => fn.apply(this, args), ms);
-    };
-  };
 
   const verifyGameInstance = useCallback(async (gameId: string) => {
     let verify = async (gameId: string): Promise<boolean> => {
