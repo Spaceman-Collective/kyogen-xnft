@@ -1,15 +1,22 @@
-import { gameFeedAtom, playPhaseAtom, gameStateAtom, connectionAtom } from "@/recoil";
-import { KyogenEventCoder } from "@/utils/anchorEvents";
+import {
+  gameFeedAtom,
+  playPhaseAtom,
+  gameStateAtom,
+  connectionAtom,
+  meteorsAtomFamily,
+} from "@/recoil";
+import { KyogenEventCoder, StructuresEventCoder } from "@/utils/anchorEvents";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useCallback, useEffect } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from "recoil";
 import {
+  useUpdateMeteors,
   useUpdatePlayers,
   useUpdateTiles,
   useUpdateTroops,
 } from "../recoil/transactions";
 import { Observable } from "rxjs";
-import { PlayPhase, Player, Tile, Troop } from "../types";
+import { PlayPhase, Player, Tile, Troop, Meteor } from "../types";
 
 const LOG_START_INDEX = "Program data: ".length;
 
@@ -21,6 +28,14 @@ const useListenToGameEvents = () => {
   const setPlayPhase = useSetRecoilState(playPhaseAtom);
   const updateTroops = useUpdateTroops();
   const connection = useRecoilValue(connectionAtom);
+  const updateMeteors = useUpdateMeteors();
+  const getMeteorById = useRecoilCallback(
+    ({ snapshot }) =>
+      (meteorId: string) => {
+        return snapshot.getLoadable(meteorsAtomFamily(meteorId)).contents;
+      },
+    []
+  );
 
   const handleEvent = useCallback(
     async (event: any) => {
@@ -29,7 +44,10 @@ const useListenToGameEvents = () => {
       }
       console.log("EVENT: ", event);
       if (!gameState) return;
-      if (event.data.instance.toString() != gameState.instance.toString()) {
+      if (
+        event.name !== "MeteorMined" &&
+        event.data.instance.toString() != gameState.instance.toString()
+      ) {
         return;
       }
       const timestamp = Date.now();
@@ -173,6 +191,30 @@ const useListenToGameEvents = () => {
           updateTroops({ troops: [...defendingTroops, attackingTroop] });
           updateTiles(defendingTiles);
           break;
+
+        case "MeteorMined":
+          // const meteorId = BigInt(event.data.meteor);
+          // const minerId = BigInt(event.data.player);
+          // // Get the exsting meteor by ID from recoil state. Then update with the slot from the event.
+          // console.log("getting meteor by ID", meteorId.toString());
+          // await gameState.update_entity(meteorId);
+          // const meteor = gameState.get_structure_json(meteorId) as Meteor;
+          // updateMeteors([meteor]);
+          // await gameState.update_entity(minerId);
+          // const miner = gameState.get_player_json(minerId) as Player;
+          // updatePlayers({ players: [miner] });
+          // setGameFeed((curr) => [
+          //   ...curr,
+          //   {
+          //     type: event.name,
+          //     players: [miner],
+          //     msg: `%1% mined ${meteor.structure.Meteor.solarite_per_use} solarite`,
+          //     timestamp,
+          //   },
+          // ]);
+          break;
+        case "PortalUsed":
+          break;
       }
     },
     [
@@ -186,7 +228,7 @@ const useListenToGameEvents = () => {
   );
 
   useEffect(() => {
-    let connectionId: number;
+    let connectionId: number, structureEventListenerId: number;
     let eventsObservable: Observable<{
       slot: number;
       name: string;
@@ -199,6 +241,26 @@ const useListenToGameEvents = () => {
             if (log.startsWith("Program data:")) {
               const logStr = log.slice(LOG_START_INDEX);
               const event = KyogenEventCoder.decode(logStr);
+              if (event) {
+                subscriber.next({
+                  slot: ctx.slot,
+                  name: event.name,
+                  data: event.data,
+                });
+              }
+            }
+          }
+        },
+        "max"
+      );
+
+      structureEventListenerId = connection.onLogs(
+        new PublicKey(process.env.NEXT_PUBLIC_STRUCTURES_ID as string),
+        (logs, ctx) => {
+          for (let log of logs.logs) {
+            if (log.startsWith("Program data:")) {
+              const logStr = log.slice(LOG_START_INDEX);
+              const event = StructuresEventCoder.decode(logStr);
               if (event) {
                 subscriber.next({
                   slot: ctx.slot,

@@ -17,6 +17,7 @@ import CreeperSamurai from "../../../public/creeper_samurai.webp";
 import SynthSamurai from "../../../public/synth_samurai.webp";
 import WildingSamurai from "../../../public/wildling_samurai.webp";
 import { currentSlotAtom } from "@/recoil";
+import { FE_RECOVERY_BUFFER } from "../../constants";
 
 const UnitNameToImageMap = (name: UnitNames): StaticImageData => {
   switch (name) {
@@ -81,7 +82,8 @@ const UnitImage = ({ troop }: { troop: Troop }) => {
   const currentSlot = useRecoilValue(currentSlotAtom);
 
   let coolDownPercentage =
-    ((currentSlot - parseInt(troop.last_used)) / parseInt(troop.recovery)) *
+    ((currentSlot - parseInt(troop.last_used)) /
+      (parseInt(troop.recovery) + FE_RECOVERY_BUFFER)) *
     100;
   coolDownPercentage = coolDownPercentage > 100 ? 100 : coolDownPercentage;
 

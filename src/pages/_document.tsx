@@ -14,7 +14,7 @@ export default function Document() {
           <script dangerouslySetInnerHTML={{ __html: errorSupressScript }} />
         )}
       </Head>
-      <body>
+      <body className="text-white">
         <Main />
         <NextScript />
       </body>

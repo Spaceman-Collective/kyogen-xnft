@@ -2,9 +2,10 @@ import * as PIXI from "pixi.js";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Container } from "react-pixi-fiber";
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
-import { UNIT_LENGTH, UNIT_OFFSET } from "../../constants";
+import { FE_RECOVERY_BUFFER, UNIT_LENGTH, UNIT_OFFSET } from "../../constants";
 import { useMoveUnit } from "../../hooks/useMoveUnit";
 import {
+  connectionAtom,
   gameStateAtom,
   selectedTileIdAtom,
   troopContainerRefAtomFamily,
@@ -50,6 +51,7 @@ export const UnitSprite = ({
   troop: Troop;
 }) => {
   const containerRef = useRef(null);
+  const connection = useRecoilValue(connectionAtom);
   const setTroopContainerRef = useSetRecoilState(
     troopContainerRefAtomFamily(troop.id)
   );
@@ -156,6 +158,13 @@ export const UnitSprite = ({
         }
         // unit could be moved
         try {
+          const slot = await connection.getSlot("max");
+          const recovering =
+            slot - parseInt(troop.last_used) <=
+            parseInt(troop.recovery) + FE_RECOVERY_BUFFER;
+          if (recovering) {
+            throw Error("Cannot move recovering unit");
+          }
           setSelectedTileId(destinationTileId);
           await moveUnit(destinationTileId);
           container.position = calculateUnitPositionOnTileCoords(...coords);
@@ -173,7 +182,16 @@ export const UnitSprite = ({
           container.position = calculateUnitPositionOnTileCoords(...startTile!);
         }
       },
-      [gameState, startTile, movement, moveUnit, setSelectedTileId]
+      [
+        gameState,
+        startTile,
+        movement,
+        connection,
+        troop.last_used,
+        troop.recovery,
+        setSelectedTileId,
+        moveUnit,
+      ]
     );
 
   const onDragMove: PIXI.FederatedEventHandler<PIXI.FederatedPointerEvent> =

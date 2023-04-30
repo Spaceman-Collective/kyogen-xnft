@@ -2,21 +2,26 @@ import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { TextInput } from "@/components/inputs/TextInput";
 import Page from "@/components/Page";
 import { LOCAL_GAME_KEY } from "@/constants";
-import { connectionAtom, gameIdAtom, notificationsAtom } from "@/recoil";
+import {
+  connectionAtom,
+  customRpcAtom,
+  gameIdAtom,
+  notificationsAtom,
+} from "@/recoil";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useCallback, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { useLocalStorage } from "usehooks-ts";
 import toast from "react-hot-toast";
 import { useFetchGameWalletBalance } from "@/hooks/useFetchGameWalletBalance";
 import { Connection } from "@solana/web3.js";
 import { useMemo } from "react";
-import * as anchor from '@coral-xyz/anchor'
+import * as anchor from "@coral-xyz/anchor";
 import { debounce } from "@/utils/debounce";
 
 interface onChainGameStatus {
-  verified: boolean
-  valid: boolean
+  verified: boolean;
+  valid: boolean;
 }
 
 const JoinGamePage = () => {
@@ -26,11 +31,12 @@ const JoinGamePage = () => {
   const setNotifications = useSetRecoilState(notificationsAtom);
   const [idString, setIdString] = useState("");
   const [verifyLoading, setVerifyLoading] = useState<boolean>(false);
-  const [onChainGameStatus, setOnChainGameStatus] =
-    useState<onChainGameStatus>({ verified: false, valid: false });
-  const rpcRef = useRef<HTMLInputElement>(null);
-  const setConnection = useSetRecoilState(connectionAtom);
-  const connection = useRecoilValue(connectionAtom);
+  const [onChainGameStatus, setOnChainGameStatus] = useState<onChainGameStatus>(
+    { verified: false, valid: false }
+  );
+  const [customRpc, setCustomRpc] = useRecoilState(customRpcAtom);
+  const [localCustomRpc, setLocalCustomRpc] = useState(customRpc);
+  const [connection, setConnection] = useRecoilState(connectionAtom);
   const fetchGameWalletBalance = useFetchGameWalletBalance();
 
   const verifyGameInstance = useCallback(async (gameId: string) => {
@@ -95,7 +101,7 @@ const JoinGamePage = () => {
         { role: "danger", message: "Please enter a valid gameId" },
       ]);
 
-      setOnChainGameStatus({ valid: false, verified: false })
+      setOnChainGameStatus({ valid: false, verified: false });
       setVerifyLoading(false);
       return;
     }
@@ -107,23 +113,27 @@ const JoinGamePage = () => {
         <div className="flex flex-row ml-24 mt-10 space-x-4">
           <label>RPC Endpoint: </label>
           <input
-            className="text-right"
+            className="text-black"
+            onChange={(e) => setLocalCustomRpc(e.target.value)}
+            value={localCustomRpc}
             type="string"
-            defaultValue={connection.rpcEndpoint}
-            ref={rpcRef}
-          ></input>
-          <button onClick={
-            async () => { 
-              try{ 
-                setConnection(new Connection(rpcRef.current!.value))
+          />
+          <button
+            onClick={async () => {
+              try {
+                setCustomRpc(localCustomRpc);
+                setConnection(new Connection(localCustomRpc));
                 await fetchGameWalletBalance();
-                toast.success(`RPC Endpoint Updated!`);  
+                toast.success(`RPC Endpoint Updated!`);
               } catch (e) {
                 toast.error("RPC Invalid!");
               }
-            }
-          }>Save RPC</button>
-        </div>        
+            }}
+          >
+            Save RPC
+          </button>
+        </div>
+
         <div className="flex flex-row justify-center items-center mt-20">
           <p className="mr-3 text-2xl">Enter Game ID:</p>
           <TextInput

@@ -1,22 +1,25 @@
 {
-  "name": "Kyogen Clash - Localhost",
-  "version": "0.0.4",
-  "description": "Solana RTS game",
-  "kind": "app",
-  "tag": "game",
-  "website": "https://dominari.xyz",
-  "contact": {
-    "repository": "https://github.com/Spaceman-Collective"
-  },
-  "icon": {
-    "md": "./out/kyogen-logo.png"
-  },
-  "screenshots": [
-    "./out/kyogen-logo.png"
-  ],
-  "entrypoints": {
-    "default": {
-      "web": "./out/index.html"
-    }
+    "name": "Kyogen Clash - iFrame - LH",
+    "version": "0.0.11",
+    "description": "Solana RTS game",
+    "kind": "app",
+    "tag": "game",
+    "website": "https://dominari.xyz",
+    "contact": "https://github.com/Spaceman-Collective",
+    "icon": {
+      "md": "./iframe/kyogen-logo.png"
+    },
+    "screenshots": [
+      "./iframe/1-intro.png",
+      "./iframe/2-join-game.png",
+      "./iframe/3-fund-wallet.png",
+      "./iframe/4-choose-clan.png",
+      "./iframe/5-game-UI.png"
+    ],
+    "entrypoints": {
+      "default": {
+        "web": "https://kyogen-xnft-git-iframe-kyogen.vercel.app"
+      }
+    },
+    "storage": "aws"
   }
-}

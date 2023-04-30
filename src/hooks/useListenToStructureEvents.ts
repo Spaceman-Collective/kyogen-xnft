@@ -21,6 +21,8 @@ const useListenToStructureEvents = () => {
       if (!gameState) return;
       const timestamp = Date.now();
 
+      console.log("STRUCTURE EVENT: ", event);
+
       switch (event.name) {
         case "MeteorMined":
           const meteorId = BigInt(event.data.meteor);
@@ -28,6 +30,7 @@ const useListenToStructureEvents = () => {
           await gameState.update_entity(meteorId);
           await gameState.update_entity(minerId);
           const meteor = gameState.get_structure_json(meteorId) as Meteor;
+          console.log("Updating meteor with with information", meteor);
           updateMeteors([meteor]);
           const miner = gameState.get_player_json(minerId) as Player;
           updatePlayers({ players: [miner] });

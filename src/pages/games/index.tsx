@@ -6,7 +6,12 @@ import { GameOverlay } from "../../components/GameOverlay";
 import { useLoadGameState } from "../../hooks/useLoadGameState";
 import { useTrackSlotChange } from "../../hooks/useTrackSlotChange";
 import usePlayerUnitsOnMeteors from "@/hooks/usePlayerUnitsOnMeteors";
-import useListenToStructureEvents from "@/hooks/useListenToStructureEvents";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { connectionAtom } from "@/recoil";
+import { Connection } from "@solana/web3.js";
+import toast from "react-hot-toast";
+import { Howl } from 'howler'; 
+import music from "../../../public/sounds/melody_63.mp3";
 
 // // must use dynamic imports as `pixi-viewport` expects window object.
 const GameMap = dynamic({
@@ -23,9 +28,8 @@ const GameMap = dynamic({
 const Game = () => {
   useLoadGameState();
   useListenToGameEvents();
-  useListenToStructureEvents();
   useTrackSlotChange();
-  usePlayerUnitsOnMeteors();
+  // usePlayerUnitsOnMeteors();
   const gameContainerRef = useRef<HTMLDivElement>(null);
   const [containerDims, setContainerDims] = useState({ height: 0, width: 0 });
 
@@ -44,8 +48,56 @@ const Game = () => {
     }
   }, []);
 
+  const rpcRef = useRef<HTMLInputElement>(null);
+  const setConnection = useSetRecoilState(connectionAtom);
+  const connection = useRecoilValue(connectionAtom);
+  
+  let sound = new Howl({
+    src: [music],
+    autoplay: false,
+    loop: true
+  });
+
+  useEffect(() => {
+    //sound.play();
+
+    return () => {
+      sound.unload();
+    }
+  }, [])
+  
   return (
     <>
+      <div className="flex flex-row space-x-8">
+        <div className="flex flex-row ml-24 mt-10 space-x-4">
+          <label>RPC Endpoint: </label>
+          <input
+            className="text-black"
+            type="string"
+            ref={rpcRef}
+          ></input>
+          <button onClick={
+            async () => { 
+              try{ 
+                setConnection(new Connection(rpcRef.current!.value))
+                toast.success(`RPC Endpoint Updated!`);  
+              } catch (e) {
+                toast.error("RPC Invalid!");
+              }
+            }
+          }>Save RPC</button>
+        </div> 
+
+        <div className="flex flex-row ml-30 mt-10 space-x-4">
+          <button onClick={() => {
+            sound.pause()
+          }}>Mute</button>
+          <button onClick={() => {
+            sound.play();
+          }}>Play Music</button>
+        </div>
+      </div>
+        
       <div className="h-screen w-screen flex flex-col">
         <div
           ref={gameContainerRef}

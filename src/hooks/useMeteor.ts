@@ -6,6 +6,7 @@ import { selectCurrentPlayer } from "../recoil/selectors";
 import { GameConfig } from "../types";
 import { ixWasmToJs } from "../utils/wasm";
 import { useSendAndConfirmGameWalletTransaction } from "./useSendTransaction";
+import toast from "react-hot-toast";
 
 export const useMeteor = () => {
   const currentPlayer = useRecoilValue(selectCurrentPlayer);
@@ -47,6 +48,7 @@ export const useMeteor = () => {
         )
       );
       const txSig = await sendTransaction([ix], {skipPreflight: true});
+      toast.success("Meteor mined...please wait 30s to mine it again!");
       return txSig;
     },
     [currentPlayer, gameState, gameWallet, sendTransaction]

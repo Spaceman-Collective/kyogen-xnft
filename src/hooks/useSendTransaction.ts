@@ -1,4 +1,4 @@
-import { ConfirmOptions, TransactionInstruction } from "@solana/web3.js";
+import { ComputeBudgetProgram, ConfirmOptions, TransactionInstruction } from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor";
 import { useRecoilValue } from "recoil";
 import { connectionAtom, gameWallet as gameWalletAtom } from "../recoil";
@@ -23,7 +23,10 @@ export const useSendAndConfirmGameWalletTransaction = () => {
       const msg = new anchor.web3.TransactionMessage({
         payerKey: gameWallet.publicKey,
         recentBlockhash: latestBlockInfo.blockhash,
-        instructions: instructions,
+        instructions: [
+          ComputeBudgetProgram.setComputeUnitLimit({units: 1400000}),
+          ...instructions
+        ],
       }).compileToLegacyMessage();
       const tx = new anchor.web3.VersionedTransaction(msg);
       tx.sign([gameWallet]);
@@ -34,19 +37,25 @@ export const useSendAndConfirmGameWalletTransaction = () => {
         lastValidBlockHeight: latestBlockInfo.lastValidBlockHeight + 50,
       };
 
-      let opts:ConfirmOptions = confirmationOptions ? confirmationOptions : {skipPreflight: false};
+      let opts: ConfirmOptions = confirmationOptions
+        ? confirmationOptions
+        : { skipPreflight: false };
 
-      try{
-        await sendAndConfirmRawTransaction(
+      try {
+        const txid = await sendAndConfirmRawTransaction(
           connection,
           Buffer.from(tx.serialize()),
           confirmationStrategy,
           opts
-        );  
+        );
+        console.log("TXID: ", txid);
       } catch (e) {
+
+        console.log("error", e);
         toast.error(`TX Failed: ${e}`);
+        throw e;
       }
-      
+
       console.log("TX Confirmed: ", txSig);
       return txSig;
     },

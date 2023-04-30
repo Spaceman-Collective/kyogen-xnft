@@ -53,7 +53,7 @@ const SelectedUnitInfo = () => {
           </InfoContainer>
           <InfoContainer icon={{ src: CoolDownIcon, alt: "Cool Down Icon" }}>
             <p>Cool down</p>
-            <p>{troop.recovery}s</p>
+            <p>{troop.recovery} slots</p>
           </InfoContainer>
         </div>
       </div>

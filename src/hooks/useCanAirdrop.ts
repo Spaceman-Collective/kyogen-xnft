@@ -2,6 +2,7 @@ import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { useCallback, useMemo } from "react";
 import { useRecoilValue } from "recoil";
 import { connectionAtom } from "../recoil";
+import toast from "react-hot-toast";
 
 export const useCanAirdrop = () => {
   const connection = useRecoilValue(connectionAtom);
@@ -10,7 +11,8 @@ export const useCanAirdrop = () => {
     return (
       connection.rpcEndpoint.includes("devnet") ||
       connection.rpcEndpoint.includes("localhost") ||
-      connection.rpcEndpoint.includes("127.0.0.1")
+      connection.rpcEndpoint.includes("127.0.0.1") ||
+      connection.rpcEndpoint.includes("helius") // Done for private chains 
     );
   }, [connection.rpcEndpoint]);
 };
@@ -20,14 +22,21 @@ export const useAirdrop = () => {
 
   return useCallback(
     async (address: PublicKey) => {
-      const latestBlockInfo = await connection.getLatestBlockhash();
-      const txSig = await connection.requestAirdrop(address, LAMPORTS_PER_SOL);
-      const confirmationStrategy = {
-        signature: txSig,
-        blockhash: latestBlockInfo.blockhash,
-        lastValidBlockHeight: latestBlockInfo.lastValidBlockHeight + 50,
-      };
-      return connection.confirmTransaction(confirmationStrategy);
+      try {
+        const latestBlockInfo = await connection.getLatestBlockhash();
+        const txSig = await connection.requestAirdrop(address, LAMPORTS_PER_SOL);
+        console.log("Airdrop Sig: ", txSig);
+        const confirmationStrategy = {
+          signature: txSig,
+          blockhash: latestBlockInfo.blockhash,
+          lastValidBlockHeight: latestBlockInfo.lastValidBlockHeight + 5, // was 50
+        };
+        return connection.confirmTransaction(confirmationStrategy);  
+      } catch (e) {
+        toast.success("Airdropping...!");
+        // Do i need to throw e?
+        console.log("Airdrop error: ", e);
+      }
     },
     [connection]
   );

@@ -136,6 +136,7 @@ const FundWallet = () => {
         </InputContainer>
         <InputContainer className={inputContainerClass}>
           <ContainerTitle>YOUR GAME WALLET</ContainerTitle>
+          <label>{gameWallet?.publicKey.toString()}</label>
           <Image
             src={SolanaLogoLight}
             alt="Solana Logo Light"
