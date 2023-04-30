@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import * as kyogenSdk from "kyogen-sdk";
+import { GameState } from "kyogen-sdk";
 import { connectionAtom, gameIdAtom, gameStateAtom } from "../recoil";
 import { Map, Troop, UnitNames } from "../types";
 import useSetGameIdFromLocalStorage from "./useSetGameIdFromLocalStorage";
@@ -39,7 +39,7 @@ export const useLoadGameStateFunc = () => {
     if (typeof gameId === "undefined") {
       return;
     }
-    const gamestate = new kyogenSdk.GameState(
+    const gamestate = new GameState(
       connection.rpcEndpoint,
       process.env.NEXT_PUBLIC_KYOGEN_ID as string,
       process.env.NEXT_PUBLIC_REGISTRY_ID as string,
