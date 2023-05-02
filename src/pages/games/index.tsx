@@ -6,10 +6,6 @@ import { GameOverlay } from "../../components/GameOverlay";
 import { useLoadGameState } from "../../hooks/useLoadGameState";
 import { useTrackSlotChange } from "../../hooks/useTrackSlotChange";
 import usePlayerUnitsOnMeteors from "@/hooks/usePlayerUnitsOnMeteors";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { connectionAtom } from "@/recoil";
-import { Connection } from "@solana/web3.js";
-import toast from "react-hot-toast";
 import { Howl } from 'howler'; 
 import music from "../../../public/sounds/melody_63.mp3";
 import { SdkLoader } from "../../components/KyogenSdkLoader";
@@ -49,10 +45,6 @@ const GameInner = () => {
     }
   }, []);
 
-  const rpcRef = useRef<HTMLInputElement>(null);
-  const setConnection = useSetRecoilState(connectionAtom);
-  const connection = useRecoilValue(connectionAtom);
-  
   let sound = new Howl({
     src: [music],
     autoplay: false,
@@ -70,25 +62,6 @@ const GameInner = () => {
   return (
     <>
       <div className="flex flex-row space-x-8">
-        <div className="flex flex-row ml-24 mt-10 space-x-4">
-          <label>RPC Endpoint: </label>
-          <input
-            className="text-black"
-            type="string"
-            ref={rpcRef}
-          ></input>
-          <button onClick={
-            async () => { 
-              try{ 
-                setConnection(new Connection(rpcRef.current!.value))
-                toast.success(`RPC Endpoint Updated!`);  
-              } catch (e) {
-                toast.error("RPC Invalid!");
-              }
-            }
-          }>Save RPC</button>
-        </div> 
-
         <div className="flex flex-row ml-30 mt-10 space-x-4">
           <button onClick={() => {
             sound.pause()
