@@ -5,7 +5,7 @@ import {
   playersAtomFamily,
   troopsAtomFamily,
 } from "@/recoil";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   useUpdateMeteors,
@@ -24,13 +24,6 @@ const useListenToGameEvents = () => {
   const setGameFeed = useSetRecoilState(gameFeedAtom);
   const setPlayPhase = useSetRecoilState(playPhaseAtom);
   const updateTroops = useUpdateTroops();
-  const gameEventSource = useMemo(
-    () =>
-      new EventSource(
-        `https://dominari.xyz/game/${gameInstance}`
-      ),
-    [gameInstance]
-  );
   const updateMeteors = useUpdateMeteors();
   const getPlayerById = useRecoilCallback(
     ({ snapshot }) =>
@@ -231,18 +224,21 @@ const useListenToGameEvents = () => {
   );
 
   useEffect(() => {
-    if (!gameInstance || !gameEventSource.onmessage) {
-      console.log("event source short circuit", gameEventSource);
+    if (!gameInstance) {
       return;
     }
-    console.log("event source ", gameEventSource);
-    // @ts-ignore TODO fix this TS error
-    gameEventSource.onmessage((e) => {
+    const _source = new EventSource(
+      `https://dominari.xyz/game/${gameInstance}`
+    );
+    _source.onmessage = (e) => {
       console.log("event  ", e);
       const parsedEvent = JSON.parse(e.data);
       handleEvent(parsedEvent);
-    });
-  }, [gameEventSource, gameInstance, handleEvent]);
+    };
+    return () => {
+      _source.close();
+    };
+  }, [gameInstance, handleEvent]);
 };
 
 export default useListenToGameEvents;
