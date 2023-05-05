@@ -12,6 +12,7 @@ import { Connection } from "@solana/web3.js";
 import toast from "react-hot-toast";
 import { Howl } from 'howler'; 
 import music from "../../../public/sounds/melody_63.mp3";
+import { SdkLoader } from "../../components/KyogenSdkLoader";
 
 // // must use dynamic imports as `pixi-viewport` expects window object.
 const GameMap = dynamic({
@@ -25,7 +26,7 @@ const GameMap = dynamic({
   ssr: false,
 });
 
-const Game = () => {
+const GameInner = () => {
   useLoadGameState();
   useListenToGameEvents();
   useTrackSlotChange();
@@ -109,6 +110,14 @@ const Game = () => {
         <GameFooter />
       </div>
     </>
+  );
+};
+
+const Game = () => {
+  return (
+    <SdkLoader>
+      <GameInner />
+    </SdkLoader>
   );
 };
 
