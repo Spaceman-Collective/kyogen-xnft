@@ -35,14 +35,17 @@ export const useUpdateTiles = (updateIdList: boolean) =>
 
 export const useUpdatePlayers = () =>
   useRecoilTransaction_UNSTABLE<
-    [{ updateIdList?: boolean; players: Player[] }]
+    [{ appendToIdList?: boolean; updateIdList?: boolean; players: Player[] }]
   >(
     ({ set }) =>
-      ({ players, updateIdList }) => {
+      ({ appendToIdList, players, updateIdList }) => {
         const ids = players.map((player) => {
           set(playersAtomFamily(player.id), player);
           return player.id;
         });
+        if (appendToIdList) {
+          set(playerIdsAtom, (cur) => [...cur, ...ids]);
+        }
         if (updateIdList) {
           set(playerIdsAtom, ids);
         }

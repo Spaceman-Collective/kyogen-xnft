@@ -222,7 +222,7 @@ function makeMutClosure(arg0, arg1, dtor, f) {
     return real;
 }
 function __wbg_adapter_46(arg0, arg1, arg2) {
-    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h8499c065b5fe4e0e(arg0, arg1, addHeapObject(arg2));
+    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h52b3d4da582b977b(arg0, arg1, addHeapObject(arg2));
 }
 
 function _assertClass(instance, klass) {
@@ -275,8 +275,8 @@ function handleError(f, args) {
         wasm.__wbindgen_exn_store(addHeapObject(e));
     }
 }
-function __wbg_adapter_283(arg0, arg1, arg2, arg3) {
-    wasm.wasm_bindgen__convert__closures__invoke2_mut__h17eec2a9b68a6f6f(arg0, arg1, addHeapObject(arg2), addHeapObject(arg3));
+function __wbg_adapter_298(arg0, arg1, arg2, arg3) {
+    wasm.wasm_bindgen__convert__closures__invoke2_mut__h25a386ac9b7339df(arg0, arg1, addHeapObject(arg2), addHeapObject(arg3));
 }
 
 /**
@@ -1712,6 +1712,179 @@ export class Registry {
 }
 /**
 */
+export class StatelessSDK {
+
+    static __wrap(ptr) {
+        const obj = Object.create(StatelessSDK.prototype);
+        obj.ptr = ptr;
+
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_statelesssdk_free(ptr);
+    }
+    /**
+    * @returns {Pubkey}
+    */
+    get kyogen_id() {
+        const ret = wasm.__wbg_get_gamestate_kyogen_id(this.ptr);
+        return Pubkey.__wrap(ret);
+    }
+    /**
+    * @param {Pubkey} arg0
+    */
+    set kyogen_id(arg0) {
+        _assertClass(arg0, Pubkey);
+        var ptr0 = arg0.__destroy_into_raw();
+        wasm.__wbg_set_gamestate_kyogen_id(this.ptr, ptr0);
+    }
+    /**
+    * @returns {Pubkey}
+    */
+    get registry_id() {
+        const ret = wasm.__wbg_get_gamestate_registry_id(this.ptr);
+        return Pubkey.__wrap(ret);
+    }
+    /**
+    * @param {Pubkey} arg0
+    */
+    set registry_id(arg0) {
+        _assertClass(arg0, Pubkey);
+        var ptr0 = arg0.__destroy_into_raw();
+        wasm.__wbg_set_gamestate_registry_id(this.ptr, ptr0);
+    }
+    /**
+    * @returns {Pubkey}
+    */
+    get coreds_id() {
+        const ret = wasm.__wbg_get_gamestate_coreds_id(this.ptr);
+        return Pubkey.__wrap(ret);
+    }
+    /**
+    * @param {Pubkey} arg0
+    */
+    set coreds_id(arg0) {
+        _assertClass(arg0, Pubkey);
+        var ptr0 = arg0.__destroy_into_raw();
+        wasm.__wbg_set_gamestate_coreds_id(this.ptr, ptr0);
+    }
+    /**
+    * @returns {Pubkey}
+    */
+    get structures_id() {
+        const ret = wasm.__wbg_get_gamestate_structures_id(this.ptr);
+        return Pubkey.__wrap(ret);
+    }
+    /**
+    * @param {Pubkey} arg0
+    */
+    set structures_id(arg0) {
+        _assertClass(arg0, Pubkey);
+        var ptr0 = arg0.__destroy_into_raw();
+        wasm.__wbg_set_gamestate_structures_id(this.ptr, ptr0);
+    }
+    /**
+    * @param {string} rpc
+    * @param {string} kyogen_str
+    * @param {string} registry_str
+    * @param {string} coreds_str
+    * @param {string} structures_str
+    */
+    constructor(rpc, kyogen_str, registry_str, coreds_str, structures_str) {
+        const ptr0 = passStringToWasm0(rpc, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(kyogen_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(registry_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ptr3 = passStringToWasm0(coreds_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len3 = WASM_VECTOR_LEN;
+        const ptr4 = passStringToWasm0(structures_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len4 = WASM_VECTOR_LEN;
+        const ret = wasm.statelesssdk_new(ptr0, len0, ptr1, len1, ptr2, len2, ptr3, len3, ptr4, len4);
+        return StatelessSDK.__wrap(ret);
+    }
+    /**
+    * @param {bigint} instance
+    * @returns {Promise<any>}
+    */
+    fetch_addresses(instance) {
+        const ret = wasm.statelesssdk_fetch_addresses(this.ptr, instance);
+        return takeObject(ret);
+    }
+    /**
+    * @param {bigint} instance
+    * @param {bigint} id
+    * @returns {string}
+    */
+    fetch_address_by_id(instance, id) {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.statelesssdk_fetch_address_by_id(retptr, this.ptr, instance, id);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} data
+    * @param {bigint} player_id
+    * @returns {any}
+    */
+    get_player_json(data, player_id) {
+        const ptr0 = passStringToWasm0(data, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.statelesssdk_get_player_json(this.ptr, ptr0, len0, player_id);
+        return takeObject(ret);
+    }
+    /**
+    * @param {string} data
+    * @param {bigint} tile_id
+    * @returns {any}
+    */
+    get_tile_json(data, tile_id) {
+        const ptr0 = passStringToWasm0(data, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.statelesssdk_get_tile_json(this.ptr, ptr0, len0, tile_id);
+        return takeObject(ret);
+    }
+    /**
+    * @param {string} data
+    * @param {bigint} structure_id
+    * @returns {any}
+    */
+    get_structure_json(data, structure_id) {
+        const ptr0 = passStringToWasm0(data, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.statelesssdk_get_structure_json(this.ptr, ptr0, len0, structure_id);
+        return takeObject(ret);
+    }
+    /**
+    * @param {string} data
+    * @param {bigint} troop_id
+    * @returns {any}
+    */
+    get_troop_json(data, troop_id) {
+        const ptr0 = passStringToWasm0(data, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.statelesssdk_get_troop_json(this.ptr, ptr0, len0, troop_id);
+        return takeObject(ret);
+    }
+}
+/**
+*/
 export class Structures {
 
     static __wrap(ptr) {
@@ -2648,7 +2821,7 @@ function getImports() {
                 const a = state0.a;
                 state0.a = 0;
                 try {
-                    return __wbg_adapter_283(a, state0.b, arg0, arg1);
+                    return __wbg_adapter_298(a, state0.b, arg0, arg1);
                 } finally {
                     state0.a = a;
                 }
@@ -2758,8 +2931,8 @@ function getImports() {
         const ret = wasm.memory;
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper701 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 183, __wbg_adapter_46);
+    imports.wbg.__wbindgen_closure_wrapper762 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 189, __wbg_adapter_46);
         return addHeapObject(ret);
     };
 

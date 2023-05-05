@@ -35,7 +35,9 @@ export type xnft = {
       opts?: ConfirmOptions
     ) => Promise<TransactionSignature>;
     //   signMessage:
-    signTransaction: (tx: web3.VersionedTransaction) => Promise<web3.VersionedTransaction>;
+    signTransaction: (
+      tx: web3.VersionedTransaction
+    ) => Promise<web3.VersionedTransaction>;
     simulate: (
       tx: Transaction,
       signers?: Signer[],
@@ -177,10 +179,117 @@ export interface Portal extends StructureBase {
 }
 
 export type GameFeedItem = {
-  type:string,
-  players: Player[],
-  msg: string,
-  timestamp: number,
+  type: string;
+  players: Player[];
+  msg: string;
+  timestamp: number;
+};
+
+export type PlayPhase = "Lobby" | "Play" | "Paused" | "Finished";
+
+export interface AccountChange {
+  id: string;
+  data: string; //b64 encoded
 }
 
-export type PlayPhase = 'Lobby' | 'Play' | 'Paused' | 'Finished';
+/** Kyogen Events */
+// GameStateChanged
+export interface EventGameStateChanged {
+  name: "GameStateChanged";
+  instance: string;
+  newState: string; // PlayPhase (will be lowercased)
+}
+
+// NewPlayer
+export interface EventNewPlayer {
+  name: "NewPlayer";
+  instance: string;
+  player: AccountChange;
+  authority: string; // Pubkey
+  clan: string; // Clan
+}
+
+// SpawnClaimed
+export interface EventSpawnClaimed {
+  name: "SpawnClaimed";
+  instance: string;
+  clan: string; //Clans
+  tile: AccountChange;
+  player: string; // player id (no change)
+}
+
+// UnitSpawned
+export interface EventUnitSpawned {
+  name: "UnitSpawned";
+  instance: string;
+  tile: AccountChange; // occupant changed
+  player: AccountChange; // card used
+  unit: AccountChange; // entity created
+}
+
+// UnitMoved
+export interface EventUnitMoved {
+  name: "UnitMoved";
+  instance: string;
+  unit: AccountChange; //Last Used
+  from: AccountChange; // occupant
+  to: AccountChange; // occupant
+}
+
+// UnitAttacked
+export interface EventUnitAttacked {
+  name: "UnitAttacked";
+  instance: string;
+  attacker: AccountChange; //last used
+  defender: AccountChange; // hp
+  tile: AccountChange; // occupant if defender hp < 0
+}
+
+/** Structures Events */
+// Meteor Mined
+export interface EventMeteorMined {
+  name: "MeteorMined";
+  instance: string;
+  tile: string; // no change
+  meteor: AccountChange; // last used
+  player: AccountChange; // score
+}
+
+// PortalUsed
+export interface EventPortalUsed {
+  name: "PortalUsed";
+  instance: string;
+  from: AccountChange; //occupant
+  to: AccountChange; //occupant,
+  unit: AccountChange; //last used
+}
+
+// LootableLooted
+export interface EventLootableLooted {
+  name: "LootableLooted";
+  instance: string;
+  tile: string; //no change
+  lootable: AccountChange; //last used
+  player: AccountChange; // card hand
+}
+
+// GameFished
+export interface EventGameFinished {
+  name: "GameFinished";
+  instance: string;
+  winning_player_id: string;
+  winning_player_key: string;
+  high_score: string;
+}
+
+export type KyogenEvents =
+  | EventGameStateChanged
+  | EventNewPlayer
+  | EventSpawnClaimed
+  | EventUnitSpawned
+  | EventUnitMoved
+  | EventUnitAttacked
+  | EventMeteorMined
+  | EventPortalUsed
+  | EventLootableLooted
+  | EventGameFinished;

@@ -603,6 +603,66 @@ export class Registry {
 }
 /**
 */
+export class StatelessSDK {
+  free(): void;
+/**
+* @param {string} rpc
+* @param {string} kyogen_str
+* @param {string} registry_str
+* @param {string} coreds_str
+* @param {string} structures_str
+*/
+  constructor(rpc: string, kyogen_str: string, registry_str: string, coreds_str: string, structures_str: string);
+/**
+* @param {bigint} instance
+* @returns {Promise<any>}
+*/
+  fetch_addresses(instance: bigint): Promise<any>;
+/**
+* @param {bigint} instance
+* @param {bigint} id
+* @returns {string}
+*/
+  fetch_address_by_id(instance: bigint, id: bigint): string;
+/**
+* @param {string} data
+* @param {bigint} player_id
+* @returns {any}
+*/
+  get_player_json(data: string, player_id: bigint): any;
+/**
+* @param {string} data
+* @param {bigint} tile_id
+* @returns {any}
+*/
+  get_tile_json(data: string, tile_id: bigint): any;
+/**
+* @param {string} data
+* @param {bigint} structure_id
+* @returns {any}
+*/
+  get_structure_json(data: string, structure_id: bigint): any;
+/**
+* @param {string} data
+* @param {bigint} troop_id
+* @returns {any}
+*/
+  get_troop_json(data: string, troop_id: bigint): any;
+/**
+*/
+  coreds_id: Pubkey;
+/**
+*/
+  kyogen_id: Pubkey;
+/**
+*/
+  registry_id: Pubkey;
+/**
+*/
+  structures_id: Pubkey;
+}
+/**
+*/
 export class Structures {
   free(): void;
 /**
@@ -864,15 +924,31 @@ export interface InitOutput {
   readonly gamestate_get_players: (a: number) => number;
   readonly gamestate_get_player_json: (a: number, b: number) => number;
   readonly gamestate_get_playerjson_by_key: (a: number, b: number, c: number) => number;
-  readonly __wbg_get_structures_core_id: (a: number) => number;
-  readonly __wbg_get_structures_registry_id: (a: number) => number;
-  readonly __wbg_get_structures_kyogen_id: (a: number) => number;
-  readonly __wbg_get_structures_structures_id: (a: number) => number;
-  readonly __wbg_componentindex_free: (a: number) => void;
+  readonly __wbg_statelesssdk_free: (a: number) => void;
+  readonly statelesssdk_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number) => number;
+  readonly statelesssdk_fetch_addresses: (a: number, b: number) => number;
+  readonly statelesssdk_fetch_address_by_id: (a: number, b: number, c: number, d: number) => void;
+  readonly statelesssdk_get_player_json: (a: number, b: number, c: number, d: number) => number;
+  readonly statelesssdk_get_tile_json: (a: number, b: number, c: number, d: number) => number;
+  readonly statelesssdk_get_structure_json: (a: number, b: number, c: number, d: number) => number;
+  readonly statelesssdk_get_troop_json: (a: number, b: number, c: number, d: number) => number;
   readonly __wbg_set_structures_core_id: (a: number, b: number) => void;
   readonly __wbg_set_structures_registry_id: (a: number, b: number) => void;
   readonly __wbg_set_structures_kyogen_id: (a: number, b: number) => void;
   readonly __wbg_set_structures_structures_id: (a: number, b: number) => void;
+  readonly __wbg_set_statelesssdk_kyogen_id: (a: number, b: number) => void;
+  readonly __wbg_set_statelesssdk_registry_id: (a: number, b: number) => void;
+  readonly __wbg_set_statelesssdk_coreds_id: (a: number, b: number) => void;
+  readonly __wbg_set_statelesssdk_structures_id: (a: number, b: number) => void;
+  readonly __wbg_componentindex_free: (a: number) => void;
+  readonly __wbg_get_structures_core_id: (a: number) => number;
+  readonly __wbg_get_structures_registry_id: (a: number) => number;
+  readonly __wbg_get_structures_kyogen_id: (a: number) => number;
+  readonly __wbg_get_structures_structures_id: (a: number) => number;
+  readonly __wbg_get_statelesssdk_kyogen_id: (a: number) => number;
+  readonly __wbg_get_statelesssdk_registry_id: (a: number) => number;
+  readonly __wbg_get_statelesssdk_coreds_id: (a: number) => number;
+  readonly __wbg_get_statelesssdk_structures_id: (a: number) => number;
   readonly __wbg_keypair_free: (a: number) => void;
   readonly __wbg_transaction_free: (a: number) => void;
   readonly keypair_constructor: () => number;
@@ -916,19 +992,19 @@ export interface InitOutput {
   readonly systeminstruction_advanceNonceAccount: (a: number, b: number) => number;
   readonly systeminstruction_withdrawNonceAccount: (a: number, b: number, c: number, d: number) => number;
   readonly systeminstruction_authorizeNonceAccount: (a: number, b: number, c: number) => number;
-  readonly __wbg_pubkey_free: (a: number) => void;
+  readonly solana_program_init: () => void;
   readonly pubkey_toBytes: (a: number, b: number) => void;
   readonly pubkey_equals: (a: number, b: number) => number;
-  readonly solana_program_init: () => void;
+  readonly __wbg_pubkey_free: (a: number) => void;
   readonly pubkey_toString: (a: number, b: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
   readonly __wbindgen_export_2: WebAssembly.Table;
-  readonly _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h8499c065b5fe4e0e: (a: number, b: number, c: number) => void;
+  readonly _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h52b3d4da582b977b: (a: number, b: number, c: number) => void;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
   readonly __wbindgen_free: (a: number, b: number) => void;
   readonly __wbindgen_exn_store: (a: number) => void;
-  readonly wasm_bindgen__convert__closures__invoke2_mut__h17eec2a9b68a6f6f: (a: number, b: number, c: number, d: number) => void;
+  readonly wasm_bindgen__convert__closures__invoke2_mut__h25a386ac9b7339df: (a: number, b: number, c: number, d: number) => void;
 }
 
 export type SyncInitInput = BufferSource | WebAssembly.Module;
