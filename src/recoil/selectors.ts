@@ -147,10 +147,15 @@ export const selectMeteorFromSelectedTileId = selector({
     return (
       meteorIds
         .map((id) => get(meteorsAtomFamily(id)))
-        .find(
-          (meteor) =>
-            meteor && tileId === gameState.get_tile_id(meteor.x, meteor.y)
-        ) ?? null
+        .find((meteor) => {
+          try {
+            return (
+              meteor && tileId === gameState.get_tile_id(meteor.x, meteor.y)
+            );
+          } catch (err) {
+            return false;
+          }
+        }) ?? null
     );
   },
 });
