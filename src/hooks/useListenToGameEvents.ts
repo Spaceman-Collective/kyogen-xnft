@@ -230,12 +230,11 @@ const useListenToGameEvents = () => {
     );
     _source.onmessage = (e) => {
       console.log("event  ", e);
-      const initialParsedEvent = JSON.parse(e.data)
-      if (initialParsedEvent === "connected") {
+      const parsedEvent = JSON.parse(e.data)
+      if (parsedEvent === "connected") {
         return;
       }
       // event.data seems to be double stringified, so much double parse.
-      const parsedEvent = JSON.parse(initialParsedEvent);
       handleEvent(parsedEvent);
     };
     return () => {
