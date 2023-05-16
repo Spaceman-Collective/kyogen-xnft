@@ -187,6 +187,11 @@ export type GameFeedItem = {
 
 export type PlayPhase = "Lobby" | "Play" | "Paused" | "Finished";
 
+export interface KyogenEvent<T, N = string> {
+  name: N;
+  data: T;
+}
+
 export interface AccountChange {
   id: string;
   data: string; //b64 encoded
@@ -194,93 +199,113 @@ export interface AccountChange {
 
 /** Kyogen Events */
 // GameStateChanged
-export interface EventGameStateChanged {
+export type EventGameStateChanged = {
   name: "GameStateChanged";
-  instance: string;
-  newState: string; // PlayPhase (will be lowercased)
-}
+  data: {
+    instance: string;
+    newState: string; // PlayPhase (will be lowercased)
+  };
+};
 
 // NewPlayer
-export interface EventNewPlayer {
+export type EventNewPlayer = {
   name: "NewPlayer";
-  instance: string;
-  player: AccountChange;
-  authority: string; // Pubkey
-  clan: string; // Clan
-}
+  data: {
+    instance: string;
+    player: AccountChange;
+    authority: string; // Pubkey
+    clan: string; // Clan
+  };
+};
 
 // SpawnClaimed
-export interface EventSpawnClaimed {
+export type EventSpawnClaimed = {
   name: "SpawnClaimed";
-  instance: string;
-  clan: string; //Clans
-  tile: AccountChange;
-  player: string; // player id (no change)
-}
+  data: {
+    instance: string;
+    clan: string; //Clans
+    tile: AccountChange;
+    player: string; // player id (no change)
+  };
+};
 
 // UnitSpawned
-export interface EventUnitSpawned {
+export type EventUnitSpawned = {
   name: "UnitSpawned";
-  instance: string;
-  tile: AccountChange; // occupant changed
-  player: AccountChange; // card used
-  unit: AccountChange; // entity created
-}
+  data: {
+    instance: string;
+    tile: AccountChange; // occupant changed
+    player: AccountChange; // card used
+    unit: AccountChange; // entity created
+  };
+};
 
 // UnitMoved
-export interface EventUnitMoved {
+export type EventUnitMoved = {
   name: "UnitMoved";
-  instance: string;
-  unit: AccountChange; //Last Used
-  from: AccountChange; // occupant
-  to: AccountChange; // occupant
-}
+  data: {
+    instance: string;
+    unit: AccountChange; //Last Used
+    from: AccountChange; // occupant
+    to: AccountChange; // occupant
+  };
+};
 
 // UnitAttacked
-export interface EventUnitAttacked {
+export type EventUnitAttacked = {
   name: "UnitAttacked";
-  instance: string;
-  attacker: AccountChange; //last used
-  defender: AccountChange; // hp
-  tile: AccountChange; // occupant if defender hp < 0
-}
+  data: {
+    instance: string;
+    attacker: AccountChange; //last used
+    defender: AccountChange; // hp
+    tile: AccountChange; // occupant if defender hp < 0
+  };
+};
 
 /** Structures Events */
 // Meteor Mined
-export interface EventMeteorMined {
+export type EventMeteorMined = {
   name: "MeteorMined";
-  instance: string;
-  tile: string; // no change
-  meteor: AccountChange; // last used
-  player: AccountChange; // score
-}
+  data: {
+    instance: string;
+    tile: string; // no change
+    meteor: AccountChange; // last used
+    player: AccountChange; // score
+  };
+};
 
 // PortalUsed
-export interface EventPortalUsed {
+export type EventPortalUsed = {
   name: "PortalUsed";
-  instance: string;
-  from: AccountChange; //occupant
-  to: AccountChange; //occupant,
-  unit: AccountChange; //last used
-}
+  data: {
+    instance: string;
+    from: AccountChange; //occupant
+    to: AccountChange; //occupant,
+    unit: AccountChange; //last used
+  };
+};
 
 // LootableLooted
-export interface EventLootableLooted {
+export type EventLootableLooted = {
   name: "LootableLooted";
-  instance: string;
-  tile: string; //no change
-  lootable: AccountChange; //last used
-  player: AccountChange; // card hand
-}
+  data: {
+    instance: string;
+    tile: string; //no change
+    lootable: AccountChange; //last used
+    player: AccountChange; // card hand
+  };
+};
 
 // GameFished
-export interface EventGameFinished {
+export type EventGameFinished = {
   name: "GameFinished";
-  instance: string;
-  winning_player_id: string;
-  winning_player_key: string;
-  high_score: string;
-}
+  data: {
+    instance: string;
+    winning_player_id: string;
+    winning_player_key: string;
+    high_score: string;
+  };
+};
 
 export type KyogenEvents =
   | EventGameStateChanged

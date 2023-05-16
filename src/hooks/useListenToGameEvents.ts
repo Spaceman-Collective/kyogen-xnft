@@ -50,8 +50,8 @@ const useListenToGameEvents = () => {
       switch (event.name) {
         case "NewPlayer":
           const newPlayer = kyogenSdk.get_player_json(
-            event.player.data,
-            BigInt(event.player.id)
+            event.data.player.data,
+            BigInt(event.data.player.id)
           ) as Player;
           updatePlayers({ appendToIdList: true, players: [newPlayer] });
           setGameFeed((curr) => [
@@ -59,20 +59,20 @@ const useListenToGameEvents = () => {
             {
               type: event.name,
               players: [newPlayer],
-              msg: `a new player just joined clan ${event.clan}`,
+              msg: `a new player just joined clan ${event.data.clan}`,
               timestamp,
             },
           ]);
           break;
         case "GameStateChanged":
           // TODO: Update game state and pull from there
-          if (event.newState === "play") {
+          if (event.data.newState === "play") {
             setPlayPhase("Play");
-          } else if (event.newState === "paused") {
+          } else if (event.data.newState === "paused") {
             setPlayPhase("Paused");
-          } else if (event.newState === "lobby") {
+          } else if (event.data.newState === "lobby") {
             setPlayPhase("Lobby");
-          } else if (event.newState === "finished") {
+          } else if (event.data.newState === "finished") {
             setPlayPhase("Finished");
           }
           break;
@@ -82,8 +82,8 @@ const useListenToGameEvents = () => {
         case "UnitSpawned":
           console.log("UnitSpawned", event);
           const tile = kyogenSdk.get_tile_json(
-            event.tile.data,
-            BigInt(event.tile.id)
+            event.data.tile.data,
+            BigInt(event.data.tile.id)
           ) as Tile;
           if (tile.troop) {
             updateTroops({ appendToIdList: true, troops: [tile.troop] });
@@ -91,15 +91,15 @@ const useListenToGameEvents = () => {
           updateTiles([tile]);
 
           const spawner = kyogenSdk.get_player_json(
-            event.player.data,
-            BigInt(event.player.id)
+            event.data.player.data,
+            BigInt(event.data.player.id)
           ) as Player;
           updatePlayers({
             players: [spawner],
           });
           const spawned = kyogenSdk.get_troop_json(
-            event.unit.data,
-            BigInt(event.unit.id)
+            event.data.unit.data,
+            BigInt(event.data.unit.id)
           ) as Troop;
           setGameFeed((curr) => [
             ...curr,
@@ -113,20 +113,18 @@ const useListenToGameEvents = () => {
           break;
         case "UnitMoved":
           console.log("UnitMoved", event);
-          // TODO can we make BigInt from BN?
-
           const fromTile = kyogenSdk.get_tile_json(
-            event.from.data,
-            BigInt(event.from.id)
+            event.data.from.data,
+            BigInt(event.data.from.id)
           );
           const toTile = kyogenSdk.get_tile_json(
-            event.to.data,
-            BigInt(event.to.id)
+            event.data.to.data,
+            BigInt(event.data.to.id)
           );
 
           const troop = kyogenSdk.get_troop_json(
-            event.unit.data,
-            BigInt(event.unit.id)
+            event.data.unit.data,
+            BigInt(event.data.unit.id)
           ) as Troop;
 
           setGameFeed((curr) => [
@@ -149,13 +147,13 @@ const useListenToGameEvents = () => {
         case "UnitAttacked":
           console.log("UNIT ATTACKED", event);
           const defendingTroop = kyogenSdk.get_troop_json(
-            event.defender.data,
-            BigInt(event.defender.id)
+            event.data.defender.data,
+            BigInt(event.data.defender.id)
           ) as Troop;
           const defendingTroopPreAttack = getTroopById(defendingTroop.id);
           const attackingTroop = kyogenSdk.get_troop_json(
-            event.attacker.data,
-            BigInt(event.attacker.id)
+            event.data.attacker.data,
+            BigInt(event.data.attacker.id)
           ) as Troop;
           const damage =
             Number(defendingTroopPreAttack?.health ?? 0) -
@@ -177,7 +175,7 @@ const useListenToGameEvents = () => {
             },
           ]);
           const defendingTiles = [
-            kyogenSdk.get_tile_json(event.tile.data, BigInt(event.tile.id)),
+            kyogenSdk.get_tile_json(event.data.tile.data, BigInt(event.data.tile.id)),
           ];
           updateTroops({ troops: [defendingTroop, attackingTroop] });
           updateTiles(defendingTiles);
@@ -185,14 +183,14 @@ const useListenToGameEvents = () => {
 
         case "MeteorMined":
           // Get the exsting meteor by ID from recoil state. Then update with the slot from the event.
-          console.log("getting meteor by ID", event.meteor.id);
+          console.log("getting meteor by ID", event.data.meteor.id);
           const meteor = kyogenSdk.get_structure_json(
-            event.meteor.data,
-            BigInt(event.meteor.id)
+            event.data.meteor.data,
+            BigInt(event.data.meteor.id)
           ) as Meteor;
           const miner = kyogenSdk.get_player_json(
-            event.player.data,
-            BigInt(event.player.id)
+            event.data.player.data,
+            BigInt(event.data.player.id)
           ) as Player;
           updateMeteors([meteor]);
           updatePlayers({ players: [miner] });
@@ -232,7 +230,12 @@ const useListenToGameEvents = () => {
     );
     _source.onmessage = (e) => {
       console.log("event  ", e);
-      const parsedEvent = JSON.parse(e.data);
+      const initialParsedEvent = JSON.parse(e.data)
+      if (initialParsedEvent === "connected") {
+        return;
+      }
+      // event.data seems to be double stringified, so much double parse.
+      const parsedEvent = JSON.parse(initialParsedEvent);
       handleEvent(parsedEvent);
     };
     return () => {
