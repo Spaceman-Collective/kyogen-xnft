@@ -5,6 +5,7 @@ import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { useRouter } from "next/router";
 import { SdkLoader } from "../components/KyogenSdkLoader";
 // import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { InputContainer } from "@/components/inputs/InputContainer";
 
 const Home = () => {
   const router = useRouter();
@@ -30,7 +31,7 @@ const Home = () => {
             className="mt-4 mx-auto"
           />
 
-          <div className="self-center justify-self-center w-fit">
+          <div className="justify-self-center w-fit">
             {/* <PrimaryButton
               className="flex justify-center mb-3"
               onClick={() => router.push("/games/new")}
@@ -38,18 +39,29 @@ const Home = () => {
               New Game
             </PrimaryButton> */}
 
-            <PrimaryButton
-              className="flex justify-center mb-3"
-              onClick={() => router.push("/games")}
-            >
-              Continue
-            </PrimaryButton>
-            <PrimaryButton
-              className="flex justify-center mb-3"
-              onClick={() => router.push("/games/join")}
-            >
-              Join game
-            </PrimaryButton>
+            <InputContainer className="w-[409px] items-center">
+              {/* <PrimaryButton
+                className="flex justify-center mb-3 w-full"
+                onClick={() => router.push("/games")}
+              >
+                Continue
+              </PrimaryButton> */}
+
+              <PrimaryButton
+                className="flex justify-center mb-3 w-full"
+                onClick={() => router.push("/games/join")}
+              >
+                Join game
+              </PrimaryButton>
+
+              <PrimaryButton
+                className="flex justify-center mb-3 w-full"
+                onClick={() => router.push("/games/new")}
+              >
+                Start New Game
+              </PrimaryButton>
+            </InputContainer>
+
             {/* <WalletMultiButton
               style={{
                 width: 120,
