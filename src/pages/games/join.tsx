@@ -54,9 +54,9 @@ const JoinGamePage = () => {
         const [registryInstance, _] =
           anchor.web3.PublicKey.findProgramAddressSync(
             [
-              anchor.utils.bytes.utf8.encode("registry"),
+              Buffer.from("registry"),
               registry.toBuffer(),
-              new anchor.BN(gameId).toArrayLike(Buffer),
+              Buffer.from((BigInt(gameId).toString(16)), 'hex'),
             ],
             coreds
           );
@@ -67,8 +67,8 @@ const JoinGamePage = () => {
           accountInfo != null &&
           accountInfo!.owner.toString() === coreds.toString();
       } catch (error) {
-        console.log("[verify] error", error);
-        ret = true; // TODO: Change to false and fix validation bugs
+        //console.log("[verify] error", error);
+        ret = false;
       } finally {
         setVerifyLoading(false);
       }
