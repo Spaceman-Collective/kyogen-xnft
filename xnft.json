@@ -1,6 +1,6 @@
 {
     "name": "Kyogen Clash - iFrame - LH",
-    "version": "0.0.12",
+    "version": "0.0.13",
     "description": "Solana RTS game",
     "kind": "app",
     "tag": "game",
@@ -18,7 +18,7 @@
     ],
     "entrypoints": {
       "default": {
-        "web": "https://kyogen-xnft-kyogen.vercel.app"
+        "web": "https://kyogen-xnft-six.vercel.app"
       }
     },
     "storage": "aws"
