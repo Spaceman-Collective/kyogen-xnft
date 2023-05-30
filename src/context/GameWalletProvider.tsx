@@ -1,31 +1,43 @@
 import React, { useEffect } from "react";
 import { loadOrCreateGameWallet } from "@/utils/gameWallet";
 import { gameWallet as gameWalletAtom } from "../recoil/atoms";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { Keypair } from "@solana/web3.js";
 
 export const XnftGameWalletProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const setGameWallet = useSetRecoilState(gameWalletAtom);
+  const [gameWallet, setGameWallet] = useRecoilState(gameWalletAtom);
 
   useEffect(() => {
     (async () => {
       // TODO: [nice to have] on initiatl xNFT load this key is undefined. Could make setting the
       //  game wallet more event driven.
-      await new Promise((resolve, reject) => {
-        const intervalId = setInterval(() => {
-          if (!window.xnft.solana.publicKey) return;
-          clearInterval(intervalId);
-          resolve(true);
-        }, 500);
-      });
+      //
+      //  TODO: Leave this Promise as is once we're done implementing `Start New Game`
+      //
+      // await new Promise((resolve, reject) => {
+      //   console.log('[XnftGameWalletProvider] executing promise');
+      //   const intervalId = setInterval(() => {
+      //     if (!window.xnft.solana.publicKey) return;
+      //     clearInterval(intervalId);
+      //     resolve(true);
+      //   }, 500);
+      // });
+      if (gameWallet) {
+        console.log('[XnftGameWalletProvider] gameWallet:', gameWallet.publicKey.toBase58());
+        return;
+      };
 
-      const keypair = loadOrCreateGameWallet(window.xnft.solana.publicKey);
+      const userIdentity = (window.xnft.solana.publicKey) ? window.xnft.solana.publicKey : new Keypair().publicKey
+      const keypair = loadOrCreateGameWallet(userIdentity);
+
       setGameWallet(keypair);
     })();
-  }, [setGameWallet]);
+
+  }, [gameWallet, setGameWallet]);
 
   return <>{children}</>;
 };

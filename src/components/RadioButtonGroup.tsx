@@ -36,7 +36,7 @@ export const RadioButtonGroup = ({
   className,
   ...props
 }: RadioButtonGroupProps) => {
-  const [selectedValue, setSelectedValue] = useState("");
+  const [selectedValue, setSelectedValue] = useState<string>((buttons) ? buttons[0].value : "Balanced");
 
   const handleChange = (event: any) => {
     setSelectedValue(event.target.value);
@@ -48,9 +48,9 @@ export const RadioButtonGroup = ({
         className ? className : ""
       }`}
     >
-      {buttons?.map((radioButton) => (
+      {buttons?.map((radioButton, index) => (
         <RadioButton
-          key={1}
+          key={index}
           value={radioButton.value}
           onChange={handleChange}
           selectedValue={selectedValue}
