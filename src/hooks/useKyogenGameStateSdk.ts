@@ -7,14 +7,14 @@ export const useKyogenGameStateSdk = () => {
   const connection = useRecoilValue(connectionAtom);
 
   return useCallback(
-    async (gameIsntace: bigint) => {
+    async (gameInstance: bigint) => {
       const gameState = new GameState(
         connection.rpcEndpoint,
         process.env.NEXT_PUBLIC_KYOGEN_ID as string,
         process.env.NEXT_PUBLIC_REGISTRY_ID as string,
         process.env.NEXT_PUBLIC_COREDS_ID as string,
         process.env.NEXT_PUBLIC_STRUCTURES_ID as string,
-        gameIsntace
+        gameInstance
       );
 
       await gameState.load_state();

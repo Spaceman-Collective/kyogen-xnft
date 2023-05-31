@@ -2,8 +2,9 @@ import { useMemo } from "react";
 import { Structures } from "kyogen-sdk";
 import { useRecoilValue } from "recoil";
 import { gameWallet } from "../recoil";
+import { Keypair } from "@solana/web3.js";
 
-export const useKyogenStructuresSdk = () => {
+export const useKyogenStructuresSdk = (admin?: Keypair | null) => {
   const payer = useRecoilValue(gameWallet)?.publicKey;
 
   return useMemo(() => {
@@ -12,7 +13,7 @@ export const useKyogenStructuresSdk = () => {
       process.env.NEXT_PUBLIC_REGISTRY_ID as string,
       process.env.NEXT_PUBLIC_KYOGEN_ID as string,
       process.env.NEXT_PUBLIC_STRUCTURES_ID as string,
-      payer?.toString() ?? ""
+      (admin) ? admin.publicKey.toString() : payer?.toString() ?? ""
     );
   }, [payer]);
 };

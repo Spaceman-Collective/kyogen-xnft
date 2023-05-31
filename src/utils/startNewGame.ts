@@ -5,30 +5,18 @@ import * as spl from '@solana/spl-token'
 import { Registry, Kyogen, Structures, GameState } from 'kyogen-sdk';
 import { ixPack, ixWasmToJs, randomU64 } from './wasm';
 
-// export function loadGameConfig(configFile: string) {
-//   let config: any = null
-
-//   if (configFile.includes(".yml")) {
-//     config = YAML.parse(readFileSync(configFile, {encoding: "utf-8"}));
-//   } else {
-//     config = JSON.parse(readFileSync(configFile, {encoding: "utf-8"}));
-//   }
-
-//   return config;
-// }
-
 export async function create_mint(
   connection: anchor.web3.Connection,
-  gameWallet: anchor.web3.Keypair | null
+  payer: anchor.web3.Keypair | null
 ): Promise<anchor.web3.PublicKey | null> {
   // Create the Mint
-  if (!gameWallet) return null;
+  if (!payer) return null;
 
   const mintAddress = await spl.createMint(
     connection,
-    gameWallet,
-    gameWallet.publicKey,
-    gameWallet.publicKey,
+    payer,
+    payer.publicKey,
+    payer.publicKey,
     9
   );
 
@@ -39,10 +27,10 @@ export async function mint_spl(
   connection: anchor.web3.Connection,
   structuresSdk: Structures,
   instance: bigint,
-  gameWallet: anchor.web3.Keypair | null,
+  payer: anchor.web3.Keypair,
   configJson: any
 ) {
-  if (!gameWallet) return;
+  if (!payer) return;
 
   // Mint Max Token Amount into ATA for Structures Index
   let si = new anchor.web3.PublicKey(
@@ -54,10 +42,10 @@ export async function mint_spl(
 
   await spl.mintTo(
     connection,
-    gameWallet,
+    payer,
     mint,
     structures_ata,
-    gameWallet.publicKey,
+    payer.publicKey,
     configJson.tokens_minted
   );
 
@@ -149,50 +137,26 @@ export async function init_structures(
   });
 }
 
-export async function init_structures_index(
+export async function init_structure_index(
   connection: anchor.web3.Connection,
-  gameState: GameState,
   structures: Structures,
   instance: bigint,
-  gameWallet: anchor.web3.Keypair | null,
+  payer: anchor.web3.Keypair,
   config: any
 ) {
-  if (!gameWallet) return;
-
-  let ixs = [];
-
-  for (let s of config.structures) {
-    ixs.push(
-      ixWasmToJs(
-        structures.init_structure(
-          instance,
-          randomU64(),
-          BigInt(gameState.get_tile_id(s.x, s.y)),
-          s.x,
-          s.y,
-          gameState.get_blueprint_key(s.structure_blueprint)
-        )
-      )
-    );
-  }
-
-  let ix_groups = await ixPack(ixs);
-  let tx_group = [];
-  for (let group of ix_groups) {
-    const msg = new anchor.web3.TransactionMessage({
-      payerKey: gameWallet.publicKey,
-      recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
-      instructions: group,
-    }).compileToLegacyMessage();
-    const tx = new anchor.web3.VersionedTransaction(msg);
-    tx.sign([gameWallet]);
-    let sig = await connection.sendTransaction(tx);
-    tx_group.push(connection.confirmTransaction(sig));
-  }
-
-  await Promise.all(tx_group).then(() => {
-    console.log("Structures created!");
-  });
+  const ix = ixWasmToJs(
+    structures.init_structure_index(instance, config.game_token)
+  );
+  const msg = new anchor.web3.TransactionMessage({
+    payerKey: payer.publicKey,
+    recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
+    instructions: [ix],
+  }).compileToLegacyMessage();
+  const tx = new anchor.web3.VersionedTransaction(msg);
+  tx.sign([payer]);
+  const sig = await connection.sendTransaction(tx);
+  await connection.confirmTransaction(sig);
+  console.log(`Structure Index created: ${sig}`);
 }
 
 export async function init_map(

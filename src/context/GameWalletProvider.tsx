@@ -18,18 +18,13 @@ export const XnftGameWalletProvider = ({
       //
       //  TODO: Leave this Promise as is once we're done implementing `Start New Game`
       //
-      // await new Promise((resolve, reject) => {
-      //   console.log('[XnftGameWalletProvider] executing promise');
-      //   const intervalId = setInterval(() => {
-      //     if (!window.xnft.solana.publicKey) return;
-      //     clearInterval(intervalId);
-      //     resolve(true);
-      //   }, 500);
-      // });
-      if (gameWallet) {
-        console.log('[XnftGameWalletProvider] gameWallet:', gameWallet.publicKey.toBase58());
-        return;
-      };
+      await new Promise((resolve, reject) => {
+        const intervalId = setInterval(() => {
+          if (!window.xnft.solana.publicKey) return;
+          clearInterval(intervalId);
+          resolve(true);
+        }, 500);
+      });
 
       const userIdentity = (window.xnft.solana.publicKey) ? window.xnft.solana.publicKey : new Keypair().publicKey
       const keypair = loadOrCreateGameWallet(userIdentity);

@@ -11,25 +11,29 @@ import { BackButton } from '@/components/buttons/BackButton';
 import { RadioButtonGroup } from '@/components/RadioButtonGroup';
 import { useKyogenInstructionSdk } from "@/hooks/useKyogenInstructionSdk";
 import { ixWasmToJs, randomU64 } from '@/utils/wasm';
-import { useSendAndConfirmGameWalletTransaction } from '@/hooks/useSendTransaction';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { connectionAtom, gameWallet as gameWalletAtom, notificationsAtom } from '@/recoil';
-import { append_registry_index, create_mint, init_map, init_structures, init_structures_index, init_tiles, loadGameConfig, mint_spl } from '@/utils/startNewGame';
+import { append_registry_index, create_mint, init_map, init_structures, init_structure_index, init_tiles, loadGameConfig, mint_spl } from '@/utils/startNewGame';
 import { useKyogenRegistrySdk } from '@/hooks/useKyogenRegistrySdk';
 import { useKyogenGameStateSdk } from '@/hooks/useKyogenGameStateSdk';
 import { useKyogenStructuresSdk } from '@/hooks/ useKyogenStructuresSdk';
 import * as anchor from "@coral-xyz/anchor"
 
-import config from '@/configs/15x15-12.json'
+import config from '@/configs/8x8.json'
 import { useEffect, useState } from 'react';
 import { SdkLoader } from '@/components/KyogenSdkLoader';
 
+/* TODO: Remove this once we figure out how to call SDK with admin wallet */
+const ADMIN_PRIVATE_KEY = 'ADD YOUR ADMIN KEY HERE'
+const ADMIN_KEY = anchor.web3.Keypair.fromSecretKey(
+  Buffer.from(JSON.parse(ADMIN_PRIVATE_KEY))
+);
+
 const New = () => {
   const router = useRouter();
-  const instructionSdk = useKyogenInstructionSdk();
-  const registrySdk = useKyogenRegistrySdk()
-  const structuresSdk = useKyogenStructuresSdk()
-  const sendTransaction = useSendAndConfirmGameWalletTransaction();
+  const instructionSdk = useKyogenInstructionSdk(ADMIN_KEY);
+  const registrySdk = useKyogenRegistrySdk(ADMIN_KEY)
+  const structuresSdk = useKyogenStructuresSdk(ADMIN_KEY)
   const connection = useRecoilValue(connectionAtom);
   const gameWallet = useRecoilValue(gameWalletAtom);
   const sdkLoadGameState = useKyogenGameStateSdk();
@@ -43,10 +47,11 @@ const New = () => {
   useEffect(() => {
     /* Set default map config */
     setSelectedMapConfig(config)
+    // console.log('[componentDidMount]:', ADMIN_KEY.publicKey.toString());
   }, []);
 
   useEffect(() => {
-    console.log('[selectedMapConfig]: ', selectedMapConfig);
+    // console.log('[selectedMapConfig]: ', selectedMapConfig);
   }, [selectedMapConfig])
 
   useEffect(() => {
@@ -66,16 +71,16 @@ const New = () => {
 
   const handleStartGame = async () => {
     if (!gameWallet) {
-      console.log("[handleStartGame] gameWallet not found");
       setLoading(false);
 
       setNotifications((notifications: any) => [
         ...notifications,
         {
-          role: "success",
-          message: `Ok`,
+          role: "danger",
+          message: `Game Wallet Not Found`,
         },
       ]);
+
       return;
     }
 
@@ -84,12 +89,14 @@ const New = () => {
      */
     let mapCfg = selectedMapConfig;
     try {
+      setLoading(true);
+
       const STARTING_BALANCE = await connection.getBalance(
-        gameWallet?.publicKey
+        ADMIN_KEY?.publicKey
       );
 
       // Create SPL Mint per game
-      const gameMint = await create_mint(connection, gameWallet);
+      const gameMint = await create_mint(connection, ADMIN_KEY);
       if (!gameMint) {
         console.log("[handleStartGame] failed to create game token mint");
         setLoading(false);
@@ -98,35 +105,38 @@ const New = () => {
       mapCfg.game_token = gameMint.toString();
 
       // Create Kyogen Game instance
-      // const instance = await create_game_instance();
       let newInstanceId = randomU64();
       const ix = ixWasmToJs(
         instructionSdk.create_game_instance(newInstanceId, mapCfg)
       );
-      await sendTransaction([ix]);
-      // TODO: Confirm transaction went thorugh or abort!
-      console.log("Game Instance: ", newInstanceId.toString());
+      const msg = new anchor.web3.TransactionMessage({
+        payerKey: ADMIN_KEY.publicKey,
+        recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
+        instructions: [ix],
+      }).compileToLegacyMessage();
+      const tx = new anchor.web3.VersionedTransaction(msg);
+      tx.sign([ADMIN_KEY]);
+      const sig = await connection.sendTransaction(tx);
+      await connection.confirmTransaction(sig);
 
       // Register ABs for Instance
       const kyogenId = process.env.NEXT_PUBLIC_KYOGEN_ID as string;
-      const structuresId = process.env.NEXT_PUBLIC_KYOGEN_ID as string;
+      const structuresId = process.env.NEXT_PUBLIC_STRUCTURES_ID as string;
       await append_registry_index(
         connection,
         registrySdk,
         newInstanceId,
         kyogenId,
         structuresId,
-        gameWallet
+        ADMIN_KEY
       );
 
       // Init Index for Structures
-      const gameState = await sdkLoadGameState(newInstanceId);
-      await init_structures_index(
+      await init_structure_index(
         connection,
-        gameState,
         structuresSdk,
         newInstanceId,
-        gameWallet,
+        ADMIN_KEY,
         mapCfg
       );
 
@@ -135,7 +145,7 @@ const New = () => {
         connection,
         structuresSdk,
         newInstanceId,
-        gameWallet,
+        ADMIN_KEY,
         mapCfg
       );
 
@@ -144,7 +154,7 @@ const New = () => {
         connection,
         instructionSdk,
         newInstanceId,
-        gameWallet,
+        ADMIN_KEY,
         mapCfg
       );
 
@@ -153,33 +163,46 @@ const New = () => {
         connection,
         instructionSdk,
         newInstanceId,
-        gameWallet,
+        ADMIN_KEY,
         mapCfg
       );
-      // await new Promise(resolve => setTimeout(resolve, 5000)); // 5 sec
 
-      // TODO: Init Structures
+      await new Promise(resolve => setTimeout(resolve, 5000)); // 5 sec
+
+      const gameState = await sdkLoadGameState(newInstanceId);
       await init_structures(
         connection,
         gameState,
         structuresSdk,
         newInstanceId,
-        gameWallet,
+        ADMIN_KEY,
         mapCfg
       );
 
-      const ENDING_BALANCE = await connection.getBalance(gameWallet.publicKey);
+      const ENDING_BALANCE = await connection.getBalance(ADMIN_KEY.publicKey);
       const SOL_COST =
         (STARTING_BALANCE - ENDING_BALANCE) / anchor.web3.LAMPORTS_PER_SOL;
 
       console.log(`Map Config took ${SOL_COST} SOL to deploy.`);
+
+      setNotifications((notifications: any) => [
+        ...notifications,
+        {
+          role: "success",
+          message: `Game Successfully Created!`,
+        },
+      ]);
+
+      router.push("/fundWallet");
     } catch (err) {
       if (err instanceof Error) {
+        console.log("[handleStartNewGame]", err.message);
+
         setNotifications((notifications: any) => [
           ...notifications,
           {
             role: "danger",
-            message: `Danger`,
+            message: `${err.message}`,
           },
         ]);
       }
