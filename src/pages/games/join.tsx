@@ -4,7 +4,6 @@ import Page from "@/components/Page";
 import { LOCAL_GAME_KEY } from "@/constants";
 import {
   connectionAtom,
-  customRpcAtom,
   gameIdAtom,
   notificationsAtom,
 } from "@/recoil";
@@ -12,9 +11,6 @@ import { useRouter } from "next/router";
 import { useCallback, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { useLocalStorage } from "usehooks-ts";
-import toast from "react-hot-toast";
-import { useFetchGameWalletBalance } from "@/hooks/useFetchGameWalletBalance";
-import { Connection } from "@solana/web3.js";
 import { useMemo } from "react";
 import * as anchor from "@coral-xyz/anchor";
 import { debounce } from "@/utils/debounce";
@@ -34,10 +30,7 @@ const JoinGamePage = () => {
   const [onChainGameStatus, setOnChainGameStatus] = useState<onChainGameStatus>(
     { verified: false, valid: false }
   );
-  const [customRpc, setCustomRpc] = useRecoilState(customRpcAtom);
-  const [localCustomRpc, setLocalCustomRpc] = useState(customRpc);
-  const [connection, setConnection] = useRecoilState(connectionAtom);
-  const fetchGameWalletBalance = useFetchGameWalletBalance();
+  const [connection, __] = useRecoilState(connectionAtom);
 
   const verifyGameInstance = useCallback(async (gameId: string) => {
     let verify = async (gameId: string): Promise<boolean> => {
@@ -109,31 +102,7 @@ const JoinGamePage = () => {
   return (
     <Page title="JOIN GAME">
       <div className="flex flex-col justify-center items-center">
-        <div className="flex flex-row ml-24 mt-10 space-x-4">
-          <label>RPC Endpoint: </label>
-          <input
-            className="text-black"
-            onChange={(e) => setLocalCustomRpc(e.target.value)}
-            value={localCustomRpc}
-            type="string"
-          />
-          <button
-            onClick={async () => {
-              try {
-                setCustomRpc(localCustomRpc);
-                setConnection(new Connection(localCustomRpc));
-                await fetchGameWalletBalance();
-                toast.success(`RPC Endpoint Updated!`);
-              } catch (e) {
-                toast.error("RPC Invalid!");
-              }
-            }}
-          >
-            Save RPC
-          </button>
-        </div>
-
-        <div className="flex flex-row justify-center items-center mt-20">
+        <div className="flex flex-row justify-center items-center mt-10">
           <p className="mr-3 text-2xl">Enter Game ID:</p>
           <TextInput
             value={idString}
