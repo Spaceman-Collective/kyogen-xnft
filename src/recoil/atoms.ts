@@ -109,12 +109,6 @@ export const notificationsAtom = atom<Notification[]>({
 });
 
 /* Local solana state */
-export const customRpcAtom = atom({
-  key: "customRpcAtom",
-  default: "",
-  effects: [localStorageEffect("customRpcAtom")],
-});
-
 export const connectionAtom = atom({
   key: "connectionAtom",
   default: new Connection(
