@@ -112,7 +112,8 @@ export const notificationsAtom = atom<Notification[]>({
 export const connectionAtom = atom({
   key: "connectionAtom",
   default: new Connection(
-    process.env.NEXT_PUBLIC_DEFAULT_CONNECTION_URL as string
+    process.env.NEXT_PUBLIC_DEFAULT_CONNECTION_URL as string,
+    "confirmed"
   ),
   // connection mutates itself, so must have this
   dangerouslyAllowMutability: true,
