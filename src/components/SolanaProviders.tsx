@@ -18,7 +18,7 @@ export const SolanaProviders = ({
 }: {
   children: React.ReactNode;
 }) => {
-  useSetInnerConnection();
+  //useSetInnerConnection();
   const connection = useRecoilValue(connectionAtom);
   const wallets = useMemo(() => [], []);
 

@@ -138,3 +138,8 @@ export const playPhaseAtom = atom<PlayPhase>({
   key: "playPhaseAtom",
   default: "Play",
 });
+
+export const registryId = atom<string>({
+  key: "registryId",
+  default: process.env.NEXT_PUBLIC_REGISTRY_ID as string
+})

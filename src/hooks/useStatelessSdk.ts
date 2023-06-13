@@ -8,7 +8,10 @@ import { connectionAtom } from "../recoil";
  */
 export const useStatelessSdk = () => {
   const connection = useRecoilValue(connectionAtom);
-
+  console.log("KYOGEN: ",  process.env.NEXT_PUBLIC_KYOGEN_ID);
+  console.log("REGISTRY: ", process.env.NEXT_PUBLIC_REGISTRY_ID);
+  console.log("CORE: ", process.env.NEXT_PUBLIC_COREDS_ID);
+  console.log("STRUCTURES: ", process.env.NEXT_PUBLIC_STRUCTURES_ID)
   return useMemo(
     () =>
       new StatelessSDK(

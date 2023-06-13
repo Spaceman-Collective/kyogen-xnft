@@ -4,6 +4,7 @@ import {
   gameIdAtom,
   playersAtomFamily,
   troopsAtomFamily,
+  registryId,
 } from "@/recoil";
 import { useCallback, useEffect } from "react";
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from "recoil";
@@ -18,6 +19,7 @@ import { useStatelessSdk } from "./useStatelessSdk";
 
 const useListenToGameEvents = () => {
   const kyogenSdk = useStatelessSdk();
+  const registry = useRecoilValue(registryId);
   const gameInstance = useRecoilValue(gameIdAtom);
   const updateTiles = useUpdateTiles(false);
   const updatePlayers = useUpdatePlayers();
@@ -49,9 +51,10 @@ const useListenToGameEvents = () => {
 
       switch (event.name) {
         case "NewPlayer":
-          const newPlayer = kyogenSdk.get_player_json(
-            event.data.player.data,
-            BigInt(event.data.player.id)
+          const newPlayer = kyogenSdk.get_player_json_2(
+            event.data.player.data as string,
+            BigInt(event.data.player.id),
+            registry
           ) as Player;
           updatePlayers({ appendToIdList: true, players: [newPlayer] });
           setGameFeed((curr) => [
@@ -81,25 +84,29 @@ const useListenToGameEvents = () => {
           break;
         case "UnitSpawned":
           console.log("UnitSpawned", event);
-          const tile = kyogenSdk.get_tile_json(
-            event.data.tile.data,
-            BigInt(event.data.tile.id)
+          const tile = kyogenSdk.get_tile_json_2(
+            event.data.tile.data as string,
+            BigInt(event.data.tile.id),
+            registry,
+            event.data.unit.data
           ) as Tile;
           if (tile.troop) {
             updateTroops({ appendToIdList: true, troops: [tile.troop] });
           }
           updateTiles([tile]);
 
-          const spawner = kyogenSdk.get_player_json(
+          const spawner = kyogenSdk.get_player_json_2(
             event.data.player.data,
-            BigInt(event.data.player.id)
+            BigInt(event.data.player.id),
+            registry
           ) as Player;
           updatePlayers({
             players: [spawner],
           });
-          const spawned = kyogenSdk.get_troop_json(
+          const spawned = kyogenSdk.get_troop_json_2(
             event.data.unit.data,
-            BigInt(event.data.unit.id)
+            BigInt(event.data.unit.id),
+            registry
           ) as Troop;
           setGameFeed((curr) => [
             ...curr,
@@ -113,20 +120,29 @@ const useListenToGameEvents = () => {
           break;
         case "UnitMoved":
           console.log("UnitMoved", event);
-          const fromTile = kyogenSdk.get_tile_json(
-            event.data.from.data,
-            BigInt(event.data.from.id)
+          console.log(registry);
+          const fromTile = kyogenSdk.get_tile_json_2(
+            event.data.from.data as string,
+            BigInt(event.data.from.id),
+            registry,
+            ""
           );
-          const toTile = kyogenSdk.get_tile_json(
-            event.data.to.data,
-            BigInt(event.data.to.id)
+          console.log(registry);
+          console.log("From Tile: ", fromTile);
+          const toTile = kyogenSdk.get_tile_json_2(
+            event.data.to.data as string,
+            BigInt(event.data.to.id),
+            registry,
+            event.data.unit.data
           );
-
-          const troop = kyogenSdk.get_troop_json(
-            event.data.unit.data,
-            BigInt(event.data.unit.id)
+          console.log(registry);
+          console.log(toTile);
+          const troop = kyogenSdk.get_troop_json_2(
+            event.data.unit.data as string,
+            BigInt(event.data.unit.id),
+            registry
           ) as Troop;
-
+          console.log(troop);
           setGameFeed((curr) => [
             ...curr,
             {
@@ -146,14 +162,16 @@ const useListenToGameEvents = () => {
           break;
         case "UnitAttacked":
           console.log("UNIT ATTACKED", event);
-          const defendingTroop = kyogenSdk.get_troop_json(
+          const defendingTroop = kyogenSdk.get_troop_json_2(
             event.data.defender.data,
-            BigInt(event.data.defender.id)
+            BigInt(event.data.defender.id),
+            registry
           ) as Troop;
           const defendingTroopPreAttack = getTroopById(defendingTroop.id);
-          const attackingTroop = kyogenSdk.get_troop_json(
+          const attackingTroop = kyogenSdk.get_troop_json_2(
             event.data.attacker.data,
-            BigInt(event.data.attacker.id)
+            BigInt(event.data.attacker.id),
+            registry
           ) as Troop;
           const damage =
             Number(defendingTroopPreAttack?.health ?? 0) -
@@ -175,7 +193,12 @@ const useListenToGameEvents = () => {
             },
           ]);
           const defendingTiles = [
-            kyogenSdk.get_tile_json(event.data.tile.data, BigInt(event.data.tile.id)),
+            kyogenSdk.get_tile_json_2(
+              event.data.tile.data,
+              BigInt(event.data.tile.id),
+              registry,
+              event.data.defender.data
+            )
           ];
           updateTroops({ troops: [defendingTroop, attackingTroop] });
           updateTiles(defendingTiles);
@@ -184,13 +207,15 @@ const useListenToGameEvents = () => {
         case "MeteorMined":
           // Get the exsting meteor by ID from recoil state. Then update with the slot from the event.
           console.log("getting meteor by ID", event.data.meteor.id);
-          const meteor = kyogenSdk.get_structure_json(
+          const meteor = kyogenSdk.get_structure_json_2(
             event.data.meteor.data,
-            BigInt(event.data.meteor.id)
+            BigInt(event.data.meteor.id),
+            registry
           ) as Meteor;
-          const miner = kyogenSdk.get_player_json(
+          const miner = kyogenSdk.get_player_json_2(
             event.data.player.data,
-            BigInt(event.data.player.id)
+            BigInt(event.data.player.id),
+            registry
           ) as Player;
           updateMeteors([meteor]);
           updatePlayers({ players: [miner] });

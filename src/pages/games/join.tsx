@@ -60,9 +60,7 @@ const JoinGamePage = () => {
             ],
             coreds
           );
-
         const accountInfo = await connection.getAccountInfo(registryInstance);
-
         ret =
           accountInfo != null &&
           accountInfo!.owner.toString() === coreds.toString();

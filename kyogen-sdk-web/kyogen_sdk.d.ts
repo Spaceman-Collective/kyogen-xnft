@@ -632,10 +632,25 @@ export class StatelessSDK {
   get_player_json(data: string, player_id: bigint): any;
 /**
 * @param {string} data
+* @param {bigint} player_id
+* @param {string} registry_str
+* @returns {any}
+*/
+  get_player_json_2(data: string, player_id: bigint, registry_str: string): any;
+/**
+* @param {string} data
 * @param {bigint} tile_id
 * @returns {any}
 */
   get_tile_json(data: string, tile_id: bigint): any;
+/**
+* @param {string} data
+* @param {bigint} tile_id
+* @param {string} registry_str
+* @param {any} troop_data_hex
+* @returns {any}
+*/
+  get_tile_json_2(data: string, tile_id: bigint, registry_str: string, troop_data_hex: any): any;
 /**
 * @param {string} data
 * @param {bigint} structure_id
@@ -644,10 +659,24 @@ export class StatelessSDK {
   get_structure_json(data: string, structure_id: bigint): any;
 /**
 * @param {string} data
+* @param {bigint} structure_id
+* @param {string} registry_str
+* @returns {any}
+*/
+  get_structure_json_2(data: string, structure_id: bigint, registry_str: string): any;
+/**
+* @param {string} data
 * @param {bigint} troop_id
 * @returns {any}
 */
   get_troop_json(data: string, troop_id: bigint): any;
+/**
+* @param {string} data
+* @param {bigint} troop_id
+* @param {string} registry_str
+* @returns {any}
+*/
+  get_troop_json_2(data: string, troop_id: bigint, registry_str: string): any;
 /**
 */
   coreds_id: Pubkey;
@@ -929,9 +958,13 @@ export interface InitOutput {
   readonly statelesssdk_fetch_addresses: (a: number, b: number) => number;
   readonly statelesssdk_fetch_address_by_id: (a: number, b: number, c: number, d: number) => void;
   readonly statelesssdk_get_player_json: (a: number, b: number, c: number, d: number) => number;
+  readonly statelesssdk_get_player_json_2: (a: number, b: number, c: number, d: number, e: number, f: number) => number;
   readonly statelesssdk_get_tile_json: (a: number, b: number, c: number, d: number) => number;
+  readonly statelesssdk_get_tile_json_2: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => number;
   readonly statelesssdk_get_structure_json: (a: number, b: number, c: number, d: number) => number;
+  readonly statelesssdk_get_structure_json_2: (a: number, b: number, c: number, d: number, e: number, f: number) => number;
   readonly statelesssdk_get_troop_json: (a: number, b: number, c: number, d: number) => number;
+  readonly statelesssdk_get_troop_json_2: (a: number, b: number, c: number, d: number, e: number, f: number) => number;
   readonly __wbg_set_structures_core_id: (a: number, b: number) => void;
   readonly __wbg_set_structures_registry_id: (a: number, b: number) => void;
   readonly __wbg_set_structures_kyogen_id: (a: number, b: number) => void;
@@ -1000,11 +1033,11 @@ export interface InitOutput {
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
   readonly __wbindgen_export_2: WebAssembly.Table;
-  readonly _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h52b3d4da582b977b: (a: number, b: number, c: number) => void;
+  readonly _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h33136d33cc3ec279: (a: number, b: number, c: number) => void;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
   readonly __wbindgen_free: (a: number, b: number) => void;
   readonly __wbindgen_exn_store: (a: number) => void;
-  readonly wasm_bindgen__convert__closures__invoke2_mut__h25a386ac9b7339df: (a: number, b: number, c: number, d: number) => void;
+  readonly wasm_bindgen__convert__closures__invoke2_mut__h2ecf3afdb072861a: (a: number, b: number, c: number, d: number) => void;
 }
 
 export type SyncInitInput = BufferSource | WebAssembly.Module;
